@@ -197,7 +197,6 @@ export default {
         population: window.vm.$t('variat.SouthAsian'),
         frequency: _this.variantion['gnomAD_exome_SAS']
       })
-      console.log(_this.freArr)
       _this.loading = false
     })
   },
@@ -413,15 +412,15 @@ export default {
         arcs
           .append('text')
           .attr('transform', function(d) {
-            const x =
-              arc.centroid(d)[0] < 0
-                ? arc.centroid(d)[0] * 3
-                : arc.centroid(d)[0] * 3.2 // 文字的x坐标
-            const y =
-              arc.centroid(d)[1] < 0
-                ? arc.centroid(d)[1] * 2.5
-                : arc.centroid(d)[1] * 4 // 文字的y坐标
-            return 'translate(' + x + ',' + y + ')'
+            // const x =
+            //   arc.centroid(d)[0] < 0
+            //     ? arc.centroid(d)[0] * 3
+            //     : arc.centroid(d)[0] * 3.2 // 文字的x坐标
+            // const y =
+            //   arc.centroid(d)[1] < 0
+            //     ? arc.centroid(d)[1] * 2.5
+            //     : arc.centroid(d)[1] * 4 // 文字的y坐标
+            return 'translate(' + 30 + ',' + -45 + ')'
           })
           .attr('text-anchor', 'middle')
           .text(function(d) {
@@ -436,22 +435,22 @@ export default {
             }
           })
 
-        // 添加连接弧外的直线元素
-        arcs
-          .append('line')
-          .attr('stroke', 'black')
-          .attr('x1', function(d) {
-            return d.data[0] !== 'other' ? arc.centroid(d)[0] * 2 : null
-          })
-          .attr('y1', function(d) {
-            return d.data[0] !== 'other' ? arc.centroid(d)[1] * 2 : null
-          })
-          .attr('x2', function(d) {
-            return d.data[0] !== 'other' ? arc.centroid(d)[0] * 2.3 : null
-          })
-          .attr('y2', function(d) {
-            return d.data[0] !== 'other' ? arc.centroid(d)[1] * 2.3 : null
-          })
+        // // 添加连接弧外的直线元素
+        // arcs
+        //   .append('line')
+        //   .attr('stroke', 'black')
+        //   .attr('x1', function(d) {
+        //     return d.data[0] !== 'other' ? arc.centroid(d)[0] * 2 : null
+        //   })
+        //   .attr('y1', function(d) {
+        //     return d.data[0] !== 'other' ? arc.centroid(d)[1] * 2 : null
+        //   })
+        //   .attr('x2', function(d) {
+        //     return d.data[0] !== 'other' ? arc.centroid(d)[0] * 2.3 : null
+        //   })
+        //   .attr('y2', function(d) {
+        //     return d.data[0] !== 'other' ? arc.centroid(d)[1] * 2.3 : null
+        //   })
 
         // 添加弧外的文字元素
         arcs

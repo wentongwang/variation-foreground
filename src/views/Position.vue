@@ -15,10 +15,14 @@
                 v-model="checkboxGroup1"
                 @change="handleCheckedOptionsChangeOne"
               >
-                <el-tooltip v-for="op in options" :key="op.name" :content="op.num + '个'" placement="bottom" effect="light">
-                  <el-checkbox-button :label="op.name">{{ op.name }}
-                  </el-checkbox-button>
-                </el-tooltip>
+                <el-checkbox-button
+                  v-for="op in options"
+                  :key="op.name"
+                  :label="op.name"
+                >{{ op.name }}
+                  <el-tag class="num-tag">{{ op.num }}
+                  </el-tag>
+                </el-checkbox-button>
               </el-checkbox-group>
             </el-col>
             <el-col :span="6">
@@ -26,10 +30,14 @@
                 v-model="checkboxGroup2"
                 @change="handleCheckedOptionsChangeTwo"
               >
-                <el-tooltip v-for="(item, index) in options2" :key="index" :content="item.num + '个'" placement="bottom" effect="light">
-                  <el-checkbox-button :label="item.name">{{ item.name }}
-                  </el-checkbox-button>
-                </el-tooltip>
+                <el-checkbox-button
+                  v-for="(item, index) in options2"
+                  :key="index"
+                  :label="item.name"
+                >{{ item.name }}
+                  <el-tag class="num-tag">{{ item.num }}
+                  </el-tag>
+                </el-checkbox-button>
               </el-checkbox-group>
             </el-col>
             <el-col :span="6">
@@ -37,20 +45,24 @@
                 v-model="checkboxGroup3"
                 @change="handleCheckedOptionsChangeThree"
               >
-                <el-tooltip v-for="(item, index) in options3" :key="index" :content="item.num + '个'" placement="bottom" effect="light">
-                  <el-checkbox-button :label="item.name">{{ item.name }}
-                  </el-checkbox-button>
-                </el-tooltip>
+                <el-checkbox-button
+                  v-for="(item, index) in options3"
+                  :key="index"
+                  :label="item.name"
+                >{{ item.name }}
+                  <el-tag class="num-tag">{{ item.num }}
+                  </el-tag>
+                </el-checkbox-button>
               </el-checkbox-group>
             </el-col>
-            <el-col :span="4">
+            <!-- <el-col :span="4">
               <el-input
                 v-model="input"
                 :placeholder="$t('gene.search')"
                 prefix-icon="el-icon-search"
                 clearable
               />
-            </el-col>
+            </el-col>-->
           </el-row>
           <el-table
             ref="filterTable"
@@ -213,6 +225,15 @@ export default {
             .scale(scale)
             .ticks(10)
             .tickPadding(10)
+          svg
+            .append('text')
+            .attr('x', 0)
+            .attr('y', margin)
+            .attr('fill', '#409EFF')
+            .attr('font-size', 20)
+            .text(function() {
+              return 'chr:' + _this.position.chrom
+            })
           svg
             .append('g')
             .attr('transform', function() {
@@ -898,10 +919,44 @@ export default {
   }
   .checkbox-container {
     max-width: 90%;
-    margin: 0 auto 20px;
+    margin: 0 auto 60px;
     .el-checkbox {
       width: 100px;
       text-align: left;
+    }
+    .el-checkbox-group{
+      .el-checkbox-button{
+        position: relative;
+        .num-tag{
+          position: absolute;
+          bottom: -80%;
+          left: 0;
+          width: 100%;
+          white-space: nowrap;
+          vertical-align: middle;
+          -webkit-appearance: none;
+          text-align: center;
+          box-sizing: border-box;
+          outline: 0;
+          margin: 0;
+          transition: all .3s cubic-bezier(.645,.045,.355,1);
+          font-size: 14px;
+          border-radius: 0;
+          border-color: #409EFF;
+          border-left-color: #ecf5ff;
+        }
+      }
+      .el-checkbox-button:first-child{
+        .num-tag{
+          border: 1px solid #409EFF;
+          border-radius: 0 0 0 4px;
+        }
+      }
+      .el-checkbox-button:last-child{
+        .num-tag{
+          border-radius: 0 0 4px 0;
+        }
+      }
     }
   }
   .el-table {

@@ -33,13 +33,13 @@ export default {
     table: {
       variatiId: '变异ID',
       source: '来源',
-      exonic_function: '外显子函数',
+      exonic_function: '变异功能',
       variation_type: '变异类型',
       thousandG_ALL: '1000G数据库',
       exAC_ALL: 'ExAC数据库',
       gnomAD_exome_ALL: 'gnomADExome数据库',
       gnomAD_genome_ALL: 'gnomADGenome数据库',
-      ref_seq_gene: '参考序列基因'
+      ref_seq_gene: 'Refseq基因'
     }
   },
   variat: {
