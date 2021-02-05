@@ -1,133 +1,140 @@
 <template>
-  <el-main v-loading="loading">
-    <div v-if="this.variantion" class="main-container">
-      <p class="title">
-        {{
-          this.variantion.variation_type === 'snv'
-            ? 'Single nucleotide variant'
-            : 'InDel'
-        }}：{{ this.variantId }}
-      </p>
-      <el-divider />
-      <div class="sub-content-1">
-        <el-row :gutter="20">
-          <el-col
-            :span="10"
-            :offset="2"
-          ><div class="grid-title">
-            Variant Effect Predictor
-          </div></el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col
-            :span="10"
-            :offset="4"
-          ><div class="grid-content">
-            Exonic function : {{ this.variantion.exonic_function }}
-          </div></el-col>
-          <el-col
-            :span="10"
-            :offset="0"
-          ><div class="grid-content">
-            SIFT : {{ this.variantion.sift }}
-          </div></el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col
-            :span="10"
-            :offset="4"
-          ><div class="grid-content">
-            Clinvar id : {{ this.variantion.clinvar_id }}
-          </div></el-col>
-          <el-col
-            :span="10"
-            :offset="0"
-          ><div class="grid-content">
-            poly phen val : {{ this.variantion.polyPhenVal }}
-          </div></el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col
-            :span="10"
-            :offset="4"
-          ><div class="grid-content">
-            Disease name : {{ this.variantion.disease_name_id }}
-          </div></el-col>
-          <el-col
-            :span="10"
-            :offset="0"
-          ><div class="grid-content">
-            GERP : {{ this.variantion.gerp }}
-          </div></el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col
-            :span="10"
-            :offset="4"
-          ><div class="grid-content">
-            Significance : {{ this.variantion.significance }}
-          </div></el-col>
-          <el-col
-            :span="10"
-            :offset="0"
-          ><div class="grid-content">
-            CADD : {{ this.variantion.cadd }}
-          </div></el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col
-            :span="10"
-            :offset="4"
-          ><div class="grid-content">
-            OMIM id : {{ this.variantion.omim_ID }}
-          </div></el-col>
-        </el-row>
-      </div>
-      <div class="sub-content-2">
-        <el-row :gutter="20">
-          <el-col
-            :span="10"
-            :offset="2"
-          ><div class="grid-title">
-            Population Frequencies
-          </div></el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col
-            :span="10"
-            :offset="4"
-          ><div style="margin-top: 20px">
-            Include:
-            <el-radio-group
-              v-model="radio2"
-              size="medium"
-              @change="handleChecked"
-            >
-              <el-radio-button label="exomes" />
-              <el-radio-button label="1000G" />
-              <el-radio-button label="ExAC" />
-              <el-radio-button label="genomes" />
-            </el-radio-group>
-            <div class="grid-content">
-              <el-table :data="freArr" style="width: 100%">
-                <el-table-column prop="population" label="Population" />
-                <el-table-column prop="frequency" label="Allel Frequency" />
-              </el-table>
+  <div>
+    <Nav />
+    <el-main v-loading="loading">
+      <div v-if="variantion" class="main-container">
+        <p class="title">
+          {{
+            variantion.variation_type === 'snv'
+              ? $t('variat.snv')
+              : $t('variat.InDel')
+          }}：{{ variantId }}
+        </p>
+        <el-divider />
+        <div class="sub-content-1">
+          <el-row :gutter="20">
+            <el-col
+              :span="10"
+              :offset="2"
+            ><div class="grid-title">
+              {{ $t('variat.vep') }}
+            </div></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col
+              :span="10"
+              :offset="4"
+            ><div class="grid-content">
+              {{ $t('variat.Exonic_function') + variantion.exonic_function }}
+            </div></el-col>
+            <el-col
+              :span="10"
+              :offset="0"
+            ><div class="grid-content">
+              {{ $t('variat.SIFT') + variantion.sift }}
+            </div></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col
+              :span="10"
+              :offset="4"
+            ><div class="grid-content">
+              {{ $t('variat.ClinvarId') + variantion.clinvar_id }}
+            </div></el-col>
+            <el-col
+              :span="10"
+              :offset="0"
+            ><div class="grid-content">
+              {{ $t('variat.polyPhenVal') + variantion.polyPhenVal }}
+            </div></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col
+              :span="10"
+              :offset="4"
+            ><div class="grid-content">
+              {{ $t('variat.DiseaseName') + variantion.disease_name_id }}
+            </div></el-col>
+            <el-col
+              :span="10"
+              :offset="0"
+            ><div class="grid-content">
+              {{ $t('variat.GERP') + variantion.gerp }}
+            </div></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col
+              :span="10"
+              :offset="4"
+            ><div class="grid-content">
+              {{ $t('variat.Significance') + variantion.significance }}
+            </div></el-col>
+            <el-col
+              :span="10"
+              :offset="0"
+            ><div class="grid-content">
+              {{ $t('variat.CADD') + variantion.cadd }}
+            </div></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col
+              :span="10"
+              :offset="4"
+            ><div class="grid-content">
+              {{ $t('variat.OMIMId') + variantion.omim_ID }}
+            </div></el-col>
+          </el-row>
+        </div>
+        <div class="sub-content-2">
+          <el-row :gutter="20">
+            <el-col
+              :span="10"
+              :offset="2"
+            ><div class="grid-title">
+              {{ $t('variat.Population_frequencies') }}
+            </div></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col
+              :span="10"
+              :offset="4"
+            ><div style="margin-top: 20px">
+              {{ $t('variat.Include') }}:
+              <el-radio-group
+                v-model="radio2"
+                size="medium"
+                @change="handleChecked"
+              >
+                <el-radio-button label="exomes" />
+                <el-radio-button label="1000G" />
+                <el-radio-button label="ExAC" />
+                <el-radio-button label="genomes" />
+              </el-radio-group>
+              <div class="grid-content">
+                <el-table :data="freArr" style="width: 100%">
+                  <el-table-column prop="population" :label="$t('variat.population')" />
+                  <el-table-column prop="frequency" :label="$t('variat.frequency')" />
+                </el-table>
+              </div>
             </div>
-          </div>
-          </el-col>
-          <el-col :span="10" :offset="0"><div class="pie-container" /></el-col>
-        </el-row>
+            </el-col>
+            <el-col :span="10" :offset="0"><div class="pie-container" /></el-col>
+          </el-row>
+        </div>
       </div>
-    </div>
-  </el-main>
+    </el-main>
+  </div>
 </template>
 
 <script>
 import { variant } from '@/api/variation'
 import * as d3 from 'd3'
+import Nav from '@/components/Nav'
 export default {
   name: 'Variation',
+  components: {
+    Nav
+  },
   data() {
     return {
       variantId: '',
@@ -155,39 +162,39 @@ export default {
     variant(data).then(response => {
       _this.variantion = response['listData'][0]
       _this.freArr.push({
-        population: 'All',
+        population: window.vm.$t('variat.All'),
         frequency: _this.variantion['gnomAD_exome_ALL']
       })
       _this.freArr.push({
-        population: 'African',
+        population: window.vm.$t('variat.African'),
         frequency: _this.variantion['gnomAD_exome_AFR']
       })
       _this.freArr.push({
-        population: 'Amish',
+        population: window.vm.$t('variat.Amish'),
         frequency: _this.variantion['gnomAD_exome_AMR']
       })
       _this.freArr.push({
-        population: 'Ashkenazi Jewish',
+        population: window.vm.$t('variat.AshkenaziJewish'),
         frequency: _this.variantion['gnomAD_exome_ASJ']
       })
       _this.freArr.push({
-        population: 'East Asian',
+        population: window.vm.$t('variat.EastAsian'),
         frequency: _this.variantion['gnomAD_exome_EAS']
       })
       _this.freArr.push({
-        population: 'European(Finnish)',
+        population: window.vm.$t('variat.EuropeanFinnish'),
         frequency: _this.variantion['gnomAD_exome_FIN']
       })
       _this.freArr.push({
-        population: 'European(non-Finnish)',
+        population: window.vm.$t('variat.EuropeanNonFinnish'),
         frequency: _this.variantion['gnomAD_exome_NFE']
       })
       _this.freArr.push({
-        population: 'Other',
+        population: window.vm.$t('variat.Other'),
         frequency: _this.variantion['gnomAD_exome_OTH']
       })
       _this.freArr.push({
-        population: 'South Asian',
+        population: window.vm.$t('variat.SouthAsian'),
         frequency: _this.variantion['gnomAD_exome_SAS']
       })
       console.log(_this.freArr)
@@ -199,133 +206,133 @@ export default {
       this.freArr = []
       if (this.radio2 === 'exomes') {
         this.freArr.push({
-          population: 'All',
+          population: window.vm.$t('variat.All'),
           frequency: this.variantion['gnomAD_exome_ALL']
         })
         this.freArr.push({
-          population: 'African',
+          population: window.vm.$t('variat.African'),
           frequency: this.variantion['gnomAD_exome_AFR']
         })
         this.freArr.push({
-          population: 'Amish',
+          population: window.vm.$t('variat.Amish'),
           frequency: this.variantion['gnomAD_exome_AMR']
         })
         this.freArr.push({
-          population: 'Ashkenazi Jewish',
+          population: window.vm.$t('variat.AshkenaziJewish'),
           frequency: this.variantion['gnomAD_exome_ASJ']
         })
         this.freArr.push({
-          population: 'East Asian',
+          population: window.vm.$t('variat.EastAsian'),
           frequency: this.variantion['gnomAD_exome_EAS']
         })
         this.freArr.push({
-          population: 'European(Finnish)',
+          population: window.vm.$t('variat.EuropeanFinnish'),
           frequency: this.variantion['gnomAD_exome_FIN']
         })
         this.freArr.push({
-          population: 'European(non-Finnish)',
+          population: window.vm.$t('variat.EuropeanNonFinnish'),
           frequency: this.variantion['gnomAD_exome_NFE']
         })
         this.freArr.push({
-          population: 'Other',
+          population: window.vm.$t('variat.Other'),
           frequency: this.variantion['gnomAD_exome_OTH']
         })
         this.freArr.push({
-          population: 'South Asian',
+          population: window.vm.$t('variat.SouthAsian'),
           frequency: this.variantion['gnomAD_exome_SAS']
         })
       }
       if (this.radio2 === '1000G') {
         this.freArr.push({
-          population: 'All',
+          population: window.vm.$t('variat.All'),
           frequency: this.variantion['thousandG_ALL']
         })
         this.freArr.push({
-          population: 'African',
+          population: window.vm.$t('variat.African'),
           frequency: this.variantion['thousandG_AFR']
         })
         this.freArr.push({
-          population: 'Amish',
+          population: window.vm.$t('variat.Amish'),
           frequency: this.variantion['thousandG_AMR']
         })
         this.freArr.push({
-          population: 'European',
+          population: window.vm.$t('variat.European'),
           frequency: this.variantion['thousandG_EUR']
         })
         this.freArr.push({
-          population: 'East Asian',
+          population: window.vm.$t('variat.EastAsian'),
           frequency: this.variantion['thousandG_EAS']
         })
         this.freArr.push({
-          population: 'South Asian',
+          population: window.vm.$t('variat.SouthAsian'),
           frequency: this.variantion['thousandG_SAS']
         })
       }
       if (this.radio2 === 'ExAC') {
         this.freArr.push({
-          population: 'All',
+          population: window.vm.$t('variat.All'),
           frequency: this.variantion['exAC_ALL']
         })
         this.freArr.push({
-          population: 'African',
+          population: window.vm.$t('variat.African'),
           frequency: this.variantion['exAC_AFR']
         })
         this.freArr.push({
-          population: 'Amish',
+          population: window.vm.$t('variat.Amish'),
           frequency: this.variantion['exAC_AMR']
         })
         this.freArr.push({
-          population: 'East Asian',
+          population: window.vm.$t('variat.EastAsian'),
           frequency: this.variantion['exAC_EAS']
         })
         this.freArr.push({
-          population: 'European(Finnish)',
+          population: window.vm.$t('variat.EuropeanFinnish'),
           frequency: this.variantion['exAC_FIN']
         })
         this.freArr.push({
-          population: 'European(non-Finnish)',
+          population: window.vm.$t('variat.EuropeanNonFinnish'),
           frequency: this.variantion['exAC_NFE']
         })
         this.freArr.push({
-          population: 'Other',
+          population: window.vm.$t('variat.Other'),
           frequency: this.variantion['exAC_OTH']
         })
         this.freArr.push({
-          population: 'South Asian',
+          population: window.vm.$t('variat.SouthAsian'),
           frequency: this.variantion['exAC_SAS']
         })
       }
       if (this.radio2 === 'genomes') {
         this.freArr.push({
-          population: 'All',
+          population: window.vm.$t('variat.All'),
           frequency: this.variantion['gnomAD_genome_ALL']
         })
         this.freArr.push({
-          population: 'African',
+          population: window.vm.$t('variat.African'),
           frequency: this.variantion['gnomAD_genome_AFR']
         })
         this.freArr.push({
-          population: 'Amish',
+          population: window.vm.$t('variat.Amish'),
           frequency: this.variantion['gnomAD_genome_AMR']
         })
         this.freArr.push({
-          population: 'Ashkenazi Jewish',
+          population: window.vm.$t('variat.AshkenaziJewish'),
           frequency: this.variantion['gnomAD_genome_ASJ']
         })
         this.freArr.push({
-          population: 'East Asian',
+          population: window.vm.$t('variat.EastAsian'),
           frequency: this.variantion['gnomAD_genome_EAS']
         })
         this.freArr.push({
-          population: 'European(Finnish)',
+          population: window.vm.$t('variat.EuropeanFinnish'),
           frequency: this.variantion['gnomAD_genome_FIN']
         })
         this.freArr.push({
-          population: 'European(non-Finnish)',
+          population: window.vm.$t('variat.EuropeanNonFinnish'),
           frequency: this.variantion['gnomAD_genome_NFE']
         })
         this.freArr.push({
-          population: 'Other',
+          population: window.vm.$t('variat.Other'),
           frequency: this.variantion['gnomAD_genome_OTH']
         })
       }

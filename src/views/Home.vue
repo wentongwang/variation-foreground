@@ -1,66 +1,47 @@
 <template>
-  <el-main>
-    <div class="main-container">
-      <el-image style="margin-top:60px" :src="img" />
-      <p class="word">genome aggregation database</p>
-      <el-select
-        v-model="value"
-        class="search"
-        filterable
-        remote
-        reserve-keyword
-        placeholder="Search by gene, region, or variant"
-        :remote-method="remoteMethod"
-        :loading="loading"
-        @change="handleClick($event)"
-      >
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item"
+  <div>
+    <Nav />
+    <el-main style="height:100vh;">
+      <div class="main-container">
+        <el-image style="margin-top:60px; width: 200px" :src="img" />
+        <p class="word">{{ $t('home.name') }}</p>
+        <el-select
+          v-model="value"
+          class="search"
+          filterable
+          remote
+          reserve-keyword
+          :placeholder="$t('home.search')"
+          :remote-method="remoteMethod"
+          :loading="loading"
+          @change="handleClick($event)"
         >
-          {{ item.label }}
-        </el-option>
-      </el-select>
-      <p class="tips">
-        Please note that gnomAD v2.1.1 and v3.1 have substantially different but
-        overlapping sample compositions and are on different genome builds. For
-        more information, see the FAQ "Should I switch to the latest version of
-        gnomAD?"
-      </p>
-      <p class="tips" style="text-align:center">
-        Examples - Gene: PCSK9, Variant: 1-55516888-G-GA
-      </p>
-      <p class="tips">
-        The Genome Aggregation Database (gnomAD) is a resource developed by an
-        international coalition of investigators, with the goal of aggregating
-        and harmonizing both exome and genome sequencing data from a wide
-        variety of large-scale sequencing projects, and making summary data
-        available for the wider scientific community.
-      </p>
-      <p class="tips">
-        The v2 data set (GRCh37/hg19) provided on this website spans 125,748
-        exome sequences and 15,708 whole-genome sequences from unrelated
-        individuals sequenced as part of various disease-specific and population
-        genetic studies. The v3.1 data set (GRCh38) spans 76,156 genomes,
-        selected as in v2. The gnomAD Principal Investigators and groups that
-        have contributed data to the current release are listed here.
-      </p>
-      <p class="tips">
-        All data here are released for the benefit of the wider biomedical
-        community, without restriction on use - see the terms of use. Sign up
-        for our mailing list for future release announcements.
-      </p>
-    </div>
-  </el-main>
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item"
+          >
+            {{ item.label }}
+          </el-option>
+        </el-select>
+        <p class="tips">
+          {{ $t('home.content.con1') }}
+        </p>
+      </div>
+    </el-main>
+  </div>
 </template>
 
 <script>
 import { search, variant } from '@/api/variation'
+import Nav from '@/components/Nav'
 
 export default {
   name: 'Home',
+  components: {
+    Nav
+  },
   data() {
     return {
       img: require('../assets/logo.png'),

@@ -3,16 +3,16 @@
     <el-row>
       <el-col
         class="logo"
-        :span="4"
-      ><span @click="GoToIndex">gnomAD browser</span></el-col>
-      <el-col class="input-contaner" :span="5" :offset="5">
+        :span="6"
+      ><span @click="GoToIndex">{{ $t('index.name') }}</span></el-col>
+      <el-col class="input-contaner" :span="5" :offset="4">
         <el-select
           v-model="value"
           class="header-search"
           filterable
           remote
           reserve-keyword
-          placeholder="Search"
+          :placeholder="$t('index.search')"
           :remote-method="remoteMethod"
           :loading="loading"
           @change="handleClick($event)"
@@ -27,15 +27,27 @@
           </el-option>
         </el-select>
       </el-col>
+      <el-col class="input-contaner" :span="2" :offset="5">
+        <lang-select class="right-menu-item hover-effect" />
+      </el-col>
+      <el-col class="input-contaner" :span="2">
+        <log-out class="right-menu-item hover-effect" />
+      </el-col>
     </el-row>
   </el-header>
 </template>
 
 <script>
 import { search, variant } from '@/api/variation'
+import LangSelect from '@/components/LangSelect'
+import LogOut from '@/components/LogOut'
 
 export default {
   name: 'Nav',
+  components: {
+    LangSelect,
+    LogOut
+  },
   inject: ['reload'],
   data() {
     return {

@@ -1,17 +1,12 @@
 <template>
   <el-container id="app">
-    <Nav></Nav>
-    <router-view v-if="isRouterAlive"></router-view>
+    <router-view v-if="isRouterAlive" />
   </el-container>
 </template>
 
 <script>
-import Nav from './components/Nav.vue'
 
 export default {
-  components: {
-    Nav
-  },
   name: 'App',
   provide() {
     return {
