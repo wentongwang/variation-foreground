@@ -244,6 +244,11 @@ export default {
         function geneAnnotation() {
           const margin = _this.containerWidth / 20
           const width = _this.containerWidth - margin * 2
+          const newArr = []
+          const numArr = []
+          let start = 0
+          let end = 0
+          const name = []
           let grandParent = null
           let parent = null
           let count = 0
@@ -251,61 +256,91 @@ export default {
           _this.svg.style('overflow', 'visible')
           _this.annotationColor = '#424242'
           _this.filterData.geneList.forEach(function(d) {
-            if (d['parent'] === '.') {
-              if (d['type'] === 'pseudogene' || d['type'] === 'gene') {
-                grandParent = d['gene_id']
-                count = count + 1
-                _this.svg
-                  .append('line')
-                  .attr('x1', (d['start'] - positionStart) / geneLength * width)
-                  .attr('y1', 13 + 20 * count)
-                  .attr('x2', (d['end'] - positionStart) / geneLength * width)
-                  .attr('y2', 13 + 20 * count)
-                  .attr('stroke', '#dbdbdb')
-                  .attr('stroke-width', 2)
-                _this.svg.append('text')
-                  .attr('x', (d['start'] - positionStart) / geneLength * width - d['gene'].length * 12)
-                  .attr('y', 18 + 20 * count)
-                  .text(function() {
-                    return d['gene']
-                  })
-              }
+            if (d['type'] === 'pseudogene' || d['type'] === 'gene') {
+              newArr.push({ 'start': (d['start'] - positionStart) / geneLength * width, 'end': (d['end'] - positionStart) / geneLength * width, 'gene': d['gene'] })
             }
-            if (d['parent'] === grandParent) {
-              parent = d['gene_id']
-            }
-            if (d['parent'] === parent) {
-              if (d['type'] === 'CDS') {
-                _this.svg
-                  .append('rect')
-                  .attr(
-                    'x',
-                    ((d['start'] - positionStart) / geneLength) * width
-                  )
-                  .attr('y', 6 + 20 * count)
-                  .attr(
-                    'width',
-                    ((d['end'] - d['start']) / geneLength) * width
-                  )
-                  .attr('height', 16)
-                  .attr('fill', '#424242')
-              }
-              if (d['type'] === 'exon') {
-                _this.svg
-                  .append('rect')
-                  .attr(
-                    'x',
-                    ((d['start'] - positionStart) / geneLength) * width
-                  )
-                  .attr('y', 10 + 20 * count)
-                  .attr('width', ((d['end'] - d['start']) / geneLength) * width)
-                  .attr('height', 7)
-                  .attr('fill', '#424242')
-                  .attr('class', 'UTR')
+          })
+          newArr.sort(function(a, b) { return a['start'] - b['start'] })
+          newArr.forEach(function(d, i) {
+            start = 0
+            end = -Infinity
+            for (let j = i; j < newArr.length; j++) {
+              start = newArr[j]['start']
+              if (start - end > 120) {
+                if (name.indexOf(newArr[j]['gene']) === -1) {
+                  end = newArr[j]['end']
+                  name.push(newArr[j]['gene'])
+                  numArr.push(newArr[j])
+                }
               }
             }
           })
-          const height = 24 * count
+          console.log(numArr)
+          numArr.forEach(function(c, i) {
+            if (i > 0 && numArr[i]['start'] - 120 < numArr[i - 1]['end']) {
+              count = count + 1
+            }
+            grandParent = null
+            parent = null
+            _this.filterData.geneList.forEach(function(d) {
+              if (d['parent'] === '.' && d['gene'] === c['gene']) {
+              // if (d['parent'] === '.' && d['gene'] === 'STATH') {
+                if (d['type'] === 'pseudogene' || d['type'] === 'gene') {
+                  grandParent = d['gene_id']
+                  _this.svg
+                    .append('line')
+                    .attr('x1', (d['start'] - positionStart) / geneLength * width)
+                    .attr('y1', 13 + 30 * count)
+                    .attr('x2', (d['end'] - positionStart) / geneLength * width)
+                    .attr('y2', 13 + 30 * count)
+                    .attr('stroke', '#dbdbdb')
+                    .attr('stroke-width', 2)
+                  _this.svg.append('text')
+                    .attr('x', (d['start'] - positionStart) / geneLength * width - d['gene'].length * 10.5)
+                    .attr('y', 18 + 30 * count)
+                    .attr('fill', '#409EFF')
+                    .attr('font-size', 14)
+                    .text(function() {
+                      return d['gene']
+                    })
+                }
+              }
+              if (d['parent'] === grandParent) {
+                parent = d['gene_id']
+              }
+              if (d['parent'] === parent) {
+                if (d['type'] === 'CDS') {
+                  _this.svg
+                    .append('rect')
+                    .attr(
+                      'x',
+                      ((d['start'] - positionStart) / geneLength) * width
+                    )
+                    .attr('y', 6 + 30 * count)
+                    .attr(
+                      'width',
+                      ((d['end'] - d['start']) / geneLength) * width
+                    )
+                    .attr('height', 16)
+                    .attr('fill', '#424242')
+                }
+                if (d['type'] === 'exon') {
+                  _this.svg
+                    .append('rect')
+                    .attr(
+                      'x',
+                      ((d['start'] - positionStart) / geneLength) * width
+                    )
+                    .attr('y', 10 + 30 * count)
+                    .attr('width', ((d['end'] - d['start']) / geneLength) * width)
+                    .attr('height', 7)
+                    .attr('fill', '#424242')
+                    .attr('class', 'UTR')
+                }
+              }
+            })
+          })
+          const height = 32 * count
           _this.svg.attr('height', height).attr('width', width)
         }
         initAxis(position) // 创建坐标轴
