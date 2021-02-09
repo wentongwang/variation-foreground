@@ -3,11 +3,67 @@
     <Nav />
     <el-main>
       <div v-loading="loading" class="main-container">
-        <p class="title">{{ position.value }}<span class="sub-title" /></p>
+        <el-row type="flex" justify="space-between">
+          <el-col :span="6">
+            <p class="title">{{ position.value }}<span class="sub-title" /></p>
+          </el-col>
+          <el-col :span="10" class="tools">
+            <el-col :span="10">
+              <div class="tools-1">
+                <p>{{ $t('gene.zoom') }}</p>
+                <p class="svg-container" @click="zoomClick('-10')">
+                  <svg-icon icon-class="narrow" />
+                  <span>-10</span>
+                </p>
+                <p class="svg-container" @click="zoomClick('-3')">
+                  <svg-icon icon-class="narrow" />
+                  <span>-3</span>
+                </p>
+                <p class="svg-container">
+                  <svg-icon icon-class="enlarge" @click="zoomClick('3')" />
+                  <span>+3</span>
+                </p>
+                <p class="svg-container">
+                  <svg-icon icon-class="enlarge" @click="zoomClick('10')" />
+                  <span>+10</span>
+                </p>
+              </div>
+            </el-col>
+            <el-col :span="14">
+              <div class="tools-2">
+                <p>{{ $t('gene.move') }}</p>
+                <p class="svg-container">
+                  <svg-icon icon-class="Left-3" @click="moveClick('-95')" />
+                  <span>-95%</span>
+                </p>
+                <p class="svg-container">
+                  <svg-icon icon-class="Left-2" @click="moveClick('-50')" />
+                  <span>-50%</span>
+                </p>
+                <p class="svg-container">
+                  <svg-icon icon-class="Left-1" @click="moveClick('-5')" />
+                  <span>-5%</span>
+                </p>
+                <p class="svg-container">
+                  <svg-icon icon-class="Right-1" @click="moveClick('5')" />
+                  <span>+5%</span>
+                </p>
+                <p class="svg-container">
+                  <svg-icon icon-class="Right-2" @click="moveClick('50')" />
+                  <span>+50%</span>
+                </p>
+                <p class="svg-container">
+                  <svg-icon icon-class="Right-3" @click="moveClick('95')" />
+                  <span>+95%</span>
+                </p>
+              </div>
+            </el-col>
+          </el-col>
+        </el-row>
         <el-divider />
-        <div class="annotation-container" />
+        <div class="annotation-container"><svg /></div>
         <div class="variation-container" @click="variationClick($event)" />
-        <div class="axis-container" />
+        <div class="axis-container"><svg /></div>
         <template>
           <el-row class="checkbox-container" type="flex" justify="space-between">
             <el-col :span="8">
@@ -199,7 +255,7 @@ export default {
     filterData() {
       const _this = this
       this.$nextTick(() => {
-        console.log(_this.filterData)
+        // console.log(_this.filterData)
         const margin = _this.containerWidth / 20
         const axisWidth = _this.containerWidth - margin * 2
         const positionStart =
@@ -209,9 +265,9 @@ export default {
         const geneLength = positionEnd - positionStart
         function initAxis() {
           const height = 100
-          const svg = d3
-            .select('.axis-container')
-            .append('svg')
+          const svg = d3.select('.axis-container').select('svg')
+          svg.selectAll('*').remove()
+          svg
             .attr('class', 'axis')
             .attr('width', _this.containerWidth)
             .attr('height', height)
@@ -252,7 +308,8 @@ export default {
           let grandParent = null
           let parent = null
           let count = 0
-          _this.svg = d3.select('.annotation-container').append('svg')
+          _this.svg = d3.select('.annotation-container').select('svg')
+          _this.svg.selectAll('*').remove()
           _this.svg.style('overflow', 'visible')
           _this.annotationColor = '#424242'
           _this.filterData.geneList.forEach(function(d) {
@@ -275,7 +332,6 @@ export default {
               }
             }
           })
-          console.log(numArr)
           numArr.forEach(function(c, i) {
             if (i > 0 && numArr[i]['start'] - 120 < numArr[i - 1]['end']) {
               count = count + 1
@@ -340,7 +396,7 @@ export default {
               }
             })
           })
-          const height = 32 * count
+          const height = 32 * (count + 1)
           _this.svg.attr('height', height).attr('width', width)
         }
         initAxis(position) // 创建坐标轴
@@ -651,6 +707,56 @@ export default {
     }
   },
   methods: {
+    zoomClick(value) {
+      const center = parseInt((this.position.end - this.position.start) / 2) + this.position.start
+      const length = parseInt(((this.position.end - this.position.start) * ((100 + parseInt(value) * -1) / 100) / 2))
+      if (length > 500) {
+        const start = center - length <= 0 ? 0 : center - length
+        const end = center + length
+        const data = {
+          start: start,
+          end: end,
+          chrom: this.position.chrom
+        }
+        genePositionData(data).then(response => {
+          this.geneData = response
+          this.filterData = Object.assign({}, response)
+          this.containerWidth = parseInt(
+            d3.select('.axis-container').style('width')
+          )
+          this.position.start = data.start
+          this.position.end = data.end
+          this.position.value = this.position.chrom + '-' + data.start + '-' + data.end
+          this.position.label = this.position.chrom + '-' + data.start + '-' + data.end
+          this.$store.dispatch('variations/positionSearch', this.position)
+        })
+      }
+    },
+    moveClick(value) {
+      const length = parseInt(((this.position.end - this.position.start) / 2))
+      const center = parseInt(((this.position.end - this.position.start) / 2) + this.position.start + ((parseInt(value) * length) / 100))
+      const start = center - length <= 0 ? 0 : center - length
+      const end = start <= 0 ? length * 2 : center + length
+      if (this.position.start > 0 || value > 0) {
+        const data = {
+          start: start,
+          end: end,
+          chrom: this.position.chrom
+        }
+        genePositionData(data).then(response => {
+          this.geneData = response
+          this.filterData = Object.assign({}, response)
+          this.containerWidth = parseInt(
+            d3.select('.axis-container').style('width')
+          )
+          this.position.start = data.start
+          this.position.end = data.end
+          this.position.value = this.position.chrom + '-' + data.start + '-' + data.end
+          this.position.label = this.position.chrom + '-' + data.start + '-' + data.end
+          this.$store.dispatch('variations/positionSearch', this.position)
+        })
+      }
+    },
     filterHandler(value, row, column) {
       const property = column['property']
       return row[property] === value
@@ -937,6 +1043,48 @@ export default {
       font-weight: normal;
     }
   }
+  .tools{
+      .tools-1{
+        p{
+          float: left;
+        }
+        .svg-container {
+          height: 25px;
+          width: 25px;
+          margin-left: 12px;
+          cursor: pointer;
+          svg{
+            height: 100%;
+            width: 100%
+          }
+          span{
+            font-size: 12px;
+            color: #666;
+          }
+        }
+      }
+      .tools-2{
+        p{
+          float: left;
+        }
+        .svg-container {
+          height: 25px;
+          width: 25px;
+          border: 1px solid #409EFF;
+          border-radius: 5px;
+          margin-left: 12px;
+          cursor: pointer;
+          svg{
+            height: 100%;
+            width: 100%
+          }
+          span{
+            font-size: 12px;
+            color: #666;
+          }
+        }
+      }
+    }
   .chrom-container {
     display: flex;
     justify-content: center;

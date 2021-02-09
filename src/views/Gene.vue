@@ -327,7 +327,7 @@ export default {
     filterData() {
       const _this = this
       this.$nextTick(() => {
-        console.log(_this.filterData)
+        // console.log(_this.filterData)
         const margin = _this.containerWidth / 20
         const axisWidth = _this.containerWidth - margin * 2
         // const positionStart = Math.floor(_this.gene.start / 100) * 100

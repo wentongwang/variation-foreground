@@ -420,7 +420,7 @@ export default {
             //   arc.centroid(d)[1] < 0
             //     ? arc.centroid(d)[1] * 2.5
             //     : arc.centroid(d)[1] * 4 // 文字的y坐标
-            return 'translate(' + 30 + ',' + -45 + ')'
+            return 'translate(' + 30 + ',' + -50 + ')'
           })
           .attr('text-anchor', 'middle')
           .text(function(d) {

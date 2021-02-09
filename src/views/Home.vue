@@ -126,7 +126,6 @@ export default {
       }
     },
     handleClick(e) {
-      console.log(e)
       if (e.type === 'gene' || e.type === 'pseudogene') {
         this.$router.push('/gene')
         this.$store.dispatch('variations/geneSearch', e)

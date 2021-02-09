@@ -23,6 +23,8 @@ export default {
     chrom: '染色体名称：',
     region: '范围：',
     search: '请输入内容',
+    zoom: '缩放：',
+    move: '移动：',
     select: {
       transcripts: '转录组',
       include: '范围',

@@ -23,6 +23,8 @@ export default {
     chrom: 'Chrom：',
     region: 'Region：',
     search: 'search',
+    zoom: 'Zoom:',
+    move: 'Move:',
     select: {
       transcripts: 'transcripts',
       include: 'Include',
