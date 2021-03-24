@@ -61,11 +61,17 @@
           </el-col>
         </el-row>
         <el-divider />
-        <div class="annotation-container"><svg /></div>
+        <div class="annotation-container">
+          <svg id="svg-drag" v-drag />
+        </div>
         <div class="variation-container" @click="variationClick($event)" />
         <div class="axis-container"><svg /></div>
         <template>
-          <el-row class="checkbox-container" type="flex" justify="space-between">
+          <el-row
+            class="checkbox-container"
+            type="flex"
+            justify="space-between"
+          >
             <el-col :span="8">
               <el-checkbox-group
                 v-model="checkboxGroup1"
@@ -76,23 +82,7 @@
                   :key="op.name"
                   :label="op.name"
                 >{{ op.name }}
-                  <el-tag class="num-tag">{{ op.num }}
-                  </el-tag>
-                </el-checkbox-button>
-              </el-checkbox-group>
-            </el-col>
-            <el-col :span="6">
-              <el-checkbox-group
-                v-model="checkboxGroup2"
-                @change="handleCheckedOptionsChangeTwo"
-              >
-                <el-checkbox-button
-                  v-for="(item, index) in options2"
-                  :key="index"
-                  :label="item.name"
-                >{{ item.name }}
-                  <el-tag class="num-tag">{{ item.num }}
-                  </el-tag>
+                  <el-tag class="num-tag">{{ op.num }} </el-tag>
                 </el-checkbox-button>
               </el-checkbox-group>
             </el-col>
@@ -106,8 +96,7 @@
                   :key="index"
                   :label="item.name"
                 >{{ item.name }}
-                  <el-tag class="num-tag">{{ item.num }}
-                  </el-tag>
+                  <el-tag class="num-tag">{{ item.num }} </el-tag>
                 </el-checkbox-button>
               </el-checkbox-group>
             </el-col>
@@ -143,7 +132,11 @@
                 >{{ scope.row.variatiId }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="source" :label="$t('gene.table.source')" width="180">
+            <el-table-column
+              prop="source"
+              :label="$t('gene.table.source')"
+              width="180"
+            >
               <template slot-scope="scope">
                 <el-tag
                   v-for="sc in scope.row.source"
@@ -153,7 +146,10 @@
                 >{{ sc }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="exonic_function" :label="$t('gene.table.exonic_function')">
+            <el-table-column
+              prop="exonic_function"
+              :label="$t('gene.table.exonic_function')"
+            >
               <template slot-scope="scope">
                 <el-badge
                   class="mark"
@@ -171,12 +167,30 @@
                 />{{ scope.row.exonic_function }}
               </template>
             </el-table-column>
-            <el-table-column prop="variation_type" :label="$t('gene.table.variation_type')" />
-            <el-table-column prop="thousandG_ALL" :label="$t('gene.table.thousandG_ALL')" />
-            <el-table-column prop="exAC_ALL" :label="$t('gene.table.exAC_ALL')" />
-            <el-table-column prop="gnomAD_exome_ALL" :label="$t('gene.table.gnomAD_exome_ALL')" />
-            <el-table-column prop="gnomAD_genome_ALL" :label="$t('gene.table.gnomAD_genome_ALL')" />
-            <el-table-column prop="ref_seq_gene" :label="$t('gene.table.ref_seq_gene')" />
+            <el-table-column
+              prop="variation_type"
+              :label="$t('gene.table.variation_type')"
+            />
+            <el-table-column
+              prop="thousandG_ALL"
+              :label="$t('gene.table.thousandG_ALL')"
+            />
+            <el-table-column
+              prop="exAC_ALL"
+              :label="$t('gene.table.exAC_ALL')"
+            />
+            <el-table-column
+              prop="gnomAD_exome_ALL"
+              :label="$t('gene.table.gnomAD_exome_ALL')"
+            />
+            <el-table-column
+              prop="gnomAD_genome_ALL"
+              :label="$t('gene.table.gnomAD_genome_ALL')"
+            />
+            <el-table-column
+              prop="ref_seq_gene"
+              :label="$t('gene.table.ref_seq_gene')"
+            />
           </el-table>
         </template>
       </div>
@@ -193,6 +207,65 @@ export default {
   name: 'Position',
   components: {
     Nav
+  },
+  directives: {
+    drag: {
+      // 指令的定义
+      bind: function(el, binding, vnode) {
+        // el.drag();
+        // 获取元素
+        // var dv = document.getElementById("dv");
+        let x = 0
+        let nl = 0
+        let isDown = false
+        // 鼠标按下事件
+        el.onmousedown = function(e) {
+          // 获取x坐标和y坐标
+          x = e.clientX
+          // 获取左部和顶部的偏移量
+          // l = el.offsetLeft
+          // t = el.offsetTop
+          // console.log(el.offsetLeft)
+          // 开关打开
+          isDown = true
+          nl = 0
+          // 设置样式
+          el.style.cursor = 'move'
+        }
+        // 鼠标移动
+        window.onmousemove = function(e) {
+          if (isDown == false) {
+            return
+          }
+          // 获取x和y
+          const nx = e.clientX
+          // 计算移动后的左偏移量和顶部的偏移量
+          nl = nx - x
+          el.style.left = nl + 'px'
+        }
+        // 鼠标抬起事件
+        el.onmouseup = function() {
+          // 开关关闭
+          if (nl < -20 && nl > -300) {
+            vnode.context.moveClick('10')
+            el.style.cursor = 'default'
+          } else if (nl < -300) {
+            vnode.context.moveClick('50')
+            el.style.cursor = 'default'
+          }
+          if (nl > 300) {
+            vnode.context.moveClick('-50')
+            el.style.cursor = 'default'
+          } else if (nl > 20 && nl < 300) {
+            vnode.context.moveClick('-10')
+            el.style.cursor = 'default'
+          }
+          isDown = false
+          el.style.left = '0px'
+          el.style.cursor = 'default'
+        }
+      }
+    }
   },
   data() {
     return {
@@ -217,7 +290,6 @@ export default {
       },
       filterData: '',
       loading: true,
-      transcriptsShow: false,
       radio1: false,
       containerWidth: 0,
       minIdxSC: 0,
@@ -225,11 +297,21 @@ export default {
       svg2: '',
       input: '',
       checkboxGroup1: ['pLoF', 'Missense', 'Synonymous', 'Other'],
-      checkboxGroup2: ['EXomes', 'Genomes'],
       checkboxGroup3: ['SNVs', 'Indels'],
-      options: [{ name: 'pLoF', num: 0 }, { name: 'Missense', num: 0 }, { name: 'Synonymous', num: 0 }, { name: 'Other', num: 0 }],
-      options2: [{ name: 'EXomes', num: 0 }, { name: 'Genomes', num: 0 }],
-      options3: [{ name: 'SNVs', num: 0 }, { name: 'Indels', num: 0 }],
+      options: [
+        { name: 'pLoF', num: 0 },
+        { name: 'Missense', num: 0 },
+        { name: 'Synonymous', num: 0 },
+        { name: 'Other', num: 0 }
+      ],
+      options2: [
+        { name: 'EXomes', num: 0 },
+        { name: 'Genomes', num: 0 }
+      ],
+      options3: [
+        { name: 'SNVs', num: 0 },
+        { name: 'Indels', num: 0 }
+      ],
       tableData: [],
       colorActive: [
         'rgb(245, 108, 108)',
@@ -297,7 +379,7 @@ export default {
             })
             .call(axis)
         }
-        function geneAnnotation() {
+        function geneAnnotation(genename, geneid) {
           const margin = _this.containerWidth / 20
           const width = _this.containerWidth - margin * 2
           const newArr = []
@@ -312,12 +394,18 @@ export default {
           _this.svg.selectAll('*').remove()
           _this.svg.style('overflow', 'visible')
           _this.annotationColor = '#424242'
-          _this.filterData.geneList.forEach(function(d) {
+          _this.filterData.genomic.forEach(function(d) {
             if (d['type'] === 'pseudogene' || d['type'] === 'gene') {
-              newArr.push({ 'start': (d['start'] - positionStart) / geneLength * width, 'end': (d['end'] - positionStart) / geneLength * width, 'gene': d['gene'] })
+              newArr.push({
+                start: ((d['start'] - positionStart) / geneLength) * width,
+                end: ((d['end'] - positionStart) / geneLength) * width,
+                gene: d['gene']
+              })
             }
           })
-          newArr.sort(function(a, b) { return a['start'] - b['start'] })
+          newArr.sort(function(a, b) {
+            return a['start'] - b['start']
+          })
           newArr.forEach(function(d, i) {
             start = 0
             end = -Infinity
@@ -338,24 +426,46 @@ export default {
             }
             grandParent = null
             parent = null
-            _this.filterData.geneList.forEach(function(d) {
+            _this.filterData.genomic.forEach(function(d) {
               if (d['parent'] === '.' && d['gene'] === c['gene']) {
-              // if (d['parent'] === '.' && d['gene'] === 'STATH') {
+                // if (d['parent'] === '.' && d['gene'] === 'STATH') {
                 if (d['type'] === 'pseudogene' || d['type'] === 'gene') {
                   grandParent = d['gene_id']
                   _this.svg
                     .append('line')
-                    .attr('x1', (d['start'] - positionStart) / geneLength * width)
+                    .attr(
+                      'x1',
+                      ((d['start'] - positionStart) / geneLength) * width
+                    )
                     .attr('y1', 13 + 30 * count)
-                    .attr('x2', (d['end'] - positionStart) / geneLength * width)
+                    .attr(
+                      'x2',
+                      ((d['end'] - positionStart) / geneLength) * width
+                    )
                     .attr('y2', 13 + 30 * count)
                     .attr('stroke', '#dbdbdb')
                     .attr('stroke-width', 2)
-                  _this.svg.append('text')
-                    .attr('x', (d['start'] - positionStart) / geneLength * width - d['gene'].length * 10.5)
+                  _this.svg
+                    .append('text')
+                    .attr(
+                      'x',
+                      ((d['start'] - positionStart) / geneLength) * width -
+                        d['gene'].length * 10.5
+                    )
                     .attr('y', 18 + 30 * count)
                     .attr('fill', '#409EFF')
                     .attr('font-size', 14)
+                    .attr('cursor', 'pointer')
+                    .attr('geneId', d['gene_id'])
+                    .on('click', function() {
+                      const thisName = d3.select(this).text()
+                      const thisId = d3.select(this).attr('geneId')
+                      if (genename === thisName) {
+                        geneAnnotation()
+                      } else {
+                        geneAnnotation(thisName, thisId)
+                      }
+                    })
                     .text(function() {
                       return d['gene']
                     })
@@ -388,13 +498,71 @@ export default {
                       ((d['start'] - positionStart) / geneLength) * width
                     )
                     .attr('y', 10 + 30 * count)
-                    .attr('width', ((d['end'] - d['start']) / geneLength) * width)
+                    .attr(
+                      'width',
+                      ((d['end'] - d['start']) / geneLength) * width
+                    )
                     .attr('height', 7)
                     .attr('fill', '#424242')
                     .attr('class', 'UTR')
                 }
               }
             })
+            if (c['gene'] === genename) {
+              _this.filterData.genomic.forEach(function(d) {
+                if (d['parent'] === geneid) {
+                  count = count + 1
+                  parent = d['gene_id']
+                  _this.svg
+                    .append('line')
+                    .attr(
+                      'x1',
+                      ((d['start'] - positionStart) / geneLength) * width
+                    )
+                    .attr('y1', 13 + 30 * count)
+                    .attr(
+                      'x2',
+                      ((d['end'] - positionStart) / geneLength) * width
+                    )
+                    .attr('y2', 13 + 30 * count)
+                    .attr('stroke', '#c7def5')
+                    .attr('stroke-width', 2)
+                }
+                if (d['parent'] === parent) {
+                  if (d['type'] === 'CDS') {
+                    _this.svg
+                      .append('rect')
+                      .attr(
+                        'x',
+                        ((d['start'] - positionStart) / geneLength) * width
+                      )
+                      .attr('y', 6 + 30 * count)
+                      .attr(
+                        'width',
+                        ((d['end'] - d['start']) / geneLength) * width
+                      )
+                      .attr('height', 16)
+                      .attr('fill', '#81bcf9')
+                  }
+                  if (d['type'] === 'exon') {
+                    _this.svg
+                      .append('rect')
+                      .attr(
+                        'x',
+                        ((d['start'] - positionStart) / geneLength) * width
+                      )
+                      .attr('y', 10 + 30 * count)
+                      .attr(
+                        'width',
+                        ((d['end'] - d['start']) / geneLength) * width
+                      )
+                      .attr('height', 7)
+                      .attr('fill', '#81bcf9')
+                      .attr('class', 'UTR')
+                  }
+                }
+              })
+            }
           })
           const height = 32 * (count + 1)
           _this.svg.attr('height', height).attr('width', width)
@@ -513,46 +681,32 @@ export default {
           gnomAD_genome_ALL = parseNum(d['gnomAD_genome_ALL'])
 
           if (
-            (d['exonic_function'].indexOf('frameshift') !== -1 ||
-              d['exonic_function'].indexOf('stopgain') !== -1)
+            d['exonic_function'].indexOf('frameshift') !== -1 ||
+            d['exonic_function'].indexOf('stopgain') !== -1
           ) {
             pLoFNum = pLoFNum + 1
           }
-          if (
-            d['exonic_function'].indexOf('missense') !== -1
-          ) {
+          if (d['exonic_function'].indexOf('missense') !== -1) {
             MissenseNum = MissenseNum + 1
           }
-          if (
-            d['exonic_function'].indexOf('synonymous') !== -1
-          ) {
+          if (d['exonic_function'].indexOf('synonymous') !== -1) {
             SynonymousNum = SynonymousNum + 1
           }
-          if (
-            d['exonic_function'].indexOf('.') !== -1
-          ) {
+          if (d['exonic_function'].indexOf('.') !== -1) {
             OtherNum = OtherNum + 1
           }
 
-          if (
-            d['variation_type'].indexOf('exome') !== -1
-          ) {
+          if (d['variation_type'].indexOf('exome') !== -1) {
             exomeNum = exomeNum + 1
           }
-          if (
-            d['variation_type'].indexOf('genome') !== -1
-          ) {
+          if (d['variation_type'].indexOf('genome') !== -1) {
             genomeNum = genomeNum + 1
           }
 
-          if (
-            d['variation_type'].indexOf('snv') !== -1
-          ) {
+          if (d['variation_type'].indexOf('snv') !== -1) {
             snvNum = snvNum + 1
           }
-          if (
-            d['variation_type'].indexOf('indel') !== -1
-          ) {
+          if (d['variation_type'].indexOf('indel') !== -1) {
             indelNum = indelNum + 1
           }
 
@@ -569,9 +723,20 @@ export default {
           })
         })
 
-        _this.options = [{ name: 'pLoF', num: pLoFNum }, { name: 'Missense', num: MissenseNum }, { name: 'Synonymous', num: SynonymousNum }, { name: 'Other', num: OtherNum }]
-        _this.options2 = [{ name: 'EXomes', num: exomeNum }, { name: 'Genomes', num: genomeNum }]
-        _this.options3 = [{ name: 'SNVs', num: snvNum }, { name: 'Indels', num: indelNum }]
+        _this.options = [
+          { name: 'pLoF', num: pLoFNum },
+          { name: 'Missense', num: MissenseNum },
+          { name: 'Synonymous', num: SynonymousNum },
+          { name: 'Other', num: OtherNum }
+        ]
+        _this.options2 = [
+          { name: 'EXomes', num: exomeNum },
+          { name: 'Genomes', num: genomeNum }
+        ]
+        _this.options3 = [
+          { name: 'SNVs', num: snvNum },
+          { name: 'Indels', num: indelNum }
+        ]
 
         function parseNum(num) {
           let newNum = '.'
@@ -704,12 +869,49 @@ export default {
           }
         })
       })
+      const svgDrag = document.getElementById('svg-drag')
+      // 火狐
+      if (window.addEventListener) {
+        svgDrag.addEventListener(
+          'DOMMouseScroll',
+          function(evt) {
+            const e = evt || window.event
+            const detail = -e.detail / 3
+            if (detail >= 1) {
+              _this.zoomClick('-10')
+            }
+            if (detail <= -1) {
+              _this.zoomClick('10')
+            }
+            evt.preventDefault()
+          },
+          false
+        )
+      }
+      // 非火狐
+      svgDrag.onmousewheel = function(evt) {
+        const e = evt || window.event
+        const detail = e.wheelDelta / 120
+        if (detail >= 1) {
+          _this.zoomClick('-10')
+        }
+        if (detail <= -1) {
+          _this.zoomClick('10')
+        }
+        return false
+      }
     }
   },
   methods: {
     zoomClick(value) {
-      const center = parseInt((this.position.end - this.position.start) / 2) + this.position.start
-      const length = parseInt(((this.position.end - this.position.start) * ((100 + parseInt(value) * -1) / 100) / 2))
+      const center =
+        parseInt((this.position.end - this.position.start) / 2) +
+        this.position.start
+      const length = parseInt(
+        ((this.position.end - this.position.start) *
+          ((100 + parseInt(value) * -1) / 100)) /
+          2
+      )
       if (length > 500) {
         const start = center - length <= 0 ? 0 : center - length
         const end = center + length
@@ -726,15 +928,21 @@ export default {
           )
           this.position.start = data.start
           this.position.end = data.end
-          this.position.value = this.position.chrom + '-' + data.start + '-' + data.end
-          this.position.label = this.position.chrom + '-' + data.start + '-' + data.end
+          this.position.value =
+            this.position.chrom + '-' + data.start + '-' + data.end
+          this.position.label =
+            this.position.chrom + '-' + data.start + '-' + data.end
           this.$store.dispatch('variations/positionSearch', this.position)
         })
       }
     },
     moveClick(value) {
-      const length = parseInt(((this.position.end - this.position.start) / 2))
-      const center = parseInt(((this.position.end - this.position.start) / 2) + this.position.start + ((parseInt(value) * length) / 100))
+      const length = parseInt((this.position.end - this.position.start) / 2)
+      const center = parseInt(
+        (this.position.end - this.position.start) / 2 +
+          this.position.start +
+          (parseInt(value) * length) / 100
+      )
       const start = center - length <= 0 ? 0 : center - length
       const end = start <= 0 ? length * 2 : center + length
       if (this.position.start > 0 || value > 0) {
@@ -751,8 +959,10 @@ export default {
           )
           this.position.start = data.start
           this.position.end = data.end
-          this.position.value = this.position.chrom + '-' + data.start + '-' + data.end
-          this.position.label = this.position.chrom + '-' + data.start + '-' + data.end
+          this.position.value =
+            this.position.chrom + '-' + data.start + '-' + data.end
+          this.position.label =
+            this.position.chrom + '-' + data.start + '-' + data.end
           this.$store.dispatch('variations/positionSearch', this.position)
         })
       }
@@ -769,55 +979,6 @@ export default {
     },
     handleCheckedOptionsChangeThree(value) {
       this.dataFiter()
-    },
-    UTRchecked(e) {
-      const _this = this
-      const positionStart =
-        _this.position.start - 100 < 0 ? 0 : _this.position.start - 100
-      const positionEnd = _this.position.end + 100
-      // let exonStart = positionStart
-      // let exonEnd = positionEnd
-      const geneLength = positionEnd - positionStart
-      if (e) {
-        const margin = _this.containerWidth / 20
-        const width = _this.containerWidth - margin * 2
-        let parent = ''
-        let type = ''
-        let count = 0
-        if (_this.position.type === 'position') {
-          _this.geneData.genomic.forEach(function(d) {
-            if (parent !== '') {
-              if (
-                d['parent'] === parent &&
-                type === 'mRNA' &&
-                d['type'] === 'exon'
-              ) {
-                _this.svg2
-                  .append('rect')
-                  .attr(
-                    'x',
-                    ((d['start'] - positionStart) / geneLength) * width
-                  )
-                  .attr('y', 10 + 18 * count)
-                  .attr('width', ((d['end'] - d['start']) / geneLength) * width)
-                  .attr('height', 5)
-                  .attr('fill', '#424242')
-                  .attr('class', 'UTR')
-              }
-            }
-            if (d['type'] === 'transcript') {
-              parent = d['gene_id']
-              type = 'transcript'
-            }
-            if (d['type'] === 'mRNA') {
-              parent = d['gene_id']
-              type = 'mRNA'
-              count = count + 1
-            }
-          })
-          _this.annotationColor = '#424242'
-        }
-      }
     },
     variationClick(e) {
       const _this = this
@@ -995,20 +1156,6 @@ export default {
         })
       }
       filterArr.forEach(function(d) {
-        for (let i = 0; i < _this.checkboxGroup2.length; i++) {
-          if (
-            _this.checkboxGroup2[i] === 'EXomes' &&
-            d['variation_type'].indexOf('exome') !== -1
-          ) {
-            _this.filterData.variation.push(d)
-          }
-          if (
-            _this.checkboxGroup2[i] === 'Genomes' &&
-            d['variation_type'].indexOf('genome') !== -1
-          ) {
-            _this.filterData.variation.push(d)
-          }
-        }
         for (let i = 0; i < _this.checkboxGroup3.length; i++) {
           if (
             _this.checkboxGroup3[i] === 'SNVs' &&
@@ -1043,48 +1190,48 @@ export default {
       font-weight: normal;
     }
   }
-  .tools{
-      .tools-1{
-        p{
-          float: left;
-        }
-        .svg-container {
-          height: 25px;
-          width: 25px;
-          margin-left: 12px;
-          cursor: pointer;
-          svg{
-            height: 100%;
-            width: 100%
-          }
-          span{
-            font-size: 12px;
-            color: #666;
-          }
-        }
+  .tools {
+    .tools-1 {
+      p {
+        float: left;
       }
-      .tools-2{
-        p{
-          float: left;
+      .svg-container {
+        height: 25px;
+        width: 25px;
+        margin-left: 12px;
+        cursor: pointer;
+        svg {
+          height: 100%;
+          width: 100%;
         }
-        .svg-container {
-          height: 25px;
-          width: 25px;
-          border: 1px solid #409EFF;
-          border-radius: 5px;
-          margin-left: 12px;
-          cursor: pointer;
-          svg{
-            height: 100%;
-            width: 100%
-          }
-          span{
-            font-size: 12px;
-            color: #666;
-          }
+        span {
+          font-size: 12px;
+          color: #666;
         }
       }
     }
+    .tools-2 {
+      p {
+        float: left;
+      }
+      .svg-container {
+        height: 25px;
+        width: 25px;
+        border: 1px solid #409eff;
+        border-radius: 5px;
+        margin-left: 12px;
+        cursor: pointer;
+        svg {
+          height: 100%;
+          width: 100%;
+        }
+        span {
+          font-size: 12px;
+          color: #666;
+        }
+      }
+    }
+  }
   .chrom-container {
     display: flex;
     justify-content: center;
@@ -1107,10 +1254,10 @@ export default {
       width: 100px;
       text-align: left;
     }
-    .el-checkbox-group{
-      .el-checkbox-button{
+    .el-checkbox-group {
+      .el-checkbox-button {
         position: relative;
-        .num-tag{
+        .num-tag {
           position: absolute;
           bottom: -80%;
           left: 0;
@@ -1122,21 +1269,21 @@ export default {
           box-sizing: border-box;
           outline: 0;
           margin: 0;
-          transition: all .3s cubic-bezier(.645,.045,.355,1);
+          transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
           font-size: 14px;
           border-radius: 0;
-          border-color: #409EFF;
+          border-color: #409eff;
           border-left-color: #ecf5ff;
         }
       }
-      .el-checkbox-button:first-child{
-        .num-tag{
-          border: 1px solid #409EFF;
+      .el-checkbox-button:first-child {
+        .num-tag {
+          border: 1px solid #409eff;
           border-radius: 0 0 0 4px;
         }
       }
-      .el-checkbox-button:last-child{
-        .num-tag{
+      .el-checkbox-button:last-child {
+        .num-tag {
           border-radius: 0 0 4px 0;
         }
       }
@@ -1148,48 +1295,10 @@ export default {
   }
   .annotation-container {
     position: relative;
-    .el-button {
-      position: absolute;
-      top: 50px;
-      left: -20px;
-    }
-    .annotation-include {
-      text-align: right;
-      .checkbox-1 {
-        margin-right: 8px;
-        margin-left: 5px;
-      }
-      .checkbox-2 {
-        margin-right: 8px;
-      }
-      .checkbox-3 {
-        margin-right: 8px;
-      }
-      .checkbox-1::after {
-        content: '';
-        display: inline-block;
-        height: 16px;
-        width: 20px;
-        background: #424242;
-        margin-left: 5px;
-        transform: translateY(4px);
-      }
-      .checkbox-2::after {
-        content: '';
-        display: inline-block;
-        height: 8px;
-        width: 20px;
-        background: #424242;
-        margin-left: 5px;
-      }
-      .checkbox-3::after {
-        content: '';
-        display: inline-block;
-        height: 8px;
-        width: 20px;
-        background: #bdbdbd;
-        margin-left: 5px;
-      }
+    svg {
+      position: relative;
+      top: 0;
+      left: 0;
     }
   }
   .gene-table {

@@ -1,12 +1,12 @@
 export default {
   login: {
-    title: 'gnomAD browser',
+    title: 'genome aggregation database',
     name: 'Username',
     pass: 'Password',
     login: 'Login'
   },
   index: {
-    name: 'gnomAD browser',
+    name: 'genome aggregation database',
     search: 'search'
   },
   home: {

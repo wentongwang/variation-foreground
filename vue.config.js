@@ -22,7 +22,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
+  publicPath: './',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -44,7 +44,6 @@ module.exports = {
     }
   },
   chainWebpack(config) {
-    // it can improve the speed of the first screen, it is recommended to turn on preload
     // it can improve the speed of the first screen, it is recommended to turn on preload
     config.plugin('preload').tap(() => [
       {
@@ -79,14 +78,14 @@ module.exports = {
     config
       .when(process.env.NODE_ENV !== 'development',
         config => {
-          // config
-          //   .plugin('ScriptExtHtmlWebpackPlugin')
-          //   .after('html')
-          //   .use('script-ext-html-webpack-plugin', [{
-          //   // `runtime` must same as runtimeChunk name. default is `runtime`
-          //     inline: /runtime\..*\.js$/
-          //   }])
-          //   .end()
+          config
+            .plugin('ScriptExtHtmlWebpackPlugin')
+            .after('html')
+            .use('script-ext-html-webpack-plugin', [{
+            // `runtime` must same as runtimeChunk name. default is `runtime`
+              inline: /runtime\..*\.js$/
+            }])
+            .end()
           config
             .optimization.splitChunks({
               chunks: 'all',

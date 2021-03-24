@@ -16,22 +16,6 @@ export function search(data) {
   })
 }
 
-export function geneData(data) {
-  return request({
-    url: '/geneData',
-    method: 'post',
-    data: data
-  })
-}
-
-export function geneList(data) {
-  return request({
-    url: '/geneList',
-    method: 'post',
-    data: data
-  })
-}
-
 export function genePositionData(data) {
   return request({
     url: '/genePositionData',
