@@ -31,3 +31,11 @@ export function variant(data) {
     data: data
   })
 }
+
+export function variantDetail(data) {
+  return request({
+    url: '/variantDetail',
+    method: 'post',
+    data: data
+  })
+}

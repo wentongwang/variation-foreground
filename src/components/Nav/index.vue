@@ -16,6 +16,7 @@
           :remote-method="remoteMethod"
           :loading="loading"
           @change="handleClick($event)"
+          @keyup.enter.native="selectBlur"
         >
           <el-option
             v-for="item in options"
@@ -66,15 +67,15 @@ export default {
         const queryArr = query.split('-')
         this.options = []
         const _this = this
-        if (queryArr.length > 0 && queryArr[0] < 23) {
+        if (queryArr.length > 0 && queryArr[0] < 23 || queryArr[0] === "x") {
           if (queryArr.length === 2) {
             if (parseInt(queryArr[1]) > 10) {
               _this.options.push({
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
-                chrom: parseInt(queryArr[0]),
+                chrom: queryArr[0] === "x" ? 23 : parseInt(queryArr[0]),
                 start: parseInt(queryArr[1]) - 1,
-                end: parseInt(queryArr[2]) + 1,
+                end: parseInt(queryArr[1]) + 1,
                 type: 'position'
               })
             }
@@ -87,7 +88,7 @@ export default {
               _this.options.push({
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
-                chrom: parseInt(queryArr[0]),
+                chrom: queryArr[0] === "x" ? 23 : parseInt(queryArr[0]),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[2]) + 1,
                 type: 'position'
@@ -154,6 +155,22 @@ export default {
         this.$store.dispatch('variations/variationSearch', e)
         _this.options = []
         this.reload()
+      }
+    },
+    selectBlur() {
+      if(this.options.length){
+        if (this.options[0].type === 'gene' || this.options[0].type === 'pseudogene') {
+          this.$router.push('/gene')
+          this.$store.dispatch('variations/geneSearch', this.options[0])
+        }
+        if (this.options[0].type === 'position') {
+          this.$router.push('/position')
+          this.$store.dispatch('variations/positionSearch', this.options[0])
+        }
+        if (this.options[0].type === 'variant') {
+          this.$router.push('/variant?id=' + this.options[0].value)
+          this.$store.dispatch('variations/variationSearch', this.options[0])
+        }
       }
     }
   }

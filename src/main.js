@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import UmyUi from 'umy-ui'
 import 'normalize.css/normalize.css'
 import App from './App.vue'
 import router from './router'
@@ -14,6 +15,8 @@ Vue.config.productionTip = false
 Vue.use(Element, {
   i18n: (key, value) => i18n.t(key, value)
 })
+
+Vue.use(UmyUi);
 
 window.vm = new Vue({
   i18n,

@@ -1,19 +1,20 @@
 export default {
   login: {
-    title: '中国十万人基因组计划变异数据库',
+    title: '中国人群多组学参比数据库',
     name: '用户名',
     pass: '密码',
     login: '登录'
   },
   index: {
-    name: '中国十万人基因组计划变异数据库',
+    name: '中国人群多组学参比数据库',
     search: '搜索'
   },
   home: {
-    name: '中国十万人基因组计划变异数据库',
+    name: '中国人群多组学参比数据库',
     search: '搜索基因名，范围（如1-10000-20000），变异ID',
     content: {
-      con1: '本数据库向获得授权的人员提供计划所测得的全部基因组变异数据及相关注释信息的在线查询与可视化。'
+      con1:
+        '本数据库向获得授权的人员提供计划所测得的全部基因组变异数据及相关注释信息的在线查询与可视化。'
     }
   },
   gene: {
@@ -34,14 +35,16 @@ export default {
     },
     table: {
       variatiId: '变异ID',
+      start: '起始',
+      end: '终点',
+      rsid: 'RSID',
       source: '来源',
-      exonic_function: '变异功能',
+      exonicFunc: '变异功能',
       variation_type: '变异类型',
-      thousandG_ALL: '1000G数据库',
-      exAC_ALL: 'ExAC数据库',
-      gnomAD_exome_ALL: 'gnomADExome数据库',
-      gnomAD_genome_ALL: 'gnomADGenome数据库',
-      ref_seq_gene: 'Refseq基因'
+      dbsnp: 'dbSNP',
+      chn100k_ALL: 'chn100k数据库',
+      gene: '基因名',
+      geneDetail: '基因详情'
     }
   },
   variat: {
@@ -63,14 +66,66 @@ export default {
     frequency: '等位基因频率',
     All: '所有',
     African: '非洲人群',
-    Amish: '阿米什人群',
+    Amish: '美洲人群',
     AshkenaziJewish: '德系犹太人群',
     EastAsian: '东亚人群',
     European: '欧洲人群',
     EuropeanFinnish: '欧洲人群（芬兰语）',
-    EuropeanNonFinnish: '欧洲群（非芬兰语）',
+    EuropeanNonFinnish: '欧洲人群（非芬兰语）',
     Other: '其他',
-    SouthAsian: '南亚人群'
+    SouthAsian: '南亚人群',
+    CHN100K:'CHN100K：',
+    VariationPosition: '变异位置：',
+    dbSNPRsID: 'dbSNP rsID：',
+    VariationType: '变异类型：',
+    HGVS: 'HGVS：',
+    VariationDetails: '变异详情：',
+    RelatedGene: '相关基因：',
+    VariationEffect: '变异效应：',
+    SIFT: 'SIFT得分：',
+    PolyPhen: 'PolyPhen得分：',
+    GERP: 'GERP得分：',
+    CADD: 'CADD得分：',
+    VertebratePhastCons: '脊椎动物PhastCons：',
+    VertebratePhyloP: '脊椎动物PhyloP：',
+    MammalsPhastCons: '哺乳类PhastCons：',
+    MammalsPhyloP: '哺乳类PhyloP：',
+    PrimatesPhastCons: '灵长目PhastCons：',
+    PrimatesPhyloP: '灵长目PhyloP：',
+    GCContent:'局部区域GC含量：',
+    CpGRatio:'局部区域CpG比例：',
+    RepeatMasker:'RepeatMasker：',
+    TiTv:'Ti/Tv：',
+    ClinVarID: 'ClinVar ID：',
+    OMIMID: 'OMIM ID：',
+    ClinVar: '临床显著性(ClinVar)：',
+    DiseaseName: '疾病名称：',
+    GWASCatalog: 'GWAS Catalog：',
+    GRASP2: 'GRASP 2.0：',
+    COSMIC: 'COSMIC：',
+    TFBS: 'TFBS：',
+    TargetScan: 'TargetScan：',
+    CAGEPromoters: 'CAGE promoters：',
+    CAGEEnhancers: 'CAGE Enhancers：',
+    BasicInformationOfVariation: '变异基本信息',
+    VariationFunctionAnnotation: '变异功能注释',
+    AlleleFrequency: 'CHN100K人群等位基因频率',
+    InternationalPublicDatabasePopulationAlleleFrequency: '国际公共数据库人群等位基因频率',
+    ConservationOfVariationSites: '变异位点保守性',
+    SequenceCharacteristicsOfVariationSites: '变异位点序列特征', 
+    VariationClinicalInformation: '变异临床信息',
+    RegulatoryInformationOfVariationSites: '变异位点调控信息',
+    EpigeneticCharacteristicsOfVariationSites: '变异位点表观遗传学特征',
+    HistoneModificationCharacteristicsOfVariantSites: '变异位点组蛋白修饰特征',
+    ChromatinOpeningCharacteristicsOfVariationSites: '变异位点染色质开放特征',
+    region: '区域',
+    WholeCountry: '全国',
+    NorthEast: '东北',
+    NorthChina: '华北',
+    EastChina: '华东',
+    CentralChina: '华中',
+    NorthWest: '西北',
+    SouthWest: '西南',
+    SouthChina: '华南'
   }
 }
-

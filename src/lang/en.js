@@ -13,7 +13,8 @@ export default {
     name: 'genome aggregation database',
     search: 'Search by gene, region, or variant',
     content: {
-      con1: 'The database provides online query and visualization of all the genomic variation data and related annotation information.'
+      con1:
+        'The database provides online query and visualization of all the genomic variation data and related annotation information.'
     }
   },
   gene: {
@@ -34,14 +35,16 @@ export default {
     },
     table: {
       variatiId: 'Vatriat ID',
+      start: 'start',
+      end: 'end',
+      rsid: 'RSID',
       source: 'Source',
-      exonic_function: 'Exonic Function',
+      exonicFunc: 'Exonic Function',
       variation_type: 'Variation Type',
-      thousandG_ALL: '1000G ALL',
-      exAC_ALL: 'ExAC ALL',
-      gnomAD_exome_ALL: 'gnomADExome ALL',
-      gnomAD_genome_ALL: 'gnomADGenome ALL',
-      ref_seq_gene: 'Refseq Gene'
+      dbsnp: 'dbSNP',
+      chn100k_ALL: 'chn100k ALL',
+      gene: 'gene',
+      geneDetail: 'geneDetail'
     }
   },
   variat: {
@@ -70,7 +73,59 @@ export default {
     EuropeanFinnish: 'European(Finnish)',
     EuropeanNonFinnish: 'European(non-Finnish)',
     Other: 'Other',
-    SouthAsian: 'South Asian'
+    SouthAsian: 'South Asian',
+    CHN100K:'CHN100K：',
+    VariationPosition: 'Variation Position：',
+    dbSNPRsID: 'dbSNP rsID：',
+    VariationType: 'Variation Type：',
+    HGVS: 'HGVS：',
+    VariationDetails: 'Variation Details：',
+    RelatedGene: 'Related Gene：',
+    VariationEffect: 'Variation Effect：',
+    SIFT: 'SIFT：',
+    PolyPhen: 'PolyPhen：',
+    GERP: 'GERP：',
+    CADD: 'CADD：',
+    VertebratePhastCons: 'Vertebrate PhastCons：',
+    VertebratePhyloP: 'Vertebrate PhyloP：',
+    MammalsPhastCons: 'Mammals PhastCons：',
+    MammalsPhyloP: 'Mammals PhyloP：',
+    PrimatesPhastCons: 'Primates PhastCons：',
+    PrimatesPhyloP: 'Primates PhyloP：',
+    GCContent:'GC Content：',
+    CpGRatio:'CpG Ratio：',
+    RepeatMasker:'RepeatMasker：',
+    TiTv:'Ti/Tv：',
+    ClinVarID: 'ClinVar ID：',
+    OMIMID: 'OMIM ID：',
+    ClinVar: 'ClinVar：',
+    DiseaseName: 'Disease Name：',
+    GWASCatalog: 'GWAS Catalog：',
+    GRASP2: 'GRASP 2.0：',
+    COSMIC: 'COSMIC：',
+    TFBS: 'TFBS：',
+    TargetScan: 'TargetScan：',
+    CAGEPromoters: 'CAGE promoters：',
+    CAGEEnhancers: 'CAGE Enhancers：',
+    BasicInformationOfVariation: 'Basic Information Of Variation',
+    VariationFunctionAnnotation: 'Variation Function Annotation',
+    AlleleFrequency: 'Allele Frequency In chn100k Population',
+    InternationalPublicDatabasePopulationAlleleFrequency: 'International Public Database Population Allele Frequency',
+    ConservationOfVariationSites: 'Conservation Of Variation Sites',
+    SequenceCharacteristicsOfVariationSites: 'Sequence Characteristics Of Variation Sites', 
+    VariationClinicalInformation: 'Variation Clinical Information',
+    RegulatoryInformationOfVariationSites: 'Regulatory Information Of Variation Sites',
+    EpigeneticCharacteristicsOfVariationSites: 'Epigenetic Characteristics Of Variation Sites',
+    HistoneModificationCharacteristicsOfVariantSites: 'Histone Modification Characteristics Of VariantSites',
+    ChromatinOpeningCharacteristicsOfVariationSites: 'Chromatin Opening Characteristics Of Variation Sites',
+    region: 'Region',
+    WholeCountry: 'Whole Country',
+    NorthEast: 'North East',
+    NorthChina: 'North China',
+    EastChina: 'East China',
+    CentralChina: 'Central China',
+    NorthWest: 'North West',
+    SouthWest: 'South West',
+    SouthChina: 'South China'
   }
 }
-

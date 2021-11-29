@@ -13,20 +13,20 @@
             <el-col :span="10">
               <div class="tools-1">
                 <p>{{ $t('gene.zoom') }}</p>
-                <p class="svg-container" @click="zoomClick('-10')">
+                <p class="svg-container" @click="zoomClick('10')">
                   <svg-icon icon-class="narrow" />
                   <span>-10</span>
                 </p>
-                <p class="svg-container" @click="zoomClick('-3')">
+                <p class="svg-container" @click="zoomClick('3')">
                   <svg-icon icon-class="narrow" />
                   <span>-3</span>
                 </p>
                 <p class="svg-container">
-                  <svg-icon icon-class="enlarge" @click="zoomClick('3')" />
+                  <svg-icon icon-class="enlarge" @click="zoomClick('0.3333')" />
                   <span>+3</span>
                 </p>
                 <p class="svg-container">
-                  <svg-icon icon-class="enlarge" @click="zoomClick('10')" />
+                  <svg-icon icon-class="enlarge" @click="zoomClick('0.1')" />
                   <span>+10</span>
                 </p>
               </div>
@@ -63,11 +63,11 @@
           </el-col>
         </el-row>
         <el-divider />
+        <div class="axis-container"><svg /></div>
         <div class="annotation-container">
           <svg id="svg-drag" v-drag />
         </div>
         <div class="variation-container" @click="variationClick($event)" />
-        <div class="axis-container"><svg /></div>
         <template>
           <el-row
             class="checkbox-container"
@@ -152,7 +152,6 @@
             :data="tableData"
             max-height="540"
             style="width: 100%"
-            @scroll="tableScroll($event)"
           >
             <el-table-column
               prop="variatiId"
@@ -162,69 +161,44 @@
             >
               <template slot-scope="scope">
                 <el-link
-                  :href="'#/variant?id=' + scope.row.variatiId"
+                  :href="'#/variant?id=' + scope.row.variatiId + '&chrom=' + scope.row.chrom"
                   type="primary"
                 >{{ scope.row.variatiId }}</el-link>
               </template>
             </el-table-column>
+            <el-table-column prop="gene" :label="$t('gene.table.gene')" />
+            <el-table-column prop="rsid" :label="$t('gene.table.rsid')" />
             <el-table-column
-              prop="source"
-              :label="$t('gene.table.source')"
-              width="180"
-            >
-              <template slot-scope="scope">
-                <el-tag
-                  v-for="sc in scope.row.source"
-                  :key="sc"
-                  :type="sc === 'E' ? 'primary' : 'success'"
-                  disable-transitions
-                >{{ sc }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="exonic_function"
-              :label="$t('gene.table.exonic_function')"
+              prop="exonicFunc"
+              :label="$t('gene.table.exonicFunc')"
             >
               <template slot-scope="scope">
                 <el-badge
                   class="mark"
                   is-dot
                   :type="
-                    scope.row.exonic_function === 'frameshift'
+                    scope.row.exonicFunColor === 'danger'
                       ? 'danger'
-                      : scope.row.exonic_function === 'missense'
-                        ? 'warning'
-                        : scope.row.exonic_function === 'synonymous'
-                          ? 'success'
-                          : 'info'
+                      : scope.row.exonicFunColor === 'success'
+                        ? 'success'
+                        : 'info'
                   "
                   style="margin-top:15px;margin-right:5px"
-                />{{ scope.row.exonic_function }}
+                />{{ scope.row.exonicFuncValue }}
               </template>
             </el-table-column>
             <el-table-column
               prop="variation_type"
               :label="$t('gene.table.variation_type')"
             />
+            <!-- <el-table-column prop="dbsnp" :label="$t('gene.table.dbsnp')" /> -->
+            <!-- <el-table-column
+              prop="chn100k_ALL"
+              :label="$t('gene.table.chn100k_ALL')"
+            /> -->
             <el-table-column
-              prop="thousandG_ALL"
-              :label="$t('gene.table.thousandG_ALL')"
-            />
-            <el-table-column
-              prop="exAC_ALL"
-              :label="$t('gene.table.exAC_ALL')"
-            />
-            <el-table-column
-              prop="gnomAD_exome_ALL"
-              :label="$t('gene.table.gnomAD_exome_ALL')"
-            />
-            <el-table-column
-              prop="gnomAD_genome_ALL"
-              :label="$t('gene.table.gnomAD_genome_ALL')"
-            />
-            <el-table-column
-              prop="ref_seq_gene"
-              :label="$t('gene.table.ref_seq_gene')"
+              prop="geneDetail"
+              :label="$t('gene.table.geneDetail')"
             />
           </el-table>
         </template>
@@ -373,7 +347,7 @@ export default {
       const _this = this
       this.$nextTick(() => {
         // console.log(_this.filterData)
-        const margin = _this.containerWidth / 20
+        const margin = (_this.containerWidth / 20) * 1.5
         const axisWidth = _this.containerWidth - margin * 2
         const positionStart =
           _this.gene.start - 100 < 0 ? 0 : _this.gene.start - 100
@@ -392,16 +366,15 @@ export default {
             .scaleLinear()
             .domain([positionStart, positionEnd])
             .range([0, axisWidth])
-
           const axis = d3
-            .axisTop()
+            .axisBottom()
             .scale(scale)
             .ticks(10)
             .tickPadding(10)
           svg
             .append('text')
             .attr('x', 0)
-            .attr('y', margin)
+            .attr('y', 50)
             .attr('fill', '#409EFF')
             .attr('font-size', 20)
             .text(function() {
@@ -410,12 +383,14 @@ export default {
           svg
             .append('g')
             .attr('transform', function() {
-              return 'translate(' + margin + ',' + margin + ')'
+              return (
+                'translate(' + margin + ',50)'
+              )
             })
             .call(axis)
         }
         function geneAnnotation(genename, geneid) {
-          const margin = _this.containerWidth / 20
+          const margin = (_this.containerWidth / 20) * 1.5
           const width = _this.containerWidth - margin * 2
           const newArr = []
           const numArr = []
@@ -472,12 +447,12 @@ export default {
                       'x1',
                       ((d['start'] - positionStart) / geneLength) * width
                     )
-                    .attr('y1', 13 + 30 * count)
+                    .attr('y1', 13 + 15 * count)
                     .attr(
                       'x2',
                       ((d['end'] - positionStart) / geneLength) * width
                     )
-                    .attr('y2', 13 + 30 * count)
+                    .attr('y2', 13 + 15 * count)
                     .attr('stroke', '#dbdbdb')
                     .attr('stroke-width', 2)
                   _this.svg
@@ -487,7 +462,7 @@ export default {
                       ((d['start'] - positionStart) / geneLength) * width -
                         d['gene'].length * 10.5
                     )
-                    .attr('y', 18 + 30 * count)
+                    .attr('y', 18 + 15 * count)
                     .attr('fill', '#409EFF')
                     .attr('font-size', 14)
                     .attr('cursor', 'pointer')
@@ -517,12 +492,12 @@ export default {
                       'x',
                       ((d['start'] - positionStart) / geneLength) * width
                     )
-                    .attr('y', 6 + 30 * count)
+                    .attr('y', 6 + 15 * count)
                     .attr(
                       'width',
                       ((d['end'] - d['start']) / geneLength) * width
                     )
-                    .attr('height', 16)
+                    .attr('height', 14)
                     .attr('fill', '#424242')
                 }
                 if (d['type'] === 'exon') {
@@ -532,12 +507,12 @@ export default {
                       'x',
                       ((d['start'] - positionStart) / geneLength) * width
                     )
-                    .attr('y', 10 + 30 * count)
+                    .attr('y', 10 + 15 * count)
                     .attr(
                       'width',
                       ((d['end'] - d['start']) / geneLength) * width
                     )
-                    .attr('height', 7)
+                    .attr('height', 5)
                     .attr('fill', '#424242')
                     .attr('class', 'UTR')
                 }
@@ -554,14 +529,28 @@ export default {
                       'x1',
                       ((d['start'] - positionStart) / geneLength) * width
                     )
-                    .attr('y1', 13 + 30 * count)
+                    .attr('y1', 13 + 15 * count)
                     .attr(
                       'x2',
                       ((d['end'] - positionStart) / geneLength) * width
                     )
-                    .attr('y2', 13 + 30 * count)
+                    .attr('y2', 13 + 15 * count)
                     .attr('stroke', '#c7def5')
                     .attr('stroke-width', 2)
+                  _this.svg
+                    .append('text')
+                    .attr(
+                      'x',
+                      ((d['start'] - positionStart) / geneLength) * width -
+                        d['gene_id'].length * 8
+                    )
+                    .attr('y', 18 + 15 * count)
+                    .attr('fill', '#409EFF')
+                    .attr('font-size', 12)
+                    .attr('geneId', d['gene_id'])
+                    .text(function() {
+                      return d['gene_id']
+                    })
                 }
                 if (d['parent'] === parent) {
                   if (d['type'] === 'CDS') {
@@ -571,12 +560,12 @@ export default {
                         'x',
                         ((d['start'] - positionStart) / geneLength) * width
                       )
-                      .attr('y', 6 + 30 * count)
+                      .attr('y', 6 + 15 * count)
                       .attr(
                         'width',
                         ((d['end'] - d['start']) / geneLength) * width
                       )
-                      .attr('height', 16)
+                      .attr('height', 14)
                       .attr('fill', '#81bcf9')
                   }
                   if (d['type'] === 'exon') {
@@ -586,12 +575,12 @@ export default {
                         'x',
                         ((d['start'] - positionStart) / geneLength) * width
                       )
-                      .attr('y', 10 + 30 * count)
+                      .attr('y', 10 + 15 * count)
                       .attr(
                         'width',
                         ((d['end'] - d['start']) / geneLength) * width
                       )
-                      .attr('height', 7)
+                      .attr('height', 5)
                       .attr('fill', '#81bcf9')
                       .attr('class', 'UTR')
                   }
@@ -599,7 +588,7 @@ export default {
               })
             }
           })
-          const height = 32 * (count + 1)
+          const height = 16 * (count + 1)
           _this.svg.attr('height', height).attr('width', width)
         }
         initAxis(position) // 创建坐标轴
@@ -613,7 +602,7 @@ export default {
       const positionEnd = _this.gene.end + 100
       const geneLength = positionEnd - positionStart
       function geneVariation() {
-        const margin = _this.containerWidth / 20
+        const margin = (_this.containerWidth / 20) * 1.5
         const width = _this.containerWidth - margin * 2
         const height = 100
         let thisColor, activeColor, cx
@@ -632,43 +621,50 @@ export default {
               positionStart) /
               geneLength) *
             width
-          if (d['thousandG_ALL'] === '.' || d['thousandG_ALL'] <= 0.15) {
-            d['thousandG_ALL'] = 0.15
-          }
           if (
-            d['exonic_function'].indexOf('frameshift') !== -1 ||
-            d['exonic_function'].indexOf('stopgain') !== -1
+            d['func'].indexOf('ncRNA_exonic') !== -1 ||
+            d['func'].indexOf('ncRNA_intronic') !== -1 ||
+            d['func'].indexOf('intronic') !== -1 ||
+            d['func'].indexOf('UTR5') !== -1 ||
+            d['func'].indexOf('UTR3') !== -1 ||
+            d['func'].indexOf('ncRNA_splicing') !== -1 ||
+            d['func'].indexOf('UTR5;UTR3') !== -1 ||
+            d['func'].indexOf('ncRNA_exonic;splicing') !== -1 ||
+            d['func'].indexOf('ncRNA_UTR5') !== -1
+          ) {
+            thisColor = _this.color[2]
+            activeColor = _this.colorActive[2]
+          } else if (
+            d['func'].indexOf('exonic') !== -1 ||
+            d['func'].indexOf('splicing') !== -1 ||
+            d['func'].indexOf('exonic;splicing') !== -1
           ) {
             thisColor = _this.color[0]
             activeColor = _this.colorActive[0]
-          } else if (d['exonic_function'].indexOf('missense') !== -1) {
-            thisColor = _this.color[1]
-            activeColor = _this.colorActive[1]
-          } else if (d['exonic_function'].indexOf('synonymous') !== -1) {
-            thisColor = _this.color[2]
-            activeColor = _this.colorActive[2]
           } else {
             thisColor = _this.color[3]
             activeColor = _this.colorActive[3]
           }
-          if (i < 11) {
-            svg
-              .append('ellipse')
-              .attr('cx', cx)
-              .attr('cy', 50)
-              .attr('rx', parseInt(d['end'] - d['start'] + 5))
-              .attr('ry', parseInt(35 * d['thousandG_ALL']))
-              .attr('stroke', '#DCDFE6')
-              .attr('fill', activeColor)
-          } else {
-            svg
-              .append('ellipse')
-              .attr('cx', cx)
-              .attr('cy', 50)
-              .attr('rx', parseInt(d['end'] - d['start'] + 5))
-              .attr('ry', parseInt(35 * d['thousandG_ALL']))
-              .attr('stroke', '#C0C4CC')
-              .attr('fill', thisColor)
+          if (d['chn100k_ALL'] !== '.') {
+            if (i < 11) {
+              svg
+                .append('ellipse')
+                .attr('cx', cx)
+                .attr('cy', 50)
+                .attr('rx', parseInt(d['end'] - d['start'] + 5))
+                .attr('ry', parseInt(35 * d['chn100k_ALL']))
+                .attr('stroke', '#DCDFE6')
+                .attr('fill', activeColor)
+            } else {
+              svg
+                .append('ellipse')
+                .attr('cx', cx)
+                .attr('cy', 50)
+                .attr('rx', parseInt(d['end'] - d['start'] + 5))
+                .attr('ry', parseInt(35 * d['chn100k_ALL']))
+                .attr('stroke', '#C0C4CC')
+                .attr('fill', thisColor)
+            }
           }
         })
       }
@@ -683,51 +679,61 @@ export default {
         let snvNum = 0
         let indelNum = 0
         _this.filterData.variation.forEach(function(d) {
-          const thisSource = []
-          let exonic_function = ''
-          let thousandG_ALL = ''
-          let exAC_ALL = ''
-          let gnomAD_exome_ALL = ''
-          let gnomAD_genome_ALL = ''
-
-          if (!isNaN(d['gnomAD_exome_ALL'])) {
-            thisSource.push('E')
-          }
-          if (!isNaN(d['gnomAD_genome_ALL'])) {
-            thisSource.push('G')
-          }
-
+          let exonicFunColor = ''
+          let exonicFuncValue = ''
           if (
-            d['exonic_function'].indexOf('frameshift') !== -1 ||
-            d['exonic_function'].indexOf('stopgain') !== -1
+            d['func'].indexOf('ncRNA_exonic') !== -1 ||
+            d['func'].indexOf('ncRNA_intronic') !== -1 ||
+            d['func'].indexOf('intronic') !== -1 ||
+            d['func'].indexOf('UTR5') !== -1 ||
+            d['func'].indexOf('UTR3') !== -1 ||
+            d['func'].indexOf('ncRNA_splicing') !== -1 ||
+            d['func'].indexOf('UTR5;UTR3') !== -1 ||
+            d['func'].indexOf('ncRNA_exonic;splicing') !== -1 ||
+            d['func'].indexOf('ncRNA_UTR5') !== -1
           ) {
-            exonic_function = 'frameshift'
-          } else if (d['exonic_function'].indexOf('missense') !== -1) {
-            exonic_function = 'missense'
-          } else if (d['exonic_function'].indexOf('synonymous') !== -1) {
-            exonic_function = 'synonymous'
+            exonicFunColor = 'success'
+          } else if (
+            d['func'].indexOf('exonic') !== -1 ||
+            d['func'].indexOf('splicing') !== -1 ||
+            d['func'].indexOf('exonic;splicing') !== -1
+          ) {
+            exonicFunColor = 'danger'
           } else {
-            exonic_function = 'other'
+            exonicFunColor = 'info'
           }
 
-          thousandG_ALL = parseNum(d['thousandG_ALL'])
-          exAC_ALL = parseNum(d['exAC_ALL'])
-          gnomAD_exome_ALL = parseNum(d['gnomAD_exome_ALL'])
-          gnomAD_genome_ALL = parseNum(d['gnomAD_genome_ALL'])
-
+          if (d['exonicFunc'].indexOf('.') !== -1) {
+            exonicFuncValue = d['func']
+          } else {
+            exonicFuncValue = d['func'] + ':' + d['exonicFunc']
+          }
           if (
-            d['exonic_function'].indexOf('frameshift') !== -1 ||
-            d['exonic_function'].indexOf('stopgain') !== -1
+            d['func'] === 'splicing' ||
+            d['func'] === 'exonic;splicing' ||
+            d['exonicFunc'] === 'stopgain' ||
+            d['exonicFunc'] === 'frameshift insertion' ||
+            d['exonicFunc'] === 'frameshift deletion' ||
+            d['exonicFunc'] === 'startloss' ||
+            d['exonicFunc'] === 'stoploss'
           ) {
             pLoFNum = pLoFNum + 1
-          }
-          if (d['exonic_function'].indexOf('missense') !== -1) {
+          } else if (
+            d['exonicFunc'] === 'nonsynonymous SNV' ||
+            d['exonicFunc'] === 'nonframeshift deletion' ||
+            d['exonicFunc'] === 'nonframeshift insertion'
+          ) {
             MissenseNum = MissenseNum + 1
-          }
-          if (d['exonic_function'].indexOf('synonymous') !== -1) {
+          } else if (
+            d['exonicFunc'] === 'synonymous SNV' ||
+            d['exonicFunc'] === 'unknown'
+          ) {
             SynonymousNum = SynonymousNum + 1
-          }
-          if (d['exonic_function'].indexOf('.') !== -1) {
+          } else if (
+            d['func'] !== 'splicing' &&
+            d['func'] !== 'exonic;splicing' &&
+            d['func'] !== 'exonic'
+          ) {
             OtherNum = OtherNum + 1
           }
 
@@ -737,27 +743,25 @@ export default {
           if (d['variation_type'].indexOf('genome') !== -1) {
             genomeNum = genomeNum + 1
           }
-
-          if (d['variation_type'].indexOf('snv') !== -1) {
+          if (d['variation_type'].indexOf('SNV') !== -1) {
             snvNum = snvNum + 1
           }
-          if (d['variation_type'].indexOf('indel') !== -1) {
+          if (d['variation_type'].indexOf('INDEL') !== -1) {
             indelNum = indelNum + 1
           }
-
           _this.tableData.push({
-            variatiId: d['uuId'],
-            source: thisSource,
-            exonic_function: exonic_function,
+            variatiId: d['uu_id'],
+            chrom: d['chrom'],
+            rsid: d['rsid'],
+            exonicFunColor: exonicFunColor,
+            exonicFuncValue: exonicFuncValue,
             variation_type: d['variation_type'],
-            thousandG_ALL: thousandG_ALL,
-            exAC_ALL: exAC_ALL,
-            gnomAD_exome_ALL: gnomAD_exome_ALL,
-            gnomAD_genome_ALL: gnomAD_genome_ALL,
-            ref_seq_gene: '.'
+            dbsnp: d['af'],
+            chn100k_ALL: d['chn100k_ALL'],
+            gene: d['gene'],
+            geneDetail: d['geneDetail']
           })
         })
-
         _this.options = [
           { name: 'pLoF', num: pLoFNum },
           { name: 'Missense', num: MissenseNum },
@@ -772,7 +776,6 @@ export default {
           { name: 'SNVs', num: snvNum },
           { name: 'Indels', num: indelNum }
         ]
-
         function parseNum(num) {
           let newNum = '.'
           const e = String(num)
@@ -803,7 +806,7 @@ export default {
       const data = {
         start: this.gene.start,
         end: this.gene.end,
-        chrom: this.gene.chrom
+        chrom: this.gene.chrom === "x" ? 23 : this.gene.chrom
       }
       genePositionData(data).then(response => {
         this.geneData = response
@@ -828,7 +831,7 @@ export default {
           _this.gene.start - 100 < 0 ? 0 : _this.gene.start - 100
         const positionEnd = _this.gene.end + 100
         const geneLength = positionEnd - positionStart
-        const margin = _this.containerWidth / 20
+        const margin = (_this.containerWidth / 20) * 1.5
         const width = _this.containerWidth - margin * 2
         let cx, thisColor, activeColor
         const svg = d3.select('.variation-container').select('svg')
@@ -843,17 +846,25 @@ export default {
         }
         _this.filterData.variation.forEach(function(d, i) {
           if (
-            d['exonic_function'].indexOf('frameshift') !== -1 ||
-            d['exonic_function'].indexOf('stopgain') !== -1
+            d['func'].indexOf('ncRNA_exonic') !== -1 ||
+            d['func'].indexOf('ncRNA_intronic') !== -1 ||
+            d['func'].indexOf('intronic') !== -1 ||
+            d['func'].indexOf('UTR5') !== -1 ||
+            d['func'].indexOf('UTR3') !== -1 ||
+            d['func'].indexOf('ncRNA_splicing') !== -1 ||
+            d['func'].indexOf('UTR5;UTR3') !== -1 ||
+            d['func'].indexOf('ncRNA_exonic;splicing') !== -1 ||
+            d['func'].indexOf('ncRNA_UTR5') !== -1
+          ) {
+            thisColor = _this.color[2]
+            activeColor = _this.colorActive[2]
+          } else if (
+            d['func'].indexOf('exonic') !== -1 ||
+            d['func'].indexOf('splicing') !== -1 ||
+            d['func'].indexOf('exonic;splicing') !== -1
           ) {
             thisColor = _this.color[0]
             activeColor = _this.colorActive[0]
-          } else if (d['exonic_function'].indexOf('missense') !== -1) {
-            thisColor = _this.color[1]
-            activeColor = _this.colorActive[1]
-          } else if (d['exonic_function'].indexOf('synonymous') !== -1) {
-            thisColor = _this.color[2]
-            activeColor = _this.colorActive[2]
           } else {
             thisColor = _this.color[3]
             activeColor = _this.colorActive[3]
@@ -864,27 +875,26 @@ export default {
               positionStart) /
               geneLength) *
             width
-          if (d['thousandG_ALL'] === '.' || d['thousandG_ALL'] <= 0.15) {
-            d['thousandG_ALL'] = 0.15
-          }
-          if (_this.minIdxSC - i < 6 && _this.minIdxSC - i > -6) {
-            svg
-              .append('ellipse')
-              .attr('cx', cx)
-              .attr('cy', 50)
-              .attr('rx', parseInt(d['end'] - d['start'] + 5))
-              .attr('ry', parseInt(35 * d['thousandG_ALL']))
-              .attr('stroke', '#DCDFE6')
-              .attr('fill', activeColor)
-          } else {
-            svg
-              .append('ellipse')
-              .attr('cx', cx)
-              .attr('cy', 50)
-              .attr('rx', parseInt(d['end'] - d['start'] + 5))
-              .attr('ry', parseInt(35 * d['thousandG_ALL']))
-              .attr('stroke', '#C0C4CC')
-              .attr('fill', thisColor)
+          if (d['chn100k_ALL'] !== '.') {
+            if (_this.minIdxSC - i < 6 && _this.minIdxSC - i > -6) {
+              svg
+                .append('ellipse')
+                .attr('cx', cx)
+                .attr('cy', 50)
+                .attr('rx', parseInt(d['end'] - d['start'] + 5))
+                .attr('ry', parseInt(35 * d['chn100k_ALL']))
+                .attr('stroke', '#DCDFE6')
+                .attr('fill', activeColor)
+            } else {
+              svg
+                .append('ellipse')
+                .attr('cx', cx)
+                .attr('cy', 50)
+                .attr('rx', parseInt(d['end'] - d['start'] + 5))
+                .attr('ry', parseInt(35 * d['chn100k_ALL']))
+                .attr('stroke', '#C0C4CC')
+                .attr('fill', thisColor)
+            }
           }
         })
       })
@@ -897,10 +907,10 @@ export default {
             const e = evt || window.event
             const detail = -e.detail / 3
             if (detail >= 1) {
-              _this.zoomClick('-10')
+              _this.zoomClick('3')
             }
             if (detail <= -1) {
-              _this.zoomClick('10')
+              _this.zoomClick('0.3333')
             }
             evt.preventDefault()
           },
@@ -912,10 +922,10 @@ export default {
         const e = evt || window.event
         const detail = e.wheelDelta / 120
         if (detail >= 1) {
-          _this.zoomClick('-10')
+          _this.zoomClick('3')
         }
         if (detail <= -1) {
-          _this.zoomClick('10')
+          _this.zoomClick('0.3333')
         }
         return false
       }
@@ -925,18 +935,14 @@ export default {
     zoomClick(value) {
       const center =
         parseInt((this.gene.end - this.gene.start) / 2) + this.gene.start
-      const length = parseInt(
-        ((this.gene.end - this.gene.start) *
-          ((100 + parseInt(value) * -1) / 100)) /
-          2
-      )
+      const length = parseInt(((this.gene.end - this.gene.start) * value) / 2)
       if (length > 500) {
         const start = center - length <= 0 ? 0 : center - length
         const end = center + length
         const data = {
           start: start,
           end: end,
-          chrom: this.gene.chrom
+          chrom: this.gene.chrom === "x" ? 23 : this.gene.chrom
         }
         genePositionData(data).then(response => {
           this.geneData = response
@@ -999,10 +1005,10 @@ export default {
         detail = -e.detail / 3
       }
       if (detail >= 1) {
-        this.zoomClick('-10')
+        this.zoomClick('3')
       }
       if (detail <= -1) {
-        this.zoomClick('10')
+        this.zoomClick('0.33333')
       }
     },
     variationClick(e) {
@@ -1014,7 +1020,7 @@ export default {
         _this.gene.start - 100 < 0 ? 0 : _this.gene.start - 100
       const positionEnd = _this.gene.end + 100
       const geneLength = positionEnd - positionStart
-      const margin = _this.containerWidth / 20
+      const margin = (_this.containerWidth / 20) * 1.5
       const width = _this.containerWidth - margin * 2
       let cx, thisColor, activeColor
       let temp = Infinity
@@ -1044,48 +1050,54 @@ export default {
       })
       this.filterData.variation.forEach(function(d, i) {
         cx =
-          ((d['start'] +
-            parseInt(d['end'] - d['start'] + 3) / 2 -
-            positionStart) /
-            geneLength) *
+          (d['start'] +
+            parseInt(d['end'] - d['start'] + 5) / 2 -
+            positionStart / geneLength) *
           width
-        if (d['thousandG_ALL'] === '.' || d['thousandG_ALL'] <= 0.15) {
-          d['thousandG_ALL'] = 0.15
-        }
         if (
-          d['exonic_function'].indexOf('frameshift') !== -1 ||
-          d['exonic_function'].indexOf('stopgain') !== -1
+          d['func'].indexOf('ncRNA_exonic') !== -1 ||
+          d['func'].indexOf('ncRNA_intronic') !== -1 ||
+          d['func'].indexOf('intronic') !== -1 ||
+          d['func'].indexOf('UTR5') !== -1 ||
+          d['func'].indexOf('UTR3') !== -1 ||
+          d['func'].indexOf('ncRNA_splicing') !== -1 ||
+          d['func'].indexOf('UTR5;UTR3') !== -1 ||
+          d['func'].indexOf('ncRNA_exonic;splicing') !== -1 ||
+          d['func'].indexOf('ncRNA_UTR5') !== -1
+        ) {
+          thisColor = _this.color[2]
+          activeColor = _this.colorActive[2]
+        } else if (
+          d['func'].indexOf('exonic') !== -1 ||
+          d['func'].indexOf('splicing') !== -1 ||
+          d['func'].indexOf('exonic;splicing') !== -1
         ) {
           thisColor = _this.color[0]
           activeColor = _this.colorActive[0]
-        } else if (d['exonic_function'].indexOf('missense') !== -1) {
-          thisColor = _this.color[1]
-          activeColor = _this.colorActive[1]
-        } else if (d['exonic_function'].indexOf('synonymous') !== -1) {
-          thisColor = _this.color[2]
-          activeColor = _this.colorActive[2]
         } else {
           thisColor = _this.color[3]
           activeColor = _this.colorActive[3]
         }
-        if (_this.minIdxSC - i < 6 && _this.minIdxSC - i > -6) {
-          svg
-            .append('ellipse')
-            .attr('cx', cx)
-            .attr('cy', 50)
-            .attr('rx', parseInt(d['end'] - d['start'] + 5))
-            .attr('ry', parseInt(35 * d['thousandG_ALL']))
-            .attr('stroke', '#DCDFE6')
-            .attr('fill', activeColor)
-        } else {
-          svg
-            .append('ellipse')
-            .attr('cx', cx)
-            .attr('cy', 50)
-            .attr('rx', parseInt(d['end'] - d['start'] + 5))
-            .attr('ry', parseInt(35 * d['thousandG_ALL']))
-            .attr('stroke', '#C0C4CC')
-            .attr('fill', thisColor)
+        if (d['chn100k_ALL'] !== '.') {
+          if (_this.minIdxSC - i < 6 && _this.minIdxSC - i > -6) {
+            svg
+              .append('ellipse')
+              .attr('cx', cx)
+              .attr('cy', 50)
+              .attr('rx', parseInt(d['end'] - d['start'] + 5))
+              .attr('ry', parseInt(35 * d['chn100k_ALL']))
+              .attr('stroke', '#DCDFE6')
+              .attr('fill', activeColor)
+          } else {
+            svg
+              .append('ellipse')
+              .attr('cx', cx)
+              .attr('cy', 50)
+              .attr('rx', parseInt(d['end'] - d['start'] + 5))
+              .attr('ry', parseInt(35 * d['chn100k_ALL']))
+              .attr('stroke', '#C0C4CC')
+              .attr('fill', thisColor)
+          }
         }
       })
       this.dom.scrollTop =
@@ -1119,27 +1131,38 @@ export default {
             i = 0
             while (i < _this.checkboxGroup1.length) {
               if (
-                (_this.checkboxGroup1[i] === 'pLoF' &&
-                  d['exonic_function'].indexOf('frameshift') !== -1) ||
-                d['exonic_function'].indexOf('stopgain') !== -1
+                _this.checkboxGroup1[i] === 'pLoF' &&
+                (d['func'] === 'splicing' ||
+                  d['func'] === 'exonic;splicing' ||
+                  d['exonicFunc'] === 'stopgain' ||
+                  d['exonicFunc'] === 'frameshift insertion' ||
+                  d['exonicFunc'] === 'frameshift deletion' ||
+                  d['exonicFunc'] === 'startloss' ||
+                  d['exonicFunc'] === 'stoploss')
               ) {
                 filterArr.push(d)
-              }
-              if (
+              } else if (
                 _this.checkboxGroup1[i] === 'Missense' &&
-                d['exonic_function'].indexOf('missense') !== -1
+                d['func'] !== 'splicing' &&
+                d['func'] !== 'exonic;splicing' &&
+                (d['exonicFunc'] === 'nonsynonymous SNV' ||
+                  d['exonicFunc'] === 'nonframeshift deletion' ||
+                  d['exonicFunc'] === 'nonframeshift insertion')
               ) {
                 filterArr.push(d)
-              }
-              if (
+              } else if (
                 _this.checkboxGroup1[i] === 'Synonymous' &&
-                d['exonic_function'].indexOf('synonymous') !== -1
+                d['func'] !== 'splicing' &&
+                d['func'] !== 'exonic;splicing' &&
+                (d['exonicFunc'] === 'synonymous SNV' ||
+                  d['exonicFunc'] === 'unknown')
               ) {
                 filterArr.push(d)
-              }
-              if (
+              } else if (
                 _this.checkboxGroup1[i] === 'Other' &&
-                d['exonic_function'].indexOf('.') !== -1
+                d['func'] !== 'splicing' &&
+                d['func'] !== 'exonic;splicing' &&
+                d['func'] !== 'exonic'
               ) {
                 filterArr.push(d)
               }
@@ -1152,27 +1175,38 @@ export default {
           i = 0
           while (i < _this.checkboxGroup1.length) {
             if (
-              (_this.checkboxGroup1[i] === 'pLoF' &&
-                d['exonic_function'].indexOf('frameshift') !== -1) ||
-              d['exonic_function'].indexOf('stopgain') !== -1
+              _this.checkboxGroup1[i] === 'pLoF' &&
+              (d['func'] === 'splicing' ||
+                d['func'] === 'exonic;splicing' ||
+                d['exonicFunc'] === 'stopgain' ||
+                d['exonicFunc'] === 'frameshift insertion' ||
+                d['exonicFunc'] === 'frameshift deletion' ||
+                d['exonicFunc'] === 'startloss' ||
+                d['exonicFunc'] === 'stoploss')
             ) {
               filterArr.push(d)
-            }
-            if (
+            } else if (
               _this.checkboxGroup1[i] === 'Missense' &&
-              d['exonic_function'].indexOf('missense') !== -1
+              d['func'] !== 'splicing' &&
+              d['func'] !== 'exonic;splicing' &&
+              (d['exonicFunc'] === 'nonsynonymous SNV' ||
+                d['exonicFunc'] === 'nonframeshift deletion' ||
+                d['exonicFunc'] === 'nonframeshift insertion')
             ) {
               filterArr.push(d)
-            }
-            if (
+            } else if (
               _this.checkboxGroup1[i] === 'Synonymous' &&
-              d['exonic_function'].indexOf('synonymous') !== -1
+              d['func'] !== 'splicing' &&
+              d['func'] !== 'exonic;splicing' &&
+              (d['exonicFunc'] === 'synonymous SNV' ||
+                d['exonicFunc'] === 'unknown')
             ) {
               filterArr.push(d)
-            }
-            if (
+            } else if (
               _this.checkboxGroup1[i] === 'Other' &&
-              d['exonic_function'].indexOf('.') !== -1
+              d['func'] !== 'splicing' &&
+              d['func'] !== 'exonic;splicing' &&
+              d['func'] !== 'exonic'
             ) {
               filterArr.push(d)
             }
@@ -1184,13 +1218,13 @@ export default {
         for (let i = 0; i < _this.checkboxGroup3.length; i++) {
           if (
             _this.checkboxGroup3[i] === 'SNVs' &&
-            d['variation_type'].indexOf('snv') !== -1
+            d['variation_type'].indexOf('SNV') !== -1
           ) {
             _this.filterData.variation.push(d)
           }
           if (
             _this.checkboxGroup3[i] === 'Indels' &&
-            d['variation_type'].indexOf('indel') !== -1
+            d['variation_type'].indexOf('INDEL') !== -1
           ) {
             _this.filterData.variation.push(d)
           }
