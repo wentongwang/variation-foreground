@@ -425,7 +425,7 @@ export default {
         },
       ]
       //圆环颜色
-      let gieStainColor = {
+      var gieStainColor = {
         gpos100: 'rgb(0,0,0)',
         gpos: 'rgb(0,0,0)',
         gpos75: 'rgb(130,130,130)',
@@ -440,7 +440,7 @@ export default {
         select: 'rgb(135,177,255)',
       }
       //线条颜色
-      let dataColor = {
+      var dataColor = {
         chr1: '#b7944c',
         chr2: '#92924a',
         chr3: '#a7a751',
@@ -520,10 +520,10 @@ export default {
         })
         return data
       }
-      let drawCircos = (error, GRCh37, cytobands, es, ips) => {
-        let width = parseInt(document.getElementById('echart1').offsetWidth)
+      var drawCircos = (error, GRCh37, cytobands, es, ips) => {
+        var width = parseInt(document.getElementById('echart1').offsetWidth)
         document.getElementById('echart1').style.height = width + 'px'
-        let circos = new Circos({
+        var circos = new Circos({
           container: '#echart1',
           width: width,
           height: width,
@@ -537,7 +537,7 @@ export default {
             name: d.name,
           }
         })
-        let data = this.dataListAll.map((d) => {
+        var data = this.dataListAll.map((d) => {
           return {
             source: {
               id: 'chr' + d.Chr1,
@@ -631,7 +631,7 @@ export default {
         .await(drawCircos)
     },
     getEchartData2() {
-      let width = document.getElementById('echart2').offsetWidth
+      var width = document.getElementById('echart2').offsetWidth
       var chartDom = document.getElementById('echart2')
       var myChart = echarts.init(chartDom)
       var option = {
@@ -678,7 +678,7 @@ export default {
       myChart.resize({ width: width, height: width })
     },
     getEchartData3() {
-      let width = document.getElementById('echart3').offsetWidth
+      var width = document.getElementById('echart3').offsetWidth
       var chartDom = document.getElementById('echart3')
       var myChart = echarts.init(chartDom)
       var option = {
@@ -730,7 +730,7 @@ export default {
       myChart.resize({ width: width, height: width })
     },
     getEchartData4() {
-      let width = document.getElementById('echart4').offsetWidth
+      var width = document.getElementById('echart4').offsetWidth
       var chartDom = document.getElementById('echart4')
       var myChart = echarts.init(chartDom)
       var option = {
@@ -781,7 +781,7 @@ export default {
       myChart.resize({ width: width, height: width })
     },
     getEchartData5() {
-      let width = document.getElementById('echart5').offsetWidth
+      var width = document.getElementById('echart5').offsetWidth
       var chartDom = document.getElementById('echart5')
       var myChart = echarts.init(chartDom)
       var option = {
@@ -844,7 +844,7 @@ export default {
       myChart.resize({ width: width, height: width })
     },
     getEchartData6() {
-      let width = document.getElementById('echart6').offsetWidth
+      var width = document.getElementById('echart6').offsetWidth
       var chartDom = document.getElementById('echart6')
       var myChart = echarts.init(chartDom)
       var total = 1207 + 1206 + 192 + 62 + 100 + 921

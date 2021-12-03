@@ -2,6 +2,43 @@
   <div>
     <Nav />
     <el-main>
+      <div id="spage-tbshare-container">
+        <div class="tbshare_popup_enter">过滤选项</div>
+        <div class="tbshare_popup_main clearfix">
+          <el-card class="box-card">
+            <el-divider content-position="left">功能类型</el-divider>
+            <el-row class="checkbox-container" type="flex" justify="start">
+              <el-checkbox-group
+                v-model="checkboxGroup1"
+                @change="handleCheckedOptionsChangeOne"
+              >
+                <el-checkbox-button
+                  v-for="op in options"
+                  :key="op.name"
+                  :label="op.name"
+                  >{{ op.name }}
+                  <el-tag class="num-tag">{{ op.num }} </el-tag>
+                </el-checkbox-button>
+              </el-checkbox-group>
+            </el-row>
+            <el-divider content-position="left">SNV/Indel</el-divider>
+            <el-row class="checkbox-container" type="flex" align="end">
+              <el-checkbox-group
+                v-model="checkboxGroup3"
+                @change="handleCheckedOptionsChangeThree"
+              >
+                <el-checkbox-button
+                  v-for="(item, index) in options3"
+                  :key="index"
+                  :label="item.name"
+                  >{{ item.name }}
+                  <el-tag class="num-tag">{{ item.num }} </el-tag>
+                </el-checkbox-button>
+              </el-checkbox-group>
+            </el-row>
+          </el-card>
+        </div>
+      </div>
       <div v-loading="loading" class="main-container">
         <el-row type="flex" justify="space-between">
           <el-col :span="6">
@@ -69,138 +106,77 @@
         </div>
         <div class="variation-container" @click="variationClick($event)" />
         <template>
-          <el-row
-            class="checkbox-container"
-            type="flex"
-            justify="space-between"
-          >
+          <el-row>
             <el-col :span="8">
-              <el-checkbox-group
-                v-model="checkboxGroup1"
-                @change="handleCheckedOptionsChangeOne"
-              >
-                <el-checkbox-button
-                  v-for="op in options"
-                  :key="op.name"
-                  :label="op.name"
-                >{{ op.name }}
-                  <el-tag class="num-tag">{{ op.num }} </el-tag>
-                </el-checkbox-button>
-              </el-checkbox-group>
+              <div id="mapChart" />
             </el-col>
-            <el-col :span="6">
-              <el-checkbox-group
-                v-model="checkboxGroup3"
-                @change="handleCheckedOptionsChangeThree"
+            <el-col :span="16">
+              <el-table
+                ref="filterTable"
+                class="gene-table"
+                size="mini"
+                :data="tableData"
+                max-height="540"
+                @cell-click="tableCell"
+                :row-style="TableRowStyle"
               >
-                <el-checkbox-button
-                  v-for="(item, index) in options3"
-                  :key="index"
-                  :label="item.name"
-                >{{ item.name }}
-                  <el-tag class="num-tag">{{ item.num }} </el-tag>
-                </el-checkbox-button>
-              </el-checkbox-group>
-            </el-col>
-            <!-- <el-col :span="8">
-              <el-checkbox-group
-                v-model="checkboxGroup1"
-                @change="handleCheckedOptionsChangeOne"
-              >
-                <el-tooltip v-for="op in options" :key="op.name" :content="op.num + '个'" placement="bottom" effect="light">
-                  <el-checkbox-button :label="op.name">{{ op.name }}
-                  </el-checkbox-button>
-                </el-tooltip>
-              </el-checkbox-group>
-            </el-col>
-            <el-col :span="6">
-              <el-checkbox-group
-                v-model="checkboxGroup2"
-                @change="handleCheckedOptionsChangeTwo"
-              >
-                <el-tooltip v-for="(item, index) in options2" :key="index" :content="item.num + '个'" placement="bottom" effect="light">
-                  <el-checkbox-button :label="item.name">{{ item.name }}
-                  </el-checkbox-button>
-                </el-tooltip>
-              </el-checkbox-group>
-            </el-col>
-            <el-col :span="6">
-              <el-checkbox-group
-                v-model="checkboxGroup3"
-                @change="handleCheckedOptionsChangeThree"
-              >
-                <el-tooltip v-for="(item, index) in options3" :key="index" :content="item.num + '个'" placement="bottom" effect="light">
-                  <el-checkbox-button :label="item.name">{{ item.name }}
-                  </el-checkbox-button>
-                </el-tooltip>
-              </el-checkbox-group>
-            </el-col> -->
-            <!-- <el-col :span="4">
-              <el-input
-                v-model="input"
-                :placeholder="$t('gene.search')"
-                prefix-icon="el-icon-search"
-                clearable
-              />
-            </el-col>-->
-          </el-row>
-          <el-table
-            ref="filterTable"
-            class="gene-table"
-            stripe
-            size="mini"
-            :data="tableData"
-            max-height="540"
-            style="width: 100%"
-          >
-            <el-table-column
-              prop="variatiId"
-              :label="$t('gene.table.variatiId')"
-              sortable
-              width="180"
-            >
-              <template slot-scope="scope">
-                <el-link
-                  :href="'#/variant?id=' + scope.row.variatiId + '&chrom=' + scope.row.chrom"
-                  type="primary"
-                >{{ scope.row.variatiId }}</el-link>
-              </template>
-            </el-table-column>
-            <el-table-column prop="gene" :label="$t('gene.table.gene')" />
-            <el-table-column prop="rsid" :label="$t('gene.table.rsid')" />
-            <el-table-column
-              prop="exonicFunc"
-              :label="$t('gene.table.exonicFunc')"
-            >
-              <template slot-scope="scope">
-                <el-badge
-                  class="mark"
-                  is-dot
-                  :type="
-                    scope.row.exonicFunColor === 'danger'
-                      ? 'danger'
-                      : scope.row.exonicFunColor === 'success'
-                        ? 'success'
-                        : 'info'
-                  "
-                  style="margin-top:15px;margin-right:5px"
-                />{{ scope.row.exonicFuncValue }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="variation_type"
-              :label="$t('gene.table.variation_type')"
-            />
-            <!-- <el-table-column prop="dbsnp" :label="$t('gene.table.dbsnp')" /> -->
-            <!-- <el-table-column
+                <el-table-column
+                  prop="variatiId"
+                  :label="$t('gene.table.variatiId')"
+                  sortable
+                  width="180"
+                >
+                  <template slot-scope="scope">
+                    <el-link
+                      :href="
+                        '#/variant?id=' +
+                        scope.row.variatiId +
+                        '&chrom=' +
+                        scope.row.chrom
+                      "
+                      type="primary"
+                      >{{ scope.row.variatiId }}</el-link
+                    >
+                  </template>
+                </el-table-column>
+                <el-table-column prop="gene" :label="$t('gene.table.gene')" />
+                <el-table-column prop="rsid" :label="$t('gene.table.rsid')" />
+                <el-table-column
+                  prop="exonicFunc"
+                  :label="$t('gene.table.exonicFunc')"
+                >
+                  <template slot-scope="scope">
+                    <el-badge
+                      class="mark"
+                      is-dot
+                      :type="
+                        scope.row.exonicFunColor === 'danger'
+                          ? 'danger'
+                          : scope.row.exonicFunColor === 'success'
+                          ? 'success'
+                          : 'info'
+                      "
+                      style="margin-top: 15px; margin-right: 5px"
+                    />{{ scope.row.exonicFuncValue }}
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="variation_type"
+                  :label="$t('gene.table.variation_type')"
+                  width="70"
+                />
+                <!-- <el-table-column prop="dbsnp" :label="$t('gene.table.dbsnp')" /> -->
+                <!-- <el-table-column
               prop="chn100k_ALL"
               :label="$t('gene.table.chn100k_ALL')"
             /> -->
-            <el-table-column
-              prop="geneDetail"
-              :label="$t('gene.table.geneDetail')"
-            />
-          </el-table>
+                <el-table-column
+                  prop="geneDetail"
+                  :label="$t('gene.table.geneDetail')"
+                />
+              </el-table>
+            </el-col>
+          </el-row>
         </template>
       </div>
     </el-main>
@@ -212,15 +188,18 @@ import { mapGetters } from 'vuex'
 import { genePositionData } from '@/api/variation'
 import * as d3 from 'd3'
 import Nav from '@/components/Nav'
+import * as echarts from 'echarts'
+import chinaJson from 'echarts/map/json/china.json'
+require('echarts/theme/macarons') // echarts theme
 export default {
   name: 'Gene',
   components: {
-    Nav
+    Nav,
   },
   directives: {
     drag: {
       // 指令的定义
-      bind: function(el, binding, vnode) {
+      bind: function (el, binding, vnode) {
         // el.drag();
         // 获取元素
         // var dv = document.getElementById("dv");
@@ -228,7 +207,7 @@ export default {
         let nl = 0
         let isDown = false
         // 鼠标按下事件
-        el.onmousedown = function(e) {
+        el.onmousedown = function (e) {
           // 获取x坐标和y坐标
           x = e.clientX
           // 获取左部和顶部的偏移量
@@ -242,7 +221,7 @@ export default {
           el.style.cursor = 'move'
         }
         // 鼠标移动
-        window.onmousemove = function(e) {
+        window.onmousemove = function (e) {
           if (isDown == false) {
             return
           }
@@ -253,7 +232,7 @@ export default {
           el.style.left = nl + 'px'
         }
         // 鼠标抬起事件
-        el.onmouseup = function() {
+        el.onmouseup = function () {
           // 开关关闭
           if (nl < -20 && nl > -300) {
             vnode.context.moveClick('10')
@@ -273,8 +252,8 @@ export default {
           el.style.left = '0px'
           el.style.cursor = 'default'
         }
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -292,10 +271,10 @@ export default {
             gene_id: '',
             parent: '',
             gene: '',
-            id: 1
-          }
+            id: 1,
+          },
         ],
-        variation: []
+        variation: [],
       },
       filterData: '',
       loading: true,
@@ -311,36 +290,37 @@ export default {
         { name: 'pLoF', num: 0 },
         { name: 'Missense', num: 0 },
         { name: 'Synonymous', num: 0 },
-        { name: 'Other', num: 0 }
+        { name: 'Other', num: 0 },
       ],
       options2: [
         { name: 'EXomes', num: 0 },
-        { name: 'Genomes', num: 0 }
+        { name: 'Genomes', num: 0 },
       ],
       options3: [
         { name: 'SNVs', num: 0 },
-        { name: 'Indels', num: 0 }
+        { name: 'Indels', num: 0 },
       ],
       tableData: [],
       colorActive: [
         'rgb(245, 108, 108)',
         'rgb(230, 162, 60)',
         'rgb(103, 194, 58)',
-        'rgb(157, 157, 157)'
+        'rgb(157, 157, 157)',
       ],
       color: [
         'rgb(253, 226, 226)',
         'rgb(250, 236, 216)',
         'rgb(208, 249, 188)',
-        'rgb(233, 233, 235)'
-      ]
+        'rgb(233, 233, 235)',
+      ],
+      tableBgPos: '',
     }
   },
   computed: {
     ...mapGetters(['gene']),
     variation() {
       return this.filterData.variation
-    }
+    },
   },
   watch: {
     filterData() {
@@ -366,26 +346,20 @@ export default {
             .scaleLinear()
             .domain([positionStart, positionEnd])
             .range([0, axisWidth])
-          const axis = d3
-            .axisBottom()
-            .scale(scale)
-            .ticks(10)
-            .tickPadding(10)
+          const axis = d3.axisBottom().scale(scale).ticks(10).tickPadding(10)
           svg
             .append('text')
             .attr('x', 0)
             .attr('y', 50)
             .attr('fill', '#409EFF')
             .attr('font-size', 20)
-            .text(function() {
+            .text(function () {
               return 'chr:' + _this.gene.chrom
             })
           svg
             .append('g')
-            .attr('transform', function() {
-              return (
-                'translate(' + margin + ',50)'
-              )
+            .attr('transform', function () {
+              return 'translate(' + margin + ',50)'
             })
             .call(axis)
         }
@@ -404,19 +378,19 @@ export default {
           _this.svg.selectAll('*').remove()
           _this.svg.style('overflow', 'visible')
           _this.annotationColor = '#424242'
-          _this.filterData.genomic.forEach(function(d) {
+          _this.filterData.genomic.forEach(function (d) {
             if (d['type'] === 'pseudogene' || d['type'] === 'gene') {
               newArr.push({
                 start: ((d['start'] - positionStart) / geneLength) * width,
                 end: ((d['end'] - positionStart) / geneLength) * width,
-                gene: d['gene']
+                gene: d['gene'],
               })
             }
           })
-          newArr.sort(function(a, b) {
+          newArr.sort(function (a, b) {
             return a['start'] - b['start']
           })
-          newArr.forEach(function(d, i) {
+          newArr.forEach(function (d, i) {
             start = 0
             end = -Infinity
             for (let j = i; j < newArr.length; j++) {
@@ -430,13 +404,13 @@ export default {
               }
             }
           })
-          numArr.forEach(function(c, i) {
+          numArr.forEach(function (c, i) {
             if (i > 0 && numArr[i]['start'] - 120 < numArr[i - 1]['end']) {
               count = count + 1
             }
             grandParent = null
             parent = null
-            _this.filterData.genomic.forEach(function(d) {
+            _this.filterData.genomic.forEach(function (d) {
               if (d['parent'] === '.' && d['gene'] === c['gene']) {
                 // if (d['parent'] === '.' && d['gene'] === 'STATH') {
                 if (d['type'] === 'pseudogene' || d['type'] === 'gene') {
@@ -467,7 +441,7 @@ export default {
                     .attr('font-size', 14)
                     .attr('cursor', 'pointer')
                     .attr('geneId', d['gene_id'])
-                    .on('click', function() {
+                    .on('click', function () {
                       const thisName = d3.select(this).text()
                       const thisId = d3.select(this).attr('geneId')
                       if (genename === thisName) {
@@ -476,7 +450,7 @@ export default {
                         geneAnnotation(thisName, thisId)
                       }
                     })
-                    .text(function() {
+                    .text(function () {
                       return d['gene']
                     })
                 }
@@ -519,7 +493,7 @@ export default {
               }
             })
             if (c['gene'] === genename) {
-              _this.filterData.genomic.forEach(function(d) {
+              _this.filterData.genomic.forEach(function (d) {
                 if (d['parent'] === geneid) {
                   count = count + 1
                   parent = d['gene_id']
@@ -548,7 +522,7 @@ export default {
                     .attr('fill', '#409EFF')
                     .attr('font-size', 12)
                     .attr('geneId', d['gene_id'])
-                    .text(function() {
+                    .text(function () {
                       return d['gene_id']
                     })
                 }
@@ -606,15 +580,13 @@ export default {
         const width = _this.containerWidth - margin * 2
         const height = 100
         let thisColor, activeColor, cx
-        d3.select('.variation-container')
-          .selectAll('*')
-          .remove()
+        d3.select('.variation-container').selectAll('*').remove()
         const svg = d3
           .select('.variation-container')
           .append('svg')
           .attr('width', width)
           .attr('height', height)
-        _this.filterData.variation.forEach(function(d, i) {
+        _this.filterData.variation.forEach(function (d, i) {
           cx =
             ((d['start'] +
               parseInt(d['end'] - d['start'] + 3) / 2 -
@@ -678,7 +650,7 @@ export default {
         let genomeNum = 0
         let snvNum = 0
         let indelNum = 0
-        _this.filterData.variation.forEach(function(d) {
+        _this.filterData.variation.forEach(function (d) {
           let exonicFunColor = ''
           let exonicFuncValue = ''
           if (
@@ -759,22 +731,29 @@ export default {
             dbsnp: d['af'],
             chn100k_ALL: d['chn100k_ALL'],
             gene: d['gene'],
-            geneDetail: d['geneDetail']
+            geneDetail: d['geneDetail'],
+            chn100k_NE: 0.0001 * Math.random() * 10,
+            chn100k_N: 0.0001 * Math.random() * 10,
+            chn100k_E: 0.0001 * Math.random() * 10,
+            chn100k_C: 0.0001 * Math.random() * 10,
+            chn100k_NW: 0.0001 * Math.random() * 10,
+            chn100k_SW: 0.0001 * Math.random() * 10,
+            chn100k_S: 0.0001 * Math.random() * 10,
           })
         })
         _this.options = [
           { name: 'pLoF', num: pLoFNum },
           { name: 'Missense', num: MissenseNum },
           { name: 'Synonymous', num: SynonymousNum },
-          { name: 'Other', num: OtherNum }
+          { name: 'Other', num: OtherNum },
         ]
         _this.options2 = [
           { name: 'EXomes', num: exomeNum },
-          { name: 'Genomes', num: genomeNum }
+          { name: 'Genomes', num: genomeNum },
         ]
         _this.options3 = [
           { name: 'SNVs', num: snvNum },
-          { name: 'Indels', num: indelNum }
+          { name: 'Indels', num: indelNum },
         ]
         function parseNum(num) {
           let newNum = '.'
@@ -799,16 +778,16 @@ export default {
     },
     input() {
       this.dataFiter()
-    }
+    },
   },
-  created: function() {
+  created: function () {
     if (this.gene.value) {
       const data = {
         start: this.gene.start,
         end: this.gene.end,
-        chrom: this.gene.chrom === "x" ? 23 : this.gene.chrom
+        chrom: this.gene.chrom === 'x' ? 23 : this.gene.chrom,
       }
-      genePositionData(data).then(response => {
+      genePositionData(data).then((response) => {
         this.geneData = response
         this.filterData = Object.assign({}, response)
         this.containerWidth = parseInt(
@@ -822,7 +801,7 @@ export default {
     const _this = this
     if (this.$refs.filterTable) {
       this.dom = this.$refs.filterTable.bodyWrapper
-      this.dom.addEventListener('scroll', function() {
+      this.dom.addEventListener('scroll', function () {
         const windowHeight = _this.dom.clientHeight
         const scrollHeight = _this.dom.scrollHeight
         const needScroll = scrollHeight - windowHeight
@@ -844,7 +823,7 @@ export default {
         } else if (_this.minIdxSC > _this.filterData.variation.length - 6) {
           _this.minIdxSC = _this.filterData.variation.length - 5
         }
-        _this.filterData.variation.forEach(function(d, i) {
+        _this.filterData.variation.forEach(function (d, i) {
           if (
             d['func'].indexOf('ncRNA_exonic') !== -1 ||
             d['func'].indexOf('ncRNA_intronic') !== -1 ||
@@ -903,7 +882,7 @@ export default {
       if (window.addEventListener) {
         svgDrag.addEventListener(
           'DOMMouseScroll',
-          function(evt) {
+          function (evt) {
             const e = evt || window.event
             const detail = -e.detail / 3
             if (detail >= 1) {
@@ -918,7 +897,7 @@ export default {
         )
       }
       // 非火狐
-      svgDrag.onmousewheel = function(evt) {
+      svgDrag.onmousewheel = function (evt) {
         const e = evt || window.event
         const detail = e.wheelDelta / 120
         if (detail >= 1) {
@@ -930,6 +909,8 @@ export default {
         return false
       }
     }
+    this.initMap()
+    this.initChart()
   },
   methods: {
     zoomClick(value) {
@@ -942,9 +923,9 @@ export default {
         const data = {
           start: start,
           end: end,
-          chrom: this.gene.chrom === "x" ? 23 : this.gene.chrom
+          chrom: this.gene.chrom === 'x' ? 23 : this.gene.chrom,
         }
-        genePositionData(data).then(response => {
+        genePositionData(data).then((response) => {
           this.geneData = response
           this.filterData = Object.assign({}, response)
           this.containerWidth = parseInt(
@@ -969,9 +950,9 @@ export default {
         const data = {
           start: start,
           end: end,
-          chrom: this.gene.chrom
+          chrom: this.gene.chrom,
         }
-        genePositionData(data).then(response => {
+        genePositionData(data).then((response) => {
           this.geneData = response
           this.filterData = Object.assign({}, response)
           this.containerWidth = parseInt(
@@ -1027,7 +1008,7 @@ export default {
       let scrollIndex = 0
       const svg = d3.select('.variation-container').select('svg')
       svg.selectAll('*').remove()
-      this.filterData.variation.forEach(function(d1, i1) {
+      this.filterData.variation.forEach(function (d1, i1) {
         cx =
           ((d1['start'] +
             parseInt(d1['end'] - d1['start'] + 5) / 2 -
@@ -1048,7 +1029,7 @@ export default {
           }
         }
       })
-      this.filterData.variation.forEach(function(d, i) {
+      this.filterData.variation.forEach(function (d, i) {
         cx =
           (d['start'] +
             parseInt(d['end'] - d['start'] + 5) / 2 -
@@ -1115,7 +1096,7 @@ export default {
           label: this.geneList[i].gene,
           type: this.geneList[i].type,
           start: parseInt(this.geneList[i].start) - 1,
-          end: parseInt(this.geneList[i].end) + 1
+          end: parseInt(this.geneList[i].end) + 1,
         })
         window.open(routeUrl.href, '_blank')
       }
@@ -1126,7 +1107,7 @@ export default {
       _this.filterData.variation = []
       let i
       if (this.input) {
-        _this.geneData.variation.forEach(function(d) {
+        _this.geneData.variation.forEach(function (d) {
           if (d['uuId'].indexOf(_this.input) !== -1) {
             i = 0
             while (i < _this.checkboxGroup1.length) {
@@ -1171,7 +1152,7 @@ export default {
           }
         })
       } else {
-        _this.geneData.variation.forEach(function(d) {
+        _this.geneData.variation.forEach(function (d) {
           i = 0
           while (i < _this.checkboxGroup1.length) {
             if (
@@ -1214,7 +1195,7 @@ export default {
           }
         })
       }
-      filterArr.forEach(function(d) {
+      filterArr.forEach(function (d) {
         for (let i = 0; i < _this.checkboxGroup3.length; i++) {
           if (
             _this.checkboxGroup3[i] === 'SNVs' &&
@@ -1230,12 +1211,374 @@ export default {
           }
         }
       })
-    }
-  }
+    },
+    mergeProvinces(chinaJson, names, properties) {
+      //合并大区里省份的coordinates
+      var features = chinaJson.features
+      var polygons = []
+      var polygons2 = []
+
+      for (var i = 0; i < names.length; i++) {
+        var polygonsCoordinates = []
+        var polygonsEncodeOffsets = []
+        for (var z = 0; z < names[i].length; z++) {
+          for (var j = 0; j < features.length; j++) {
+            if (features[j].properties.name == names[i][z]) {
+              if (features[j].geometry.coordinates[0].constructor == String) {
+                //合并coordinates
+                for (
+                  var l = 0;
+                  l < features[j].geometry.coordinates.length;
+                  l++
+                ) {
+                  polygonsCoordinates.push(features[j].geometry.coordinates[l])
+                }
+              } else if (
+                features[j].geometry.coordinates[0].constructor == Array
+              ) {
+                for (
+                  var k = 0;
+                  k < features[j].geometry.coordinates.length;
+                  k++
+                ) {
+                  for (
+                    var d = 0;
+                    d < features[j].geometry.coordinates[k].length;
+                    d++
+                  ) {
+                    polygonsCoordinates.push(
+                      features[j].geometry.coordinates[k][d]
+                    )
+                  }
+                }
+              }
+
+              if (features[j].geometry.encodeOffsets[0].constructor == String) {
+                //合并encodeOffsets
+                polygonsEncodeOffsets.push(features[j].geometry.encodeOffsets)
+              } else if (
+                features[j].geometry.encodeOffsets[0].constructor == Array
+              ) {
+                for (
+                  var k = 0;
+                  k < features[j].geometry.encodeOffsets.length;
+                  k++
+                ) {
+                  if (
+                    features[j].geometry.encodeOffsets[k][0].constructor ==
+                    Array
+                  ) {
+                    for (
+                      var e = 0;
+                      e < features[j].geometry.encodeOffsets[k].length;
+                      e++
+                    ) {
+                      polygonsEncodeOffsets.push(
+                        features[j].geometry.encodeOffsets[k][e]
+                      )
+                    }
+                  } else {
+                    polygonsEncodeOffsets.push(
+                      features[j].geometry.encodeOffsets[k]
+                    )
+                  }
+                }
+              }
+
+              break
+            }
+          }
+        }
+        polygons.push(polygonsCoordinates)
+        polygons2.push(polygonsEncodeOffsets)
+      }
+
+      // 构建新的合并区域
+      var features = []
+
+      for (var a = 0; a < names.length; a++) {
+        var feature = {
+          id: features.length.toString(),
+          type: 'FeatureCollection',
+          geometry: {
+            type: 'Polygon',
+            coordinates: polygons[a],
+            encodeOffsets: polygons2[a],
+          },
+          properties: {
+            name: properties.name[a] || '',
+            childNum: polygons[a].length,
+          },
+        }
+        if (properties.cp[a]) {
+          feature.properties.cp = properties.cp[a]
+        }
+
+        // 将新的合并区域添加到地图中
+        features.push(feature)
+      }
+      chinaJson.features = features
+    },
+    initMap() {
+      var params = {
+        names: [
+          //把各个大区的省份用二维数组分开
+          ['北京', '天津', '河北', '山西', '内蒙古'],
+          ['黑龙江', '吉林', '辽宁'],
+          ['山东', '江苏', '安徽', '江西', '浙江', '福建', '上海', '台湾'],
+          ['河南', '湖北', '湖南'],
+          ['广东', '广西', '海南', '香港', '澳门'],
+          ['重庆', '四川', '云南', '西藏', '贵州'],
+          ['陕西', '甘肃', '青海', '宁夏', '新疆'],
+        ],
+        properties: {
+          //自定义大区的名字，要和上面的大区省份一一对应
+          name: ['华北', '东北', '华东', '华中', '华南', '西南', '西北'],
+          cp: [
+            //经纬度可以自己随意定义
+            [116.24, 39.54],
+            [126.32, 43.5],
+            [121.28, 31.13],
+            [114.2, 30.32],
+            [113.15, 23.08],
+            [104.04, 30.39],
+            [103.49, 36.03],
+          ],
+        },
+      }
+      if (chinaJson.features && chinaJson.features.length > 8) {
+        this.mergeProvinces(chinaJson, params.names, params.properties)
+      }
+      echarts.registerMap('china', chinaJson) // 注册地图
+    },
+    initChart(dataList) {
+      var _this = this
+      var chartDom = document.getElementById('mapChart')
+      var myChart = echarts.init(chartDom)
+
+      var option = {
+        // center: ['80%', '50%'],
+        tooltip: {
+          trigger: 'item',
+          formatter: function (params) {
+            return params.name // 自行定义formatter格式
+          },
+        },
+        visualMap: {
+          min: 0,
+          max: 0.001,
+          left: 'left',
+          top: 'top',
+          text: ['High', 'Low'], //取值范围的文字
+          inRange: {
+            color: ['#e0ffff', '#006edd'], //取值范围的颜色
+          },
+          show: false, //图注
+        },
+        geo: {
+          map: 'china',
+          roam: false, //不开启缩放和平移
+          center: [105, 35],
+          zoom: 1, //视角缩放比例
+          label: {
+            normal: {
+              show: true,
+              fontSize: '12',
+              color: 'rgba(0,0,0,0.7)',
+            },
+            emphasis: {
+              textStyle: {
+                color: '#fff',
+              },
+            },
+          },
+          // regions: [
+          //   {
+          //     name: '南海诸岛',
+          //     itemStyle: {
+          //       // 隐藏地图
+          //       normal: {
+          //         opacity: 0, // 为 0 时不绘制该图形
+          //       },
+          //     },
+          //     label: {
+          //       show: false, // 隐藏文字
+          //     },
+          //   },
+          // ],
+          itemStyle: {
+            normal: {
+              borderColor: 'rgba(0, 0, 0, 0.2)',
+            },
+            emphasis: {
+              areaColor: '#F3B329', //鼠标选择区域颜色
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 20,
+              borderWidth: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
+        },
+        series: [
+          {
+            name: '变异数量',
+            type: 'map',
+            geoIndex: 0,
+            data: dataList,
+          },
+        ],
+      }
+
+      // this.chart = echarts.init(chartDom, 'macarons')
+      myChart.setOption(option)
+      myChart.on('click', function (params) {
+        if (params.name === '东北') {
+          _this.tableBgPos = 'chn100k_NE'
+        }
+        if (params.name === '华北') {
+          _this.tableBgPos = 'chn100k_N'
+        }
+        if (params.name === '华东') {
+          _this.tableBgPos = 'chn100k_E'
+        }
+        if (params.name === '华中') {
+          _this.tableBgPos = 'chn100k_C'
+        }
+        if (params.name === '华南') {
+          _this.tableBgPos = 'chn100k_S'
+        }
+        if (params.name === '西北') {
+          _this.tableBgPos = 'chn100k_NW'
+        }
+        if (params.name === '西南') {
+          _this.tableBgPos = 'chn100k_SW'
+        }
+      })
+      this.$nextTick(() => {
+        myChart.resize() // 这里是为了解决，tab刷新的时候，图表不刷新的问题。
+      })
+    },
+    tableCell(row, column, event, cell) {
+      var dataList = [
+        {
+          name: '东北',
+          value: row.chn100k_NE,
+        },
+        {
+          name: '华北',
+          value: row.chn100k_N,
+        },
+        {
+          name: '华南',
+          value: row.chn100k_S,
+        },
+        {
+          name: '华东',
+          value: row.chn100k_E,
+        },
+        {
+          name: '华中',
+          value: row.chn100k_C,
+        },
+        {
+          name: '西南',
+          value: row.chn100k_SW,
+        },
+        {
+          name: '西北',
+          value: row.chn100k_NW,
+        },
+      ]
+      this.initChart(dataList)
+    },
+    TableRowStyle(row) {
+      let rowBackground = {}
+      if (this.tableBgPos) {
+        rowBackground.background =
+          'rgba(145,213,255,' + row.row[this.tableBgPos] * 1000 + ')'
+      }
+      return rowBackground
+    },
+  },
 }
 </script>
 
 <style scoped lang="scss">
+#spage-tbshare-container {
+  width: 26px;
+  height: 92px;
+  border-radius: 6px 0 0 6px;
+  background: #84c0f2;
+  position: fixed;
+  right: 0;
+  top: 30%;
+  z-index: 99;
+  .tbshare_popup_enter {
+    width: 26px;
+    height: 92px;
+    padding-top: 15px;
+    color: #ffffff;
+    font-size: 14px;
+  }
+  .tbshare_popup_main {
+    display: none;
+    background: #ffffff;
+    width: 180px;
+    position: absolute;
+    right: 66px;
+    top: 0;
+    .box-card {
+      width: 220px;
+      // margin-right: 4px;
+      .checkbox-container {
+        width: 180px;
+        .el-checkbox-group {
+          .el-checkbox-button {
+            position: relative;
+            margin: 2px 0;
+            .num-tag {
+              position: absolute;
+              top: -1px;
+              left: 119px;
+              width: 60px;
+              height: 40px;
+              line-height: 40px;
+              white-space: nowrap;
+              -webkit-appearance: none;
+              text-align: center;
+              box-sizing: border-box;
+              outline: 0;
+              margin: 0;
+              transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+              font-size: 14px;
+              border-radius: 0 4px 4px 0;
+              border-color: #409eff;
+              border-left: none;
+            }
+          }
+          // .el-checkbox-button:first-child {
+          //   .num-tag {
+          //     border: 1px solid #409eff;
+          //     border-radius: 0 0 0 4px;
+          //   }
+          // }
+          // .el-checkbox-button:last-child {
+          //   .num-tag {
+          //     border-radius: 0 0 4px 0;
+          //   }
+          // }
+        }
+      }
+    }
+  }
+}
+#spage-tbshare-container:hover {
+  border-radius: 0;
+  .tbshare_popup_main {
+    display: block;
+  }
+}
 .main-container {
   width: 96%;
   margin: 0 auto;
@@ -1306,48 +1649,6 @@ export default {
       }
     }
   }
-  .checkbox-container {
-    max-width: 90%;
-    margin: 0 auto 60px;
-    .el-checkbox {
-      width: 100px;
-      text-align: left;
-    }
-    .el-checkbox-group {
-      .el-checkbox-button {
-        position: relative;
-        .num-tag {
-          position: absolute;
-          bottom: -80%;
-          left: 0;
-          width: 100%;
-          white-space: nowrap;
-          vertical-align: middle;
-          -webkit-appearance: none;
-          text-align: center;
-          box-sizing: border-box;
-          outline: 0;
-          margin: 0;
-          transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-          font-size: 14px;
-          border-radius: 0;
-          border-color: #409eff;
-          border-left-color: #ecf5ff;
-        }
-      }
-      .el-checkbox-button:first-child {
-        .num-tag {
-          border: 1px solid #409eff;
-          border-radius: 0 0 0 4px;
-        }
-      }
-      .el-checkbox-button:last-child {
-        .num-tag {
-          border-radius: 0 0 4px 0;
-        }
-      }
-    }
-  }
   .el-table {
     max-width: 90%;
     margin: 0 auto;
@@ -1365,5 +1666,27 @@ export default {
       margin: 0 2px;
     }
   }
+  #mapChart {
+    height: 540px;
+  }
+}
+</style>
+<style>
+#spage-tbshare-container .el-checkbox-button__inner {
+  width: 120px;
+  height: 40px;
+  margin-right: 60px;
+  border-radius: 4px 0 0 4px;
+  border-left: 1px solid #dcdfe6;
+}
+#spage-tbshare-container
+  .el-checkbox-button.is-checked
+  .el-checkbox-button__inner {
+  border-left-color: #409eff;
+}
+#spage-tbshare-container
+  .el-checkbox-button.is-focus
+  .el-checkbox-button__inner {
+  border-left-color: #409eff;
 }
 </style>
