@@ -744,13 +744,13 @@ export default {
             chn100k_ALL: d['chn100k_ALL'],
             gene: d['gene'],
             geneDetail: d['geneDetail'],
-            chn100k_NE: 0.0001 * Math.random() * 10,
-            chn100k_N: 0.0001 * Math.random() * 10,
-            chn100k_E: 0.0001 * Math.random() * 10,
-            chn100k_C: 0.0001 * Math.random() * 10,
-            chn100k_NW: 0.0001 * Math.random() * 10,
-            chn100k_SW: 0.0001 * Math.random() * 10,
-            chn100k_S: 0.0001 * Math.random() * 10,
+            chn100k_NE: d['chn100k_NE'],
+            chn100k_N:d['chn100k_N'],
+            chn100k_E:d['chn100k_E'],
+            chn100k_C:d['chn100k_C'],
+            chn100k_NW:d['chn100k_NW'],
+            chn100k_SW:d['chn100k_SW'],
+            chn100k_S:d['chn100k_S'],
           })
         })
 
@@ -1394,12 +1394,12 @@ export default {
         },
         visualMap: {
           min: 0,
-          max: 0.001,
+          max: 0.01,
           left: 'left',
           top: 'top',
           text: ['High', 'Low'], //取值范围的文字
           inRange: {
-            color: ['#e0ffff', '#006edd'], //取值范围的颜色
+            color: ['#e0ffff', '#2196f3'], //取值范围的颜色
           },
           show: false, //图注
         },

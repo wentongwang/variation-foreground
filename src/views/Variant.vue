@@ -13,8 +13,12 @@
             :data="tableData"
             stripe
             :show-header="false"
-            :cell-style="{ textAlign: 'center', fontSize: '16px' }"
-            style="width: 100%"
+            :cell-style="{
+              textAlign: 'center',
+              fontSize: '18px',
+              width: '100%',
+              border: '1px solid #EBEEF5',
+            }"
           >
             <el-table-column prop="name1"> </el-table-column>
             <el-table-column prop="value1"> </el-table-column>
@@ -28,18 +32,35 @@
               ><div>{{ $t('variat.VariationFunctionAnnotation') }}</div></el-col
             >
           </el-row>
-          <el-table
-            :data="tableData2"
-            stripe
-            :show-header="false"
-            :cell-style="{ textAlign: 'center', fontSize: '16px' }"
-            style="width: 100%"
-          >
-            <el-table-column prop="name1"> </el-table-column>
-            <el-table-column prop="value1"> </el-table-column>
-            <el-table-column prop="name2"> </el-table-column>
-            <el-table-column prop="value2"> </el-table-column>
-          </el-table>
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <div class="funcAnnotation-container" />
+              <div class="signal-container">
+                <div class="AAchange-one grid-content">{{ AAchangeOne }}</div>
+                <div class="AAchange-line grid-content">
+                  <div class="line"></div>
+                  <div class="arrow"></div>
+                </div>
+                <div class="AAchange-two grid-content">{{ AAchangeTwo }}</div>
+              </div>
+            </el-col>
+            <el-col :span="12" :offset="0">
+              <el-table
+                :data="tableData2"
+                stripe
+                :show-header="false"
+                :cell-style="{
+                  textAlign: 'center',
+                  fontSize: '18px',
+                  width: '100%',
+                  border: '1px solid #EBEEF5',
+                }"
+              >
+                <el-table-column prop="name1"> </el-table-column>
+                <el-table-column prop="value1"> </el-table-column>
+              </el-table>
+            </el-col>
+          </el-row>
         </div>
         <div class="sub-content-2">
           <el-row :gutter="0" class="grid-title">
@@ -48,24 +69,160 @@
             >
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="14" :offset="0"
-              ><div style="margin-top: 20px">
-                <div class="grid-content">
-                  <el-table :data="freArr" style="width: 100%">
-                    <el-table-column
-                      prop="population"
-                      :label="$t('variat.region')"
-                    />
-                    <el-table-column
-                      prop="frequency"
-                      :label="$t('variat.frequency')"
-                    />
-                  </el-table>
-                </div>
-              </div>
+            <el-col :span="24" :offset="0"
+              ><div class="pie-container" id="pie-container" />
             </el-col>
-            <el-col :span="10" :offset="0"><div class="pie-container"/></el-col>
           </el-row>
+        </div>
+        <div class="sub-content-1">
+          <el-row :gutter="0" class="grid-title">
+            <el-col :span="24" :offset="0"
+              ><div>
+                {{ $t('variat.ConservationOfVariationSites') }}
+              </div></el-col
+            >
+          </el-row>
+          <el-table
+            :data="tableData3"
+            stripe
+            :cell-style="{
+              textAlign: 'center',
+              fontSize: '18px',
+              border: '1px solid #EBEEF5',
+            }"
+            :header-cell-style="{
+              textAlign: 'center',
+              fontSize: '18px',
+              border: '1px solid #EBEEF5',
+            }"
+            style="width: 100%"
+          >
+            <el-table-column prop="name" label=" " width="180">
+            </el-table-column>
+            <el-table-column
+              prop="Vertebrate"
+              label="脊椎动物"
+              :index="1"
+              :render-header="renderHeader"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="Mammals"
+              label="哺乳类"
+              :index="2"
+              :render-header="renderHeader"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="Primates"
+              label="灵长目"
+              :index="3"
+              :render-header="renderHeader"
+            >
+            </el-table-column>
+          </el-table>
+        </div>
+        <div class="sub-content-1">
+          <el-row :gutter="0" class="grid-title">
+            <el-col :span="24" :offset="0"
+              ><div>
+                {{ $t('variat.SequenceCharacteristicsOfVariationSites') }}
+              </div></el-col
+            >
+          </el-row>
+          <el-row class="grid-gc">
+            <el-col :span="6"
+              ><div class="grid-content">
+                {{ this.$t('variat.GCContent') }}
+              </div></el-col
+            >
+            <el-col :span="6"
+              ><div id="GCContent-chart" class="grid-content"></div
+            ></el-col>
+            <el-col :span="6"
+              ><div class="grid-content">
+                {{ this.$t('variat.CpGRatio') }}
+              </div></el-col
+            >
+            <el-col :span="6"
+              ><div id="CpGRatio-chart" class="grid-content"></div
+            ></el-col>
+          </el-row>
+          <el-table
+            :data="tableData4"
+            stripe
+            :show-header="false"
+            :cell-style="{
+              textAlign: 'center',
+              fontSize: '18px',
+              border: '1px solid #EBEEF5',
+            }"
+            style="width: 100%"
+          >
+            <el-table-column prop="name1"> </el-table-column>
+            <el-table-column prop="value1"></el-table-column>
+            <el-table-column prop="name2"> </el-table-column>
+            <el-table-column prop="value2"> </el-table-column>
+          </el-table>
+        </div>
+        <div class="sub-content-1">
+          <el-row :gutter="0" class="grid-title">
+            <el-col :span="24" :offset="0"
+              ><div>
+                {{ $t('variat.VariationClinicalInformation') }}
+              </div></el-col
+            >
+          </el-row>
+          <el-row class="grid-clinVar">
+            <el-col :span="6"
+              ><div class="grid-content">
+                {{ this.$t('variat.ClinVarID') }}
+              </div></el-col
+            >
+            <el-col :span="6"
+              ><div class="grid-content">
+                <el-link
+                  :href="
+                    this.ClinVarHref === '.'
+                      ? 'javascript:void(0)'
+                      : this.ClinVarHref
+                  "
+                  >{{ this.ClinVarID }}</el-link
+                >
+              </div></el-col
+            >
+            <el-col :span="6"
+              ><div class="grid-content">
+                {{ this.$t('variat.OMIMID') }}
+              </div></el-col
+            >
+            <el-col :span="6"
+              ><div class="grid-content">
+                <el-link
+                  :href="
+                    this.OMIMHref === '.' ? 'javascript:void(0)' : this.OMIMHref
+                  "
+                  >{{ this.OMIMID }}</el-link
+                >
+              </div></el-col
+            >
+          </el-row>
+          <el-table
+            :data="tableData5"
+            stripe
+            :show-header="false"
+            :cell-style="{
+              textAlign: 'center',
+              fontSize: '18px',
+              border: '1px solid #EBEEF5',
+            }"
+            style="width: 100%"
+          >
+            <el-table-column prop="name1"> </el-table-column>
+            <el-table-column prop="value1"> </el-table-column>
+            <el-table-column prop="name2"> </el-table-column>
+            <el-table-column prop="value2"> </el-table-column>
+          </el-table>
         </div>
         <div class="sub-content-2">
           <el-row :gutter="0" class="grid-title">
@@ -80,7 +237,7 @@
             >
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="14" :offset="0"
+            <el-col :span="24" :offset="0"
               ><div style="margin-top: 20px">
                 {{ $t('variat.Include') }}:
                 <el-radio-group
@@ -93,87 +250,10 @@
                   <el-radio-button label="gnomAD Exomes" />
                   <el-radio-button label="gnomAD Genomes" />
                 </el-radio-group>
-                <div class="grid-content">
-                  <el-table :data="freArr2" style="width: 100%">
-                    <el-table-column
-                      prop="population"
-                      :label="$t('variat.population')"
-                    />
-                    <el-table-column
-                      prop="frequency"
-                      :label="$t('variat.frequency')"
-                    />
-                  </el-table>
-                </div>
+                <div id="pie-container2" class="pie-container2" />
               </div>
             </el-col>
-            <el-col :span="10" :offset="0"
-              ><div class="pie-container2"
-            /></el-col>
           </el-row>
-        </div>
-        <div class="sub-content-1">
-          <el-row :gutter="0" class="grid-title">
-            <el-col :span="24" :offset="0"
-              ><div>
-                {{ $t('variat.ConservationOfVariationSites') }}
-              </div></el-col
-            >
-          </el-row>
-          <el-table
-            :data="tableData3"
-            stripe
-            :show-header="false"
-            :cell-style="{ textAlign: 'center', fontSize: '16px' }"
-            style="width: 100%"
-          >
-            <el-table-column prop="name1"> </el-table-column>
-            <el-table-column prop="value1"> </el-table-column>
-            <el-table-column prop="name2"> </el-table-column>
-            <el-table-column prop="value2"> </el-table-column>
-          </el-table>
-        </div>
-        <div class="sub-content-1">
-          <el-row :gutter="0" class="grid-title">
-            <el-col :span="24" :offset="0"
-              ><div>
-                {{ $t('variat.SequenceCharacteristicsOfVariationSites') }}
-              </div></el-col
-            >
-          </el-row>
-          <el-table
-            :data="tableData4"
-            stripe
-            :show-header="false"
-            :cell-style="{ textAlign: 'center', fontSize: '16px' }"
-            style="width: 100%"
-          >
-            <el-table-column prop="name1"> </el-table-column>
-            <el-table-column prop="value1"> </el-table-column>
-            <el-table-column prop="name2"> </el-table-column>
-            <el-table-column prop="value2"> </el-table-column>
-          </el-table>
-        </div>
-        <div class="sub-content-1">
-          <el-row :gutter="0" class="grid-title">
-            <el-col :span="24" :offset="0"
-              ><div>
-                {{ $t('variat.VariationClinicalInformation') }}
-              </div></el-col
-            >
-          </el-row>
-          <el-table
-            :data="tableData5"
-            stripe
-            :show-header="false"
-            :cell-style="{ textAlign: 'center', fontSize: '16px' }"
-            style="width: 100%"
-          >
-            <el-table-column prop="name1"> </el-table-column>
-            <el-table-column prop="value1"> </el-table-column>
-            <el-table-column prop="name2"> </el-table-column>
-            <el-table-column prop="value2"> </el-table-column>
-          </el-table>
         </div>
         <div class="sub-content-1">
           <el-row :gutter="0" class="grid-title">
@@ -187,11 +267,11 @@
             :data="tableData6"
             stripe
             :show-header="false"
-            :cell-style="{ textAlign: 'center', fontSize: '16px' }"
+            :cell-style="{ textAlign: 'center', fontSize: '18px' }"
             style="width: 100%"
           >
             <el-table-column prop="name1"> </el-table-column>
-            <el-table-column prop="value1"> </el-table-column>
+            <el-table-column prop="value1"></el-table-column>
             <el-table-column prop="name2"> </el-table-column>
             <el-table-column prop="value2"> </el-table-column>
           </el-table>
@@ -244,85 +324,24 @@
 import * as d3 from 'd3'
 import { variantDetail } from '@/api/variation'
 import Nav from '@/components/Nav'
+import * as echarts from 'echarts'
+import chinaJson from 'echarts/map/json/china.json'
+import worldJson from 'echarts/map/json/world.json'
+require('echarts/theme/macarons') // echarts theme
 export default {
   name: 'Variation',
   components: {
-    Nav
+    Nav,
   },
   data() {
     let name = window.location.href.split('?')[1].split('=')[1]
     return {
+      geneDetailData: null,
       variantId: '',
       radio2: '1000G',
       loading: true,
-      freArr: [
-        {
-          population: this.$t('variat.WholeCountry'),
-          frequency: ''
-        },
-        {
-          population: this.$t('variat.NorthEast'),
-          frequency: ''
-        },
-        {
-          population: this.$t('variat.NorthChina'),
-          frequency: ''
-        },
-        {
-          population: this.$t('variat.EastChina'),
-          frequency: ''
-        },
-        {
-          population: this.$t('variat.CentralChina'),
-          frequency: ''
-        },
-        {
-          population: this.$t('variat.NorthWest'),
-          frequency: ''
-        },
-        {
-          population: this.$t('variat.SouthWest'),
-          frequency: ''
-        },
-        {
-          population: this.$t('variat.SouthChina'),
-          frequency: ''
-        }
-      ],
-      freArr2: [
-        {
-          population: window.vm.$t('variat.All'),
-          frequency: ''
-        },
-        {
-          population: window.vm.$t('variat.African'),
-          frequency: ''
-        },
-        {
-          population: window.vm.$t('variat.Amish'),
-          frequency: ''
-        },
-        {
-          population: window.vm.$t('variat.European'),
-          frequency: ''
-        },
-        {
-          population: window.vm.$t('variat.EastAsian'),
-          frequency: ''
-        },
-        {
-          population: window.vm.$t('variat.SouthAsian'),
-          frequency: ''
-        }
-      ],
       variantion: null,
-      schemeData1: [
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
+      schemeData1: [0, 0, 0, 0, 0],
       schemeData2: [0, 0, 0],
       pieData: {
         aachange: '.',
@@ -396,144 +415,375 @@ export default {
         vcf_CHROM: 'chr1',
         vcf_POS: '10321',
         vcf_QUAL: '168.86',
-        vcf_REF: 'C'
+        vcf_REF: 'C',
       },
       tableData: [
         {
           name1: this.$t('variat.CHN100K'),
           value1: '.',
           name2: this.$t('variat.VariationPosition'),
-          value2: '.'
+          value2: '.',
         },
         {
           name1: this.$t('variat.dbSNPRsID'),
           value1: '.',
           name2: this.$t('variat.VariationType'),
-          value2: '.'
+          value2: '.',
         },
         {
           name1: this.$t('variat.HGVS'),
-          value1:
-            '.',
+          value1: '.',
           name2: this.$t('variat.VariationDetails'),
-          value2: '.'
-        }
+          value2: '.',
+        },
       ],
       tableData2: [
         {
-          name1: this.$t('variat.RelatedGene'),
+          name1: this.$t('variat.PolyPhen'),
           value1: '.',
-          name2: this.$t('variat.VariationEffect'),
-          value2: '.'
         },
         {
           name1: this.$t('variat.SIFT'),
           value1: '.',
-          name2: this.$t('variat.PolyPhen'),
-          value2: '.'
+        },
+        {
+          name1: this.$t('variat.CADD'),
+          value1: '.',
         },
         {
           name1: this.$t('variat.GERP'),
           value1: '.',
-          name2: this.$t('variat.CADD'),
-          value2: '.'
-        }
+        },
       ],
       tableData3: [
         {
-          name1: this.$t('variat.VertebratePhastCons'),
-          value1: '.',
-          name2: this.$t('variat.VertebratePhyloP'),
-          value2: '.'
+          name: 'PhastCons',
+          Vertebrate: '.',
+          Mammals: '.',
+          Primates: '.',
         },
         {
-          name1: this.$t('variat.MammalsPhastCons'),
-          value1: '.',
-          name2: this.$t('variat.MammalsPhyloP'),
-          value2: '.'
+          name: 'PhyloP',
+          Vertebrate: '.',
+          Mammals: '.',
+          Primates: '.',
         },
-        {
-          name1: this.$t('variat.PrimatesPhastCons'),
-          value1: '.',
-          name2: this.$t('variat.PrimatesPhyloP'),
-          value2: '.'
-        }
       ],
       tableData4: [
-        {
-          name1: this.$t('variat.GCContent'),
-          value1: '.',
-          name2: this.$t('variat.CpGRatio'),
-          value2: '.'
-        },
         {
           name1: this.$t('variat.RepeatMasker'),
           value1: '.',
           name2: this.$t('variat.TiTv'),
-          value2: '.'
-        }
+          value2: '.',
+        },
       ],
       tableData5: [
-        {
-          name1: this.$t('variat.ClinVarID'),
-          value1: '.',
-          name2: this.$t('variat.OMIMID'),
-          value2: '.'
-        },
         {
           name1: this.$t('variat.ClinVar'),
           value1: '.',
           name2: this.$t('variat.DiseaseName'),
-          value2: '.'
+          value2: '.',
         },
         {
           name1: this.$t('variat.GWASCatalog'),
           value1: '.',
           name2: this.$t('variat.GRASP2'),
-          value2: '.'
+          value2: '.',
         },
         {
           name1: this.$t('variat.COSMIC'),
-          value1: '.'
-        }
+          value1: '.',
+        },
       ],
       tableData6: [
         {
           name1: this.$t('variat.TFBS'),
           value1: '.',
           name2: this.$t('variat.TargetScan'),
-          value2: '.'
+          value2: '.',
         },
         {
           name1: this.$t('variat.CAGEPromoters'),
           value1: '.',
           name2: this.$t('variat.CAGEEnhancers'),
-          value2: '.'
-        }
-      ]
+          value2: '.',
+        },
+      ],
+      AAchangeOne: '.',
+      AAchangeTwo: '.',
+      hunkDetail: [
+        {
+          name: window.vm.$t('variat.NorthChina'),
+          coord: [116.24, 39.54],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+        {
+          name: window.vm.$t('variat.NorthEast'),
+          coord: [126.32, 43.5],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+        {
+          name: window.vm.$t('variat.EastChina'),
+          coord: [121.28, 31.13],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+        {
+          name: window.vm.$t('variat.CentralChina'),
+          coord: [114.2, 30.32],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+        {
+          name: window.vm.$t('variat.SouthChina'),
+          coord: [113.15, 23.08],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+        {
+          name: window.vm.$t('variat.SouthWest'),
+          coord: [104.04, 30.39],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+        {
+          name: window.vm.$t('variat.NorthWest'),
+          coord: [103.49, 36.03],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+      ],
+      worldHunkDetail: [
+        {
+          name: window.vm.$t('variat.African'),
+          coord: [17.873887, -11.202692],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+        {
+          name: window.vm.$t('variat.Amish'),
+          coord: [-95.712891, 37.09024],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+        {
+          name: window.vm.$t('variat.European'),
+          coord: [-3.435973, 55.378051],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+        {
+          name: window.vm.$t('variat.EastAsian'),
+          coord: [104.195397, 35.86166],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+        {
+          name: window.vm.$t('variat.SouthAsian'),
+          coord: [78.96288, 20.593684],
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
+          data: [
+            {
+              name: '等位基因频率',
+              value: 0,
+            },
+            {
+              name: '',
+              value: 1,
+            },
+          ],
+        },
+      ],
+      img: require('../assets/logo.png'),
+      GCContent: [
+        { value: 0, name: 'GC含量' },
+        { value: 100, name: '其他' },
+      ],
+      CpGRatio: [
+        { value: 0, name: 'CpG比例' },
+        { value: 100, name: '其他' },
+      ],
+      ClinVarID: '.',
+      OMIMID: '.',
+      ClinVarHref: '.',
+      OMIMHref: '.',
     }
   },
   watch: {
     variantion() {
-      this.$nextTick(function() {
-        this.pieChart()
-        this.pieChart2()
+      this.$nextTick(function () {
+        this.funcAnnotationChart()
+        this.initMap()
+        this.initChinaChart(this.hunkDetail)
+        this.initWorldChart(this.worldHunkDetail)
         this.schemeChart(this.schemeData1)
         this.schemeChart2(this.schemeData2)
+        this.initGCContentChart(this.GCContent)
+        this.initCpGRatioChart(this.CpGRatio)
       })
-    }
+    },
   },
-  created: function() {
+  created: function () {
     const _this = this
-    _this.variantId = this.$route.query["id"]
+    _this.variantId = this.$route.query['id']
     _this.tableData[0]['value1'] = _this.variantId
     const data = {
       variantId: _this.variantId,
-      chrom: this.$route.query["chrom"] === "x" ? 23 : this.$route.query["chrom"]
+      chrom:
+        this.$route.query['chrom'] === 'x' ? 23 : this.$route.query['chrom'],
     }
-    variantDetail(data).then(response => {
+    variantDetail(data).then((response) => {
+      this.geneDetailData = response
       if (response['listData'][0]) {
-        // console.log(response['listData'][0])
         _this.pieData['chn100k_ALL'] = response['listData'][0]['chn100k_ALL']
         _this.pieData['chn100k_NE'] = response['listData'][0]['chn100k_NE']
         _this.pieData['chn100k_N'] = response['listData'][0]['chn100k_N']
@@ -603,65 +853,383 @@ export default {
         _this.tableData[2]['value1'] = response['listData'][0]['hgvs']
         _this.tableData[2]['value2'] =
           response['listData'][0]['variation_details']
-        _this.tableData2[0]['value1'] = response['listData'][0]['related_gene']
-        _this.tableData2[0]['value2'] =
-          response['listData'][0]['variation_effect']
+        _this.tableData2[0]['value1'] = response['listData'][0]['polyPhen']
         _this.tableData2[1]['value1'] = response['listData'][0]['sift']
-        _this.tableData2[1]['value2'] = response['listData'][0]['polyPhen']
-        _this.tableData2[2]['value1'] = response['listData'][0]['gerp']
-        _this.tableData2[2]['value2'] = response['listData'][0]['cadd']
-        _this.tableData3[0]['value1'] =
-          response['listData'][0]['vertebratePhastCons']
-        _this.tableData3[0]['value2'] =
-          response['listData'][0]['vertebratePhyloP']
-        _this.tableData3[1]['value1'] =
-          response['listData'][0]['mammalsPhastCons']
-        _this.tableData3[1]['value2'] = response['listData'][0]['mammalsPhyloP']
-        _this.tableData3[2]['value1'] =
-          response['listData'][0]['primatesPhastCons']
-        _this.tableData3[2]['value2'] =
-          response['listData'][0]['primatesPhyloP']
-        _this.tableData4[0]['value1'] = response['listData'][0]['gccontent']
-        _this.tableData4[0]['value2'] = response['listData'][0]['cpGRatio']
-        _this.tableData4[1]['value1'] = response['listData'][0]['repeatMasker']
-        _this.tableData4[1]['value2'] = response['listData'][0]['ti_Tv']
-        _this.tableData5[0]['value1'] = response['listData'][0]['clinVarID']
-        _this.tableData5[0]['value2'] = response['listData'][0]['omimid']
-        _this.tableData5[1]['value1'] = response['listData'][0]['clinVar']
-        _this.tableData5[1]['value2'] = response['listData'][0]['diseaseName']
-        _this.tableData5[2]['value1'] = response['listData'][0]['gwascatalog']
-        _this.tableData5[2]['value2'] = response['listData'][0]['grasp2']
-        _this.tableData5[3]['value1'] = response['listData'][0]['cosmic']
+        _this.tableData2[2]['value1'] = response['listData'][0]['cadd']
+        _this.tableData2[3]['value1'] = response['listData'][0]['gerp']
+        _this.tableData3 = [
+          {
+            name: 'PhastCons',
+            Vertebrate: response['listData'][0]['vertebratePhastCons'],
+            Mammals: response['listData'][0]['mammalsPhastCons'],
+            Primates: response['listData'][0]['primatesPhastCons'],
+          },
+          {
+            name: 'PhyloP',
+            Vertebrate: response['listData'][0]['vertebratePhyloP'],
+            Mammals: response['listData'][0]['mammalsPhyloP'],
+            Primates: response['listData'][0]['primatesPhyloP'],
+          },
+        ]
+        _this.GCContent = [
+          {
+            value: response['listData'][0]['gccontent'] * 100,
+            name: 'CpG比例',
+          },
+          {
+            value: 100 - response['listData'][0]['gccontent'] * 100,
+            name: '其他',
+          },
+        ]
+        _this.cpGRatio = [
+          { value: response['listData'][0]['cpGRatio'] * 100, name: 'CpG比例' },
+          {
+            value: 100 - response['listData'][0]['cpGRatio'] * 100,
+            name: '其他',
+          },
+        ]
+        _this.tableData4[0]['value1'] = response['listData'][0]['repeatMasker']
+        _this.tableData4[0]['value2'] = response['listData'][0]['ti_Tv']
+        if (response['listData'][0]['clinVarID'] !== '.') {
+          _this.ClinVarID = response['listData'][0]['clinVarID']
+          _this.ClinVarHref =
+            'https://www.ncbi.nlm.nih.gov/clinvar/?term=' +
+            response['listData'][0]['clinVarID'] +
+            '%5BAlleleID%5D'
+        }
+        if (response['listData'][0]['omimid'].indexOf('OMIM:') !== -1) {
+          var OMid = response['listData'][0]['omimid']
+            .split('OMIM:')[1]
+            .slice(0, 6)
+          _this.OMIMID = OMid
+          _this.OMIMHref =
+            'https://omim.org/entry/' +
+            OMid +
+            '?search=' +
+            OMid +
+            '&highlight=' +
+            OMid
+        }
+        _this.tableData5[0]['value1'] = response['listData'][0]['clinVar']
+        _this.tableData5[0]['value2'] = response['listData'][0]['diseaseName']
+        _this.tableData5[1]['value1'] = response['listData'][0]['gwascatalog']
+        _this.tableData5[1]['value2'] = response['listData'][0]['grasp2']
+        _this.tableData5[2]['value1'] = response['listData'][0]['cosmic']
         _this.tableData6[0]['value1'] = response['listData'][0]['tfbs']
         _this.tableData6[0]['value2'] = response['listData'][0]['targetScan']
         _this.tableData6[1]['value1'] = response['listData'][0]['cagepromoters']
         _this.tableData6[1]['value2'] = response['listData'][0]['cageenhancers']
         _this.variantion = _this.pieData
-        _this.freArr[0]['frequency'] = _this.variantion['chn100k_ALL']
-        _this.freArr[1]['frequency'] = _this.variantion['chn100k_NE']
-        _this.freArr[2]['frequency'] = _this.variantion['chn100k_N']
-        _this.freArr[3]['frequency'] = _this.variantion['chn100k_E']
-        _this.freArr[4]['frequency'] = _this.variantion['chn100k_C']
-        _this.freArr[5]['frequency'] = _this.variantion['chn100k_NW']
-        _this.freArr[6]['frequency'] = _this.variantion['chn100k_SW']
-        _this.freArr[7]['frequency'] = _this.variantion['chn100k_S']
-        _this.freArr2[0]['frequency'] = _this.variantion['thousandG_ALL']
-        _this.freArr2[1]['frequency'] = _this.variantion['thousandG_AFR']
-        _this.freArr2[2]['frequency'] = _this.variantion['thousandG_AMR']
-        _this.freArr2[3]['frequency'] = _this.variantion['thousandG_EUR']
-        _this.freArr2[4]['frequency'] = _this.variantion['thousandG_EAS']
-        _this.freArr2[5]['frequency'] = _this.variantion['thousandG_SAS']
         _this.schemeData1 = [
           parseFloat(response['listData'][0]['h3K27me3']),
           parseFloat(response['listData'][0]['h3K9me3']),
           parseFloat(response['listData'][0]['h3K27Ac']),
           parseFloat(response['listData'][0]['h3K4Me1']),
-          parseFloat(response['listData'][0]['h3K4Me3'])
+          parseFloat(response['listData'][0]['h3K4Me3']),
         ]
         _this.schemeData2 = [
           parseFloat(response['listData'][0]['dnase']),
           parseFloat(response['listData'][0]['polII']),
-          parseFloat(response['listData'][0]['ctcf'])
+          parseFloat(response['listData'][0]['ctcf']),
+        ]
+        if (response['listData'][0]['hgvs'] !== '.') {
+          if (response['listData'][0]['hgvs'].indexOf('ins') === -1) {
+            this.AAchangeOne = response['listData'][0]['hgvs']
+              .split(':p.')[1]
+              .split('')[0]
+            this.AAchangeTwo = response['listData'][0]['hgvs']
+              .split(':p.')[1]
+              .split('')
+              .pop()
+          } else {
+            this.AAchangeOne = response['listData'][0]['hgvs']
+              .split(':p.')[1]
+              .split('ins')[0]
+            this.AAchangeTwo = response['listData'][0]['hgvs']
+              .split(':p.')[1]
+              .split('ins')[1]
+          }
+        }
+        this.hunkDetail = [
+          {
+            name: window.vm.$t('variat.NorthChina'),
+            coord: [116.24, 39.54],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value:
+                  _this.variantion['chn100k_N'] === '0.0'
+                    ? 0
+                    : parseFloat(_this.variantion['chn100k_N']).toFixed(6),
+              },
+              {
+                name: '',
+                value: 1 - parseFloat(_this.variantion['chn100k_N']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.NorthEast'),
+            coord: [126.32, 43.5],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value:
+                  _this.variantion['chn100k_NE'] === '0.0'
+                    ? 0
+                    : parseFloat(_this.variantion['chn100k_NE']).toFixed(6),
+              },
+              {
+                name: '',
+                value:
+                  1 - parseFloat(_this.variantion['chn100k_NE']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EastChina'),
+            coord: [121.28, 31.13],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value:
+                  _this.variantion['chn100k_E'] === '0.0'
+                    ? 0
+                    : parseFloat(_this.variantion['chn100k_E']).toFixed(6),
+              },
+              {
+                name: '',
+                value: 1 - parseFloat(_this.variantion['chn100k_E']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.CentralChina'),
+            coord: [114.2, 30.32],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value:
+                  _this.variantion['chn100k_C'] === '0.0'
+                    ? 0
+                    : parseFloat(_this.variantion['chn100k_C']).toFixed(6),
+              },
+              {
+                name: '',
+                value: 1 - parseFloat(_this.variantion['chn100k_C']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.SouthChina'),
+            coord: [113.15, 23.08],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value:
+                  _this.variantion['chn100k_S'] === '0.0'
+                    ? 0
+                    : parseFloat(_this.variantion['chn100k_S']).toFixed(6),
+              },
+              {
+                name: '',
+                value: 1 - parseFloat(_this.variantion['chn100k_S']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.SouthWest'),
+            coord: [104.04, 30.39],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value:
+                  _this.variantion['chn100k_SW'] === '0.0'
+                    ? 0
+                    : parseFloat(_this.variantion['chn100k_SW']).toFixed(6),
+              },
+              {
+                name: '',
+                value:
+                  1 - parseFloat(_this.variantion['chn100k_SW']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.NorthWest'),
+            coord: [103.49, 36.03],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value:
+                  _this.variantion['chn100k_NW'] === '0.0'
+                    ? 0
+                    : parseFloat(_this.variantion['chn100k_NW']).toFixed(6),
+              },
+              {
+                name: '',
+                value:
+                  1 - parseFloat(_this.variantion['chn100k_NW']).toFixed(6),
+              },
+            ],
+          },
+        ]
+        this.worldHunkDetail = [
+          {
+            name: window.vm.$t('variat.African'),
+            coord: [17.873887, -11.202692],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['thousandG_AFR'])
+                  ? 0
+                  : parseFloat(_this.variantion['thousandG_AFR']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['thousandG_AFR'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['thousandG_AFR']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.Amish'),
+            coord: [-95.712891, 37.09024],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['thousandG_AMR'])
+                  ? 0
+                  : parseFloat(_this.variantion['thousandG_AMR']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['thousandG_AMR'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['thousandG_AMR']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.European'),
+            coord: [-3.435973, 55.378051],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['thousandG_EUR'])
+                  ? 0
+                  : parseFloat(_this.variantion['thousandG_EUR']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['thousandG_EUR'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['thousandG_EUR']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EastAsian'),
+            coord: [104.195397, 35.86166],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['thousandG_EAS'])
+                  ? 0
+                  : parseFloat(_this.variantion['thousandG_EAS']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['thousandG_EAS'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['thousandG_EAS']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.SouthAsian'),
+            coord: [78.96288, 20.593684],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['thousandG_SAS'])
+                  ? 0
+                  : parseFloat(_this.variantion['thousandG_SAS']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['thousandG_SAS'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['thousandG_SAS']).toFixed(6),
+              },
+            ],
+          },
         ]
         _this.loading = false
       } else {
@@ -686,395 +1254,733 @@ export default {
   },
   methods: {
     handleChecked(value) {
-      this.freArr2 = []
+      this.worldHunkDetail = []
       const _this = this
       if (this.radio2 === 'gnomAD Exomes') {
-        this.freArr2.push({
-          population: window.vm.$t('variat.All'),
-          frequency: this.variantion['gnomAD_exome_ALL']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.African'),
-          frequency: this.variantion['gnomAD_exome_AFR']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.Amish'),
-          frequency: this.variantion['gnomAD_exome_AMR']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.AshkenaziJewish'),
-          frequency: this.variantion['gnomAD_exome_ASJ']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.EastAsian'),
-          frequency: this.variantion['gnomAD_exome_EAS']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.EuropeanFinnish'),
-          frequency: this.variantion['gnomAD_exome_FIN']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.EuropeanNonFinnish'),
-          frequency: this.variantion['gnomAD_exome_NFE']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.Other'),
-          frequency: this.variantion['gnomAD_exome_OTH']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.SouthAsian'),
-          frequency: this.variantion['gnomAD_exome_SAS']
-        })
+        this.worldHunkDetail = [
+          {
+            name: window.vm.$t('variat.African'),
+            coord: [17.873887, -11.202692],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_exome_AFR'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_exome_AFR']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_exome_AFR'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_exome_AFR']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.Amish'),
+            coord: [-95.712891, 37.09024],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_exome_AMR'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_exome_AMR']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_exome_AMR'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_exome_AMR']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.AshkenaziJewish'),
+            coord: [34.851612, 31.046051],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_exome_ASJ'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_exome_ASJ']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_exome_ASJ'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_exome_ASJ']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EastAsian'),
+            coord: [104.195397, 35.86166],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_exome_EAS'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_exome_EAS']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_exome_EAS'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_exome_EAS']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EuropeanFinnish'),
+            coord: [25.748151, 61.92410999999999],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_exome_FIN'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_exome_FIN']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_exome_FIN'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_exome_FIN']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EuropeanNonFinnish'),
+            coord: [-3.435973, 55.378051],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_exome_NFE'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_exome_NFE']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_exome_NFE'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_exome_NFE']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.SouthAsian'),
+            coord: [78.96288, 20.593684],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_exome_SAS'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_exome_SAS']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_exome_SAS'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_exome_SAS']).toFixed(6),
+              },
+            ],
+          },
+        ]
       }
       if (this.radio2 === '1000G') {
-        this.freArr2.push({
-          population: window.vm.$t('variat.All'),
-          frequency: this.variantion['thousandG_ALL']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.African'),
-          frequency: this.variantion['thousandG_AFR']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.Amish'),
-          frequency: this.variantion['thousandG_AMR']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.European'),
-          frequency: this.variantion['thousandG_EUR']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.EastAsian'),
-          frequency: this.variantion['thousandG_EAS']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.SouthAsian'),
-          frequency: this.variantion['thousandG_SAS']
-        })
+        this.worldHunkDetail = [
+          {
+            name: window.vm.$t('variat.African'),
+            coord: [17.873887, -11.202692],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['thousandG_AFR'])
+                  ? 0
+                  : parseFloat(_this.variantion['thousandG_AFR']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['thousandG_AFR'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['thousandG_AFR']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.Amish'),
+            coord: [-95.712891, 37.09024],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['thousandG_AMR'])
+                  ? 0
+                  : parseFloat(_this.variantion['thousandG_AMR']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['thousandG_AMR'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['thousandG_AMR']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.European'),
+            coord: [-3.435973, 55.378051],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['thousandG_EUR'])
+                  ? 0
+                  : parseFloat(_this.variantion['thousandG_EUR']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['thousandG_EUR'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['thousandG_EUR']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EastAsian'),
+            coord: [104.195397, 35.86166],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['thousandG_EAS'])
+                  ? 0
+                  : parseFloat(_this.variantion['thousandG_EAS']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['thousandG_EAS'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['thousandG_EAS']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.SouthAsian'),
+            coord: [78.96288, 20.593684],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['thousandG_SAS'])
+                  ? 0
+                  : parseFloat(_this.variantion['thousandG_SAS']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['thousandG_SAS'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['thousandG_SAS']).toFixed(6),
+              },
+            ],
+          },
+        ]
       }
       if (this.radio2 === 'ExAC') {
-        this.freArr2.push({
-          population: window.vm.$t('variat.All'),
-          frequency: this.variantion['exAC_ALL']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.African'),
-          frequency: this.variantion['exAC_AFR']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.Amish'),
-          frequency: this.variantion['exAC_AMR']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.EastAsian'),
-          frequency: this.variantion['exAC_EAS']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.EuropeanFinnish'),
-          frequency: this.variantion['exAC_FIN']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.EuropeanNonFinnish'),
-          frequency: this.variantion['exAC_NFE']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.Other'),
-          frequency: this.variantion['exAC_OTH']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.SouthAsian'),
-          frequency: this.variantion['exAC_SAS']
-        })
+        this.worldHunkDetail = [
+          {
+            name: window.vm.$t('variat.African'),
+            coord: [17.873887, -11.202692],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['exAC_AFR'])
+                  ? 0
+                  : parseFloat(_this.variantion['exAC_AFR']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['exAC_AFR'])
+                  ? 1
+                  : 1 - parseFloat(_this.variantion['exAC_AFR']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.Amish'),
+            coord: [-95.712891, 37.09024],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['exAC_AMR'])
+                  ? 0
+                  : parseFloat(_this.variantion['exAC_AMR']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['exAC_AMR'])
+                  ? 1
+                  : 1 - parseFloat(_this.variantion['exAC_AMR']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EastAsian'),
+            coord: [104.195397, 35.86166],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['exAC_EAS'])
+                  ? 0
+                  : parseFloat(_this.variantion['exAC_EAS']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['exAC_EAS'])
+                  ? 1
+                  : 1 - parseFloat(_this.variantion['exAC_EAS']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EuropeanFinnish'),
+            coord: [25.748151, 61.92410999999999],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['exAC_FIN'])
+                  ? 0
+                  : parseFloat(_this.variantion['exAC_FIN']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['exAC_FIN'])
+                  ? 1
+                  : 1 - parseFloat(_this.variantion['exAC_FIN']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EuropeanNonFinnish'),
+            coord: [-3.435973, 55.378051],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['exAC_NFE'])
+                  ? 0
+                  : parseFloat(_this.variantion['exAC_NFE']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['exAC_NFE'])
+                  ? 1
+                  : 1 - parseFloat(_this.variantion['exAC_NFE']).toFixed(6),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.SouthAsian'),
+            coord: [78.96288, 20.593684],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['exAC_SAS'])
+                  ? 0
+                  : parseFloat(_this.variantion['exAC_SAS']).toFixed(6),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['exAC_SAS'])
+                  ? 1
+                  : 1 - parseFloat(_this.variantion['exAC_SAS']).toFixed(6),
+              },
+            ],
+          },
+        ]
       }
       if (this.radio2 === 'gnomAD Genomes') {
-        this.freArr2.push({
-          population: window.vm.$t('variat.All'),
-          frequency: this.variantion['gnomAD_genome_ALL']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.African'),
-          frequency: this.variantion['gnomAD_genome_AFR']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.Amish'),
-          frequency: this.variantion['gnomAD_genome_AMR']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.AshkenaziJewish'),
-          frequency: this.variantion['gnomAD_genome_ASJ']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.EastAsian'),
-          frequency: this.variantion['gnomAD_genome_EAS']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.EuropeanFinnish'),
-          frequency: this.variantion['gnomAD_genome_FIN']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.EuropeanNonFinnish'),
-          frequency: this.variantion['gnomAD_genome_NFE']
-        })
-        this.freArr2.push({
-          population: window.vm.$t('variat.Other'),
-          frequency: this.variantion['gnomAD_genome_OTH']
-        })
+        this.worldHunkDetail = [
+          {
+            name: window.vm.$t('variat.African'),
+            coord: [17.873887, -11.202692],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_genome_AFR'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_genome_AFR']).toFixed(
+                      6
+                    ),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_genome_AFR'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_genome_AFR']).toFixed(
+                      6
+                    ),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.Amish'),
+            coord: [-95.712891, 37.09024],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_genome_AMR'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_genome_AMR']).toFixed(
+                      6
+                    ),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_genome_AMR'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_genome_AMR']).toFixed(
+                      6
+                    ),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.AshkenaziJewish'),
+            coord: [34.851612, 31.046051],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_genome_ASJ'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_genome_ASJ']).toFixed(
+                      6
+                    ),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_genome_ASJ'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_genome_ASJ']).toFixed(
+                      6
+                    ),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EastAsian'),
+            coord: [104.195397, 35.86166],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_genome_EAS'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_genome_EAS']).toFixed(
+                      6
+                    ),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_genome_EAS'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_genome_EAS']).toFixed(
+                      6
+                    ),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EuropeanFinnish'),
+            coord: [25.748151, 61.92410999999999],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_genome_FIN'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_genome_FIN']).toFixed(
+                      6
+                    ),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_genome_FIN'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_genome_FIN']).toFixed(
+                      6
+                    ),
+              },
+            ],
+          },
+          {
+            name: window.vm.$t('variat.EuropeanNonFinnish'),
+            coord: [-3.435973, 55.378051],
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: [
+              {
+                name: '等位基因频率',
+                value: isNaN(_this.variantion['gnomAD_genome_NFE'])
+                  ? 0
+                  : parseFloat(_this.variantion['gnomAD_genome_NFE']).toFixed(
+                      6
+                    ),
+              },
+              {
+                name: '',
+                value: isNaN(_this.variantion['gnomAD_genome_NFE'])
+                  ? 1
+                  : 1 -
+                    parseFloat(_this.variantion['gnomAD_genome_NFE']).toFixed(
+                      6
+                    ),
+              },
+            ],
+          },
+        ]
       }
-      this.pieChart2()
+      this.initWorldChart(this.worldHunkDetail)
     },
-    pieChart() {
-      const dataset = []
-      this.freArr.forEach(function(val, index) {
-        dataset.push([
-          [
-            val.population,
-            val.frequency === '.' ? 0 : (val.frequency * 100).toFixed(1)
-          ],
-          [
-            'other',
-            val.frequency === '.' ? 100 : 100 - (val.frequency * 100).toFixed(1)
-          ]
-        ])
-      })
-      const width = parseInt(d3.select('.pie-container').style('width'))
-      const height =
-        ((document.body.clientWidth * 200) / 1920) *
-        Math.ceil(dataset.length / 3)
-      d3.select('.pie-container')
-        .selectAll('*')
-        .remove()
+    funcAnnotationChart() {
+      const _this = this
+      const width = parseInt(
+        d3.select('.funcAnnotation-container').style('width')
+      )
+      const height = 100
+      const margin = (width / 20) * 1.5
+      const axisWidth = width - margin * 2
+      const variatPos =
+        this.geneDetailData.listData[0].variation_position.split(':')[1]
+      let positionStart = Infinity
+      let positionEnd = 0
+      d3.select('.funcAnnotation-container').selectAll('*').remove()
       const svg = d3
-        .select('.pie-container')
+        .select('.funcAnnotation-container')
         .append('svg')
         .attr('width', width)
         .attr('height', height)
-      // 确定初始数据
+      this.geneDetailData.relateList.forEach(function (d, i) {
+        if (d.start < positionStart) {
+          positionStart = d.start - 200
+        }
+        if (d.end > positionEnd) {
+          positionEnd = d.end + 200
+        }
+      })
+      this.geneDetailData.listData.forEach(function (d, i) {
+        if (variatPos < positionStart) {
+          positionStart = variatPos - 200
+        }
+        if (variatPos > positionEnd) {
+          positionEnd = variatPos + 200
+        }
+      })
+      let position = [positionStart, positionEnd]
+      let geneLength = positionEnd - positionStart
+      // svg
+      //   .attr('class', 'axis')
+      //   .attr('width', width)
+      //   .attr('height', height)
+      // const scale = d3
+      //   .scaleLinear()
+      //   .domain([positionStart, positionEnd])
+      //   .range([0, axisWidth])
+      // const axis = d3
+      //   .axisBottom()
+      //   .scale(scale)
+      //   .ticks(10)
+      //   .tickPadding(10)
+      // svg
+      //   .append('text')
+      //   .attr('x', 0)
+      //   .attr('y', 50)
+      //   .attr('fill', '#409EFF')
+      //   .attr('font-size', 20)
+      // svg.append('g').call(axis)
+      svg
+        .append('line')
+        .attr('x1', 0)
+        .attr('y1', 28)
+        .attr('x2', axisWidth)
+        .attr('y2', 28)
+        .attr('stroke', '#69c0ff')
+        .attr('stroke-width', 2)
+        .attr('transform', 'translate(' + margin + ',0)')
+      this.geneDetailData.relateList.forEach(function (d, i) {
+        svg
+          .append('rect')
+          .attr('x', ((d['start'] - positionStart) / geneLength) * axisWidth)
+          .attr('y', 20)
+          .attr('width', ((d['end'] - d['start']) / geneLength) * axisWidth)
+          .attr('height', 18)
+          .attr('fill', '#1890ff')
+          .attr('transform', 'translate(' + margin + ',0)')
+        svg
+          .append('text')
+          .attr('x', ((d['start'] - positionStart) / geneLength) * axisWidth)
+          .attr('y', 15)
+          .attr('fill', '#409EFF')
+          .attr('font-size', 12)
+          .attr('gene', d['gene'])
+          .text(function () {
+            return d['gene']
+          })
+          .attr('transform', 'translate(' + margin + ',0)')
+      })
 
-      dataset.forEach(function(val, index) {
-        // 转换数据
-        const pie = d3.pie().value(function(d) {
-          return d[1]
+      let trang =
+        'M ' +
+        parseInt(((variatPos - positionStart) / geneLength) * axisWidth - 10) +
+        ' 60 L ' +
+        parseInt(((variatPos - positionStart) / geneLength) * axisWidth + 10) +
+        ' 60 L ' +
+        parseInt(((variatPos - positionStart) / geneLength) * axisWidth) +
+        ' 45 Z'
+      svg
+        .append('path')
+        .attr('d', trang)
+        .attr('stroke', '#ff7a45')
+        .attr('fill', '#ff7a45')
+        .attr('stroke-width', 2)
+        .attr('transform', 'translate(' + margin + ',0)')
+      svg
+        .append('text')
+        .attr('x', ((variatPos - positionStart) / geneLength) * axisWidth + 20)
+        .attr('y', 60)
+        .attr('fill', '#409EFF')
+        .attr('font-size', 12)
+        .attr('gene', this.geneDetailData.listData[0]['chn100K'])
+        .text(function () {
+          return _this.geneDetailData.listData[0]['chn100K']
         })
-        const piedata = pie(val)
-
-        // 外半径和内半径
-        const outerRadius = width / 12.5
-        const innerRadius = 0
-
-        // 创建弧生成器
-        const arc = d3
-          .arc()
-          .innerRadius(innerRadius)
-          .outerRadius(outerRadius)
-        const color = ['#409EFF', '#E4E7ED']
-
-        // 添加对应数目的弧组，即<g>元素
-        const arcs = svg
-          .selectAll("g[id^='code']")
-          .data(piedata)
-          .enter()
-          .append('g')
-          .attr(
-            'transform',
-            'translate(' +
-              (width * ((index % 3) * 2 + 1)) / 6 +
-              ',' +
-              (height * (Math.floor(index / 3) * 2 + 1)) /
-                (Math.ceil(dataset.length / 3) * 2) +
-              ')'
-          )
-        // 添加弧的路径元素
-        arcs
-          .append('path')
-          .attr('fill', function(d, i) {
-            return color[i] // 设定弧的颜色
-          })
-          .attr('d', function(d) {
-            return arc(d) // 使用弧生成器
-          })
-
-        // 添加弧内的文字元素
-        arcs
-          .append('text')
-          .attr('transform', function(d) {
-            // const x =
-            //   arc.centroid(d)[0] < 0
-            //     ? arc.centroid(d)[0] * 3
-            //     : arc.centroid(d)[0] * 3.2 // 文字的x坐标
-            // const y =
-            //   arc.centroid(d)[1] < 0
-            //     ? arc.centroid(d)[1] * 2.5
-            //     : arc.centroid(d)[1] * 4 // 文字的y坐标
-            return 'translate(' + 90 + ',' + -70 + ')'
-          })
-          .attr('text-anchor', 'middle')
-          .text(function(d) {
-            if (d.data[0] !== 'other') {
-              const percent =
-                (Number(d.value) /
-                  d3.sum(val, function(d) {
-                    return d[1]
-                  })) *
-                100
-              return percent.toFixed(1) + '%'
-            }
-          })
-
-        // // 添加连接弧外的直线元素
-        // arcs
-        //   .append('line')
-        //   .attr('stroke', 'black')
-        //   .attr('x1', function(d) {
-        //     return d.data[0] !== 'other' ? arc.centroid(d)[0] * 2 : null
-        //   })
-        //   .attr('y1', function(d) {
-        //     return d.data[0] !== 'other' ? arc.centroid(d)[1] * 2 : null
-        //   })
-        //   .attr('x2', function(d) {
-        //     return d.data[0] !== 'other' ? arc.centroid(d)[0] * 2.3 : null
-        //   })
-        //   .attr('y2', function(d) {
-        //     return d.data[0] !== 'other' ? arc.centroid(d)[1] * 2.3 : null
-        //   })
-
-        // 添加弧外的文字元素
-        arcs
-          .append('text')
-          .attr('transform', function(d) {
-            return 'translate(' + 0 + ',' + width / 7 + ')'
-          })
-          .attr('text-anchor', 'middle')
-          .text(function(d) {
-            return d.data[0] !== 'other' ? d.data[0] : null
-          })
-      })
-    },
-    pieChart2() {
-      const dataset = []
-      this.freArr2.forEach(function(val, index) {
-        dataset.push([
-          [
-            val.population,
-            val.frequency === '.' ? 0 : (val.frequency * 100).toFixed(1)
-          ],
-          [
-            'other',
-            val.frequency === '.' ? 100 : 100 - (val.frequency * 100).toFixed(1)
-          ]
-        ])
-      })
-      const width = parseInt(d3.select('.pie-container2').style('width'))
-      const height =
-        ((document.body.clientWidth * 200) / 1920) *
-        Math.ceil(dataset.length / 3)
-      d3.select('.pie-container2')
-        .selectAll('*')
-        .remove()
-      const svg = d3
-        .select('.pie-container2')
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height)
-      // 确定初始数据
-
-      dataset.forEach(function(val, index) {
-        // 转换数据
-        const pie = d3.pie().value(function(d) {
-          return d[1]
-        })
-        const piedata = pie(val)
-
-        // 外半径和内半径
-        const outerRadius = width / 12.5
-        const innerRadius = 0
-
-        // 创建弧生成器
-        const arc = d3
-          .arc()
-          .innerRadius(innerRadius)
-          .outerRadius(outerRadius)
-        const color = ['#409EFF', '#E4E7ED']
-
-        // 添加对应数目的弧组，即<g>元素
-        const arcs = svg
-          .selectAll("g[id^='code']")
-          .data(piedata)
-          .enter()
-          .append('g')
-          .attr(
-            'transform',
-            'translate(' +
-              (width * ((index % 3) * 2 + 1)) / 6 +
-              ',' +
-              (height * (Math.floor(index / 3) * 2 + 1)) /
-                (Math.ceil(dataset.length / 3) * 2) +
-              ')'
-          )
-        // 添加弧的路径元素
-        arcs
-          .append('path')
-          .attr('fill', function(d, i) {
-            return color[i] // 设定弧的颜色
-          })
-          .attr('d', function(d) {
-            return arc(d) // 使用弧生成器
-          })
-
-        // 添加弧内的文字元素
-        arcs
-          .append('text')
-          .attr('transform', function(d) {
-            // const x =
-            //   arc.centroid(d)[0] < 0
-            //     ? arc.centroid(d)[0] * 3
-            //     : arc.centroid(d)[0] * 3.2 // 文字的x坐标
-            // const y =
-            //   arc.centroid(d)[1] < 0
-            //     ? arc.centroid(d)[1] * 2.5
-            //     : arc.centroid(d)[1] * 4 // 文字的y坐标
-            return 'translate(' + 90 + ',' + -70 + ')'
-          })
-          .attr('text-anchor', 'middle')
-          .text(function(d) {
-            if (d.data[0] !== 'other') {
-              const percent =
-                (Number(d.value) /
-                  d3.sum(val, function(d) {
-                    return d[1]
-                  })) *
-                100
-              return percent.toFixed(1) + '%'
-            }
-          })
-
-        // // 添加连接弧外的直线元素
-        // arcs
-        //   .append('line')
-        //   .attr('stroke', 'black')
-        //   .attr('x1', function(d) {
-        //     return d.data[0] !== 'other' ? arc.centroid(d)[0] * 2 : null
-        //   })
-        //   .attr('y1', function(d) {
-        //     return d.data[0] !== 'other' ? arc.centroid(d)[1] * 2 : null
-        //   })
-        //   .attr('x2', function(d) {
-        //     return d.data[0] !== 'other' ? arc.centroid(d)[0] * 2.3 : null
-        //   })
-        //   .attr('y2', function(d) {
-        //     return d.data[0] !== 'other' ? arc.centroid(d)[1] * 2.3 : null
-        //   })
-
-        // 添加弧外的文字元素
-        arcs
-          .append('text')
-          .attr('transform', function(d) {
-            return 'translate(' + 0 + ',' + width / 7 + ')'
-          })
-          .attr('text-anchor', 'middle')
-          .text(function(d) {
-            return d.data[0] !== 'other' ? d.data[0] : null
-          })
-      })
+        .attr('transform', 'translate(' + margin + ',0)')
     },
     schemeChart(datay) {
       var datax = ['H3K27me3', 'H3K9me3', 'H3K27Ac', 'H3K4Me1', 'H3K4Me3', '']
@@ -1087,7 +1993,7 @@ export default {
         top: 10,
         right: 40,
         bottom: 40,
-        left: 40
+        left: 40,
       }
 
       var svg = d3
@@ -1115,10 +2021,7 @@ export default {
         .scaleLinear()
         .domain([0, d3.max(datay)])
         .range([height - padding.bottom, padding.top])
-      var yAxis = d3
-        .axisLeft()
-        .scale(yScale)
-        .ticks(10)
+      var yAxis = d3.axisLeft().scale(yScale).ticks(10)
       svg
         .append('g')
         .call(yAxis)
@@ -1130,21 +2033,29 @@ export default {
         .enter()
         .append('g')
         .attr('class', 'bar')
-        .attr('transform', function(d, i) {
-          return 'translate(' + xScale(i * 100) + ',' + yScale(d) + ')'
+        .attr('transform', function (d, i) {
+          return (
+            'translate(' +
+            xScale(i * 100) +
+            ',' +
+            parseInt(isNaN(yScale(d)) ? 0 : yScale(d)) +
+            ')'
+          )
         })
       bar
         .append('rect')
         .attr('x', 1)
         .attr('width', 80)
-        .attr('height', function(d) {
-          return height - yScale(d) - padding.bottom
+        .attr('height', function (d) {
+          return parseInt(
+            height - (isNaN(yScale(d)) ? 0 : yScale(d)) - padding.bottom
+          )
         })
         .attr('stroke', 'White')
-        .attr('fill', function(d, i) {
+        .attr('fill', function (d, i) {
           return sp[i] // 设定弧的颜色
         })
-        .attr('transform', function(d, i) {
+        .attr('transform', function (d, i) {
           return 'translate(10,0)'
         })
 
@@ -1170,7 +2081,7 @@ export default {
         top: 10,
         right: 40,
         bottom: 40,
-        left: 40
+        left: 40,
       }
 
       var svg = d3
@@ -1180,10 +2091,7 @@ export default {
         .attr('height', height + 'px')
 
       // x轴
-      var xScale = d3
-        .scaleOrdinal()
-        .domain(datax)
-        .range([100, 200, 300, 400])
+      var xScale = d3.scaleOrdinal().domain(datax).range([100, 200, 300, 400])
       var xAxis = d3.axisBottom().scale(xScale)
       svg
         .append('g')
@@ -1198,10 +2106,7 @@ export default {
         .scaleLinear()
         .domain([0, d3.max(datay)])
         .range([height - padding.bottom, padding.top])
-      var yAxis = d3
-        .axisLeft()
-        .scale(yScale)
-        .ticks(10)
+      var yAxis = d3.axisLeft().scale(yScale).ticks(10)
       svg
         .append('g')
         .call(yAxis)
@@ -1213,21 +2118,29 @@ export default {
         .enter()
         .append('g')
         .attr('class', 'bar')
-        .attr('transform', function(d, i) {
-          return 'translate(' + xScale(i * 100) + ',' + yScale(d) + ')'
+        .attr('transform', function (d, i) {
+          return (
+            'translate(' +
+            xScale(i * 100) +
+            ',' +
+            parseInt(isNaN(yScale(d)) ? 0 : yScale(d)) +
+            ')'
+          )
         })
       bar
         .append('rect')
         .attr('x', 1)
         .attr('width', 80)
-        .attr('height', function(d) {
-          return height - yScale(d) - padding.bottom
+        .attr('height', function (d) {
+          return parseInt(
+            height - (isNaN(yScale(d)) ? 0 : yScale(d)) - padding.bottom
+          )
         })
         .attr('stroke', 'White')
-        .attr('fill', function(d, i) {
+        .attr('fill', function (d, i) {
           return sp[i] // 设定弧的颜色
         })
-        .attr('transform', function(d, i) {
+        .attr('transform', function (d, i) {
           return 'translate(110,0)'
         })
 
@@ -1241,15 +2154,410 @@ export default {
       //   .text(function(d) {
       //     return d;
       //   });
-    }
-    // getQueryString(name) {
-    //   const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
-    //   const l = decodeURI(window.location.search)
-    //   const r = l.substr(1).match(reg)
-    //   if (r != null) return unescape(r[2])
-    //   return null
-    // }
-  }
+    },
+    mergeProvinces(chinaJson, names, properties) {
+      //合并大区里省份的coordinates
+      var features = chinaJson.features
+      var polygons = []
+      var polygons2 = []
+
+      for (var i = 0; i < names.length; i++) {
+        var polygonsCoordinates = []
+        var polygonsEncodeOffsets = []
+        for (var z = 0; z < names[i].length; z++) {
+          for (var j = 0; j < features.length; j++) {
+            if (features[j].properties.name == names[i][z]) {
+              if (features[j].geometry.coordinates[0].constructor == String) {
+                //合并coordinates
+                for (
+                  var l = 0;
+                  l < features[j].geometry.coordinates.length;
+                  l++
+                ) {
+                  polygonsCoordinates.push(features[j].geometry.coordinates[l])
+                }
+              } else if (
+                features[j].geometry.coordinates[0].constructor == Array
+              ) {
+                for (
+                  var k = 0;
+                  k < features[j].geometry.coordinates.length;
+                  k++
+                ) {
+                  for (
+                    var d = 0;
+                    d < features[j].geometry.coordinates[k].length;
+                    d++
+                  ) {
+                    polygonsCoordinates.push(
+                      features[j].geometry.coordinates[k][d]
+                    )
+                  }
+                }
+              }
+
+              if (features[j].geometry.encodeOffsets[0].constructor == String) {
+                //合并encodeOffsets
+                polygonsEncodeOffsets.push(features[j].geometry.encodeOffsets)
+              } else if (
+                features[j].geometry.encodeOffsets[0].constructor == Array
+              ) {
+                for (
+                  var k = 0;
+                  k < features[j].geometry.encodeOffsets.length;
+                  k++
+                ) {
+                  if (
+                    features[j].geometry.encodeOffsets[k][0].constructor ==
+                    Array
+                  ) {
+                    for (
+                      var e = 0;
+                      e < features[j].geometry.encodeOffsets[k].length;
+                      e++
+                    ) {
+                      polygonsEncodeOffsets.push(
+                        features[j].geometry.encodeOffsets[k][e]
+                      )
+                    }
+                  } else {
+                    polygonsEncodeOffsets.push(
+                      features[j].geometry.encodeOffsets[k]
+                    )
+                  }
+                }
+              }
+
+              break
+            }
+          }
+        }
+        polygons.push(polygonsCoordinates)
+        polygons2.push(polygonsEncodeOffsets)
+      }
+
+      // 构建新的合并区域
+      var features = []
+
+      for (var a = 0; a < names.length; a++) {
+        var feature = {
+          id: features.length.toString(),
+          type: 'FeatureCollection',
+          geometry: {
+            type: 'Polygon',
+            coordinates: polygons[a],
+            encodeOffsets: polygons2[a],
+          },
+          properties: {
+            name: properties.name[a] || '',
+            childNum: polygons[a].length,
+          },
+        }
+        if (properties.cp[a]) {
+          feature.properties.cp = properties.cp[a]
+        }
+
+        // 将新的合并区域添加到地图中
+        features.push(feature)
+      }
+      chinaJson.features = features
+    },
+    initMap() {
+      var params = {
+        names: [
+          //把各个大区的省份用二维数组分开
+          ['北京', '天津', '河北', '山西', '内蒙古'],
+          ['黑龙江', '吉林', '辽宁'],
+          ['山东', '江苏', '安徽', '江西', '浙江', '福建', '上海', '台湾'],
+          ['河南', '湖北', '湖南'],
+          ['广东', '广西', '海南', '香港', '澳门'],
+          ['重庆', '四川', '云南', '西藏', '贵州'],
+          ['陕西', '甘肃', '青海', '宁夏', '新疆'],
+        ],
+        properties: {
+          //自定义大区的名字，要和上面的大区省份一一对应
+          name: ['华北', '东北', '华东', '华中', '华南', '西南', '西北'],
+          cp: [
+            //经纬度可以自己随意定义
+            [116.24, 39.54],
+            [126.32, 43.5],
+            [121.28, 31.13],
+            [114.2, 30.32],
+            [113.15, 23.08],
+            [104.04, 30.39],
+            [103.49, 36.03],
+          ],
+        },
+      }
+      if (chinaJson.features && chinaJson.features.length > 8) {
+        this.mergeProvinces(chinaJson, params.names, params.properties)
+      }
+      echarts.registerMap('china', chinaJson) // 注册中国地图
+      echarts.registerMap('world', worldJson) // 注册世界地图
+    },
+    initChinaChart(hunkDetail) {
+      var chartDom = document.getElementById('pie-container')
+      var myChart = echarts.init(chartDom)
+      function getDe() {
+        var ser = []
+        echarts.util.each(hunkDetail, function (dataItem, idx) {
+          ser.push({
+            name: hunkDetail[idx].name,
+            color: ['#2f54eb', '#faad14', '#1890ff', '#fa8c16', '#13c2c2'],
+            type: 'pie',
+            radius: '8%',
+            // minAngle: 10,
+            center: myChart.convertToPixel('geo', hunkDetail[idx].coord),
+            label: {
+              position: 'inside',
+              formatter: function (e) {
+                if (e.data.name !== '') {
+                  return e.seriesName + '- ' + e.data.value
+                }
+              },
+            },
+            labelLine: hunkDetail[idx].labelLine,
+            data: hunkDetail[idx].data,
+          })
+        })
+        return ser
+      }
+      var option = {
+        // center: ['80%', '50%'],
+        tooltip: {
+          trigger: 'item',
+          formatter: function (params) {
+            return params.name // 自行定义formatter格式
+          },
+        },
+        geo: {
+          map: 'china',
+          roam: false, //不开启缩放和平移
+          center: [105, 35],
+          zoom: 1, //视角缩放比例
+          silent: true,
+          label: {
+            normal: {
+              show: true,
+              fontSize: '12',
+              color: 'rgba(0,0,0,0.7)',
+            },
+            emphasis: {
+              textStyle: {
+                color: '#fff',
+              },
+            },
+          },
+          itemStyle: {
+            normal: {
+              borderColor: 'rgba(0, 0, 0, 0.2)',
+            },
+            emphasis: {
+              areaColor: '#F3B329', //鼠标选择区域颜色
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 20,
+              borderWidth: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
+        },
+        series: [
+          {
+            name: '变异数量',
+            type: 'map',
+            geoIndex: 0,
+            // data: dataList,
+          },
+        ],
+      }
+      myChart.setOption(option)
+      var option2 = {
+        series: getDe(),
+      }
+      myChart.setOption(option2)
+      this.$nextTick(() => {
+        myChart.resize() // 这里是为了解决，tab刷新的时候，图表不刷新的问题。
+      })
+    },
+    initWorldChart(worldHunkDetail) {
+      var chartDom = document.getElementById('pie-container2')
+      var myChart = echarts.init(chartDom)
+      myChart.clear()
+      function getDe() {
+        var ser = []
+        echarts.util.each(worldHunkDetail, function (dataItem, idx) {
+          ser.push({
+            name: worldHunkDetail[idx].name,
+            color: ['#2f54eb', '#faad14', '#1890ff', '#fa8c16', '#13c2c2'],
+            type: 'pie',
+            radius: '8%',
+            // minAngle: 10,
+            center: myChart.convertToPixel('geo', worldHunkDetail[idx].coord),
+            label: {
+              position: 'inside',
+              formatter: function (e) {
+                if (e.data.name !== '') {
+                  return e.seriesName + '- ' + e.data.value
+                }
+              },
+            },
+            labelLine: worldHunkDetail[idx].labelLine,
+            data: worldHunkDetail[idx].data,
+          })
+        })
+        return ser
+      }
+      var option = {
+        // center: ['80%', '50%'],
+        tooltip: {
+          trigger: 'item',
+          formatter: function (params) {
+            return params.name // 自行定义formatter格式
+          },
+        },
+        geo: {
+          map: 'world',
+          mapType: 'world',
+          roam: false, //不开启缩放和平移
+          center: ['50%', '50%'],
+          zoom: 1, //视角缩放比例
+          silent: true,
+          label: {
+            normal: {
+              show: false,
+            },
+          },
+          itemStyle: {
+            normal: {
+              borderColor: 'rgba(0, 0, 0, 0.2)',
+            },
+            emphasis: {
+              areaColor: '#F3B329', //鼠标选择区域颜色
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 20,
+              borderWidth: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
+        },
+        series: [
+          {
+            name: '变异数量',
+            type: 'map',
+            geoIndex: 0,
+            // data: dataList,
+          },
+        ],
+      }
+      myChart.setOption(option)
+      var option2 = {
+        series: getDe(),
+      }
+      myChart.setOption(option2)
+      this.$nextTick(() => {
+        myChart.resize() // 这里是为了解决，tab刷新的时候，图表不刷新的问题。
+      })
+    },
+    renderHeader(h, { column }) {
+      return h('div', [
+        h('img', {
+          style: {
+            width: '60px',
+            marginRight: '5px',
+            verticalAlign: 'middle',
+          },
+          attrs: {
+            src: require('../assets/PhastCons-' + column.index + '.png'),
+          },
+        }),
+        h('span', column.label),
+      ])
+    },
+    initGCContentChart(GCContent) {
+      var chartDom = document.getElementById('GCContent-chart')
+      var myChart = echarts.init(chartDom)
+      var option = {
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} :({d}%)',
+        },
+        series: [
+          {
+            name: 'GC含量',
+            type: 'pie',
+            radius: '60%',
+            color: ['#2f54eb', '#faad14'],
+            center: ['50%', '50%'],
+            label: {
+              normal: {
+                show: false,
+              },
+            },
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: GCContent,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)',
+              },
+            },
+          },
+        ],
+      }
+      myChart.setOption(option)
+      this.$nextTick(() => {
+        myChart.resize() // 这里是为了解决，tab刷新的时候，图表不刷新的问题。
+      })
+    },
+    initCpGRatioChart(CpGRatio) {
+      var chartDom = document.getElementById('CpGRatio-chart')
+      var myChart = echarts.init(chartDom)
+      var option = {
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} :({d}%)',
+        },
+        series: [
+          {
+            name: 'CpG比例',
+            type: 'pie',
+            radius: '60%',
+            color: ['#2f54eb', '#faad14', '#1890ff', '#fa8c16', '#13c2c2'],
+            center: ['50%', '50%'],
+            label: {
+              normal: {
+                show: false,
+              },
+            },
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            data: CpGRatio,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)',
+              },
+            },
+          },
+        ],
+      }
+      myChart.setOption(option)
+      this.$nextTick(() => {
+        myChart.resize() // 这里是为了解决，tab刷新的时候，图表不刷新的问题。
+      })
+    },
+  },
 }
 </script>
 
@@ -1262,16 +2570,40 @@ export default {
     .grid-title {
       background: rgb(160, 207, 255);
       padding: 15px;
-      font-size: 20px;
+      font-size: 22px;
       // margin: 0;
       border-radius: 5px 5px 0 0;
       text-align: left;
+    }
+    .grid-gc {
+      font-size: 18px;
+      text-align: center;
+      .grid-content {
+        padding: 15px;
+        border: 1px solid #ebeef5;
+        color: #606266;
+        height: 100px;
+        line-height: 100px;
+      }
+    }
+    .grid-clinVar {
+      font-size: 18px;
+      text-align: center;
+      .grid-content {
+        padding: 15px;
+        color: #606266;
+        border: 1px solid #ebeef5;
+        a {
+          color: #409eff;
+        }
+      }
     }
   }
   .sub-content-2 {
     margin-bottom: 20px;
     .grid-title {
       background: rgb(160, 207, 255);
+      font-size: 22px;
       padding: 15px;
       // margin: 0;
       border-radius: 5px 5px 0 0;
@@ -1280,11 +2612,16 @@ export default {
     .el-row {
       .el-col {
         div {
-          font-size: 18px;
+          font-size: 22px;
           line-height: 26px;
           text-align: left;
         }
         .pie-container {
+          height: 550px;
+          font-size: 16px;
+        }
+        .pie-container2 {
+          height: 650px;
           font-size: 16px;
         }
         .grid-title {
@@ -1292,6 +2629,43 @@ export default {
           margin-bottom: 10px;
         }
       }
+    }
+  }
+  .signal-container {
+    display: flex;
+    justify-content: center;
+    height: 30px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    align-content: center;
+    .AAchange-one {
+      padding: 5px;
+      border: 1px solid #1890ff;
+    }
+    .AAchange-line {
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      .line {
+        height: 2px;
+        width: 20px;
+        margin-left: 5px;
+        background: #1890ff;
+      }
+      .arrow {
+        width: 10px;
+        height: 10px;
+        border: 10px solid #ffffff;
+        border-left-color: #1890ff;
+      }
+    }
+    .AAchange-two {
+      padding: 5px;
+      border: 1px solid #1890ff;
     }
   }
 }
