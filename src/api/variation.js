@@ -39,3 +39,11 @@ export function variantDetail(data) {
     data: data
   })
 }
+
+export function svVariantDetail(data) {
+  return request({
+    url: '/svVariantDetail',
+    method: 'post',
+    data: data
+  })
+}

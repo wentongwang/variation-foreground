@@ -1,10 +1,9 @@
 <template>
   <el-header class="hello" :gutter="20">
     <el-row>
-      <el-col
-        class="logo"
-        :span="6"
-      ><span @click="GoToIndex">{{ $t('index.name') }}</span></el-col>
+      <el-col class="logo" :span="6"
+        ><span @click="GoToIndex">{{ $t('index.name') }}</span></el-col
+      >
       <el-col class="input-contaner" :span="5" :offset="4">
         <el-select
           v-model="value"
@@ -47,7 +46,7 @@ export default {
   name: 'Nav',
   components: {
     LangSelect,
-    LogOut
+    LogOut,
   },
   inject: ['reload'],
   data() {
@@ -55,11 +54,11 @@ export default {
       msg: '',
       value: '',
       loading: false,
-      options: []
+      options: [],
     }
   },
   methods: {
-    GoToIndex: function() {
+    GoToIndex: function () {
       this.$router.replace('/')
     },
     remoteMethod(query) {
@@ -67,16 +66,26 @@ export default {
         const queryArr = query.split('-')
         this.options = []
         const _this = this
-        if (queryArr.length > 0 && queryArr[0] < 23 || queryArr[0] === "x") {
+        if (
+          (queryArr.length < 5 && queryArr.length > 0 && queryArr[0] < 23) ||
+          (queryArr.length < 5 && queryArr.length > 0 && queryArr[0] === 'x') ||
+          (queryArr.length < 5 && queryArr.length > 0 && queryArr[0] === 'X') ||
+          (queryArr.length < 5 &&
+            queryArr.length > 0 &&
+            queryArr[0].indexOf('chr') !== -1)
+        ) {
           if (queryArr.length === 2) {
             if (parseInt(queryArr[1]) > 10) {
               _this.options.push({
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
-                chrom: queryArr[0] === "x" ? 23 : parseInt(queryArr[0]),
+                chrom:
+                  queryArr[0] === 'x' || queryArr[0] === 'X'
+                    ? 23
+                    : parseInt(queryArr[0]),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[1]) + 1,
-                type: 'position'
+                type: 'position',
               })
             }
           }
@@ -88,45 +97,61 @@ export default {
               _this.options.push({
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
-                chrom: queryArr[0] === "x" ? 23 : parseInt(queryArr[0]),
+                chrom:
+                  queryArr[0] === 'x' || queryArr[0] === 'X'
+                    ? 23
+                    : parseInt(queryArr[0]),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[2]) + 1,
-                type: 'position'
+                type: 'position',
               })
             }
           }
           if (queryArr.length >= 4) {
             this.loading = true
             const data = {
-              variantId: query.toUpperCase()
+              variantId: query.toUpperCase(),
+              chrom: null,
             }
-            variant(data).then(response => {
-              const data = response.listData
-              data.forEach(function(val, index, arr) {
-                _this.options.push({
-                  chrom: val.chrom,
-                  value: val.uuId,
-                  label: val.uuId,
-                  type: response['type'],
-                  start: parseInt(val.start) - 1,
-                  end: parseInt(val.end) + 1
+            if (
+              (queryArr[0].slice(0, 3) === 'chr' &&
+                queryArr[0].slice(3) < 23) ||
+              (queryArr[0].slice(0, 3) === 'chr' &&
+                queryArr[0].slice(3) === 'x') ||
+              (queryArr[0].slice(0, 3) === 'chr' &&
+                queryArr[0].slice(3) === 'X')
+            ) {
+              queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
+                ? (data.chrom = 23)
+                : (data.chrom = queryArr[0].slice(3)),
+                variant(data).then((response) => {
+                  const data = response.listData
+                  data.forEach(function (val, index, arr) {
+                    _this.options.push({
+                      chrom: val.chrom,
+                      value: val.uu_id,
+                      label: val.uu_id,
+                      type: response['type'],
+                      start: parseInt(val.start) - 1,
+                      end: parseInt(val.end) + 1,
+                    })
+                  })
+                  this.loading = false
                 })
-              })
-              this.loading = false
-            })
+            }
           }
         } else {
           this.loading = true
-          search(query.toUpperCase()).then(response => {
+          search(query.toUpperCase()).then((response) => {
             const data = response.listData
-            data.forEach(function(val, index, arr) {
+            data.forEach(function (val, index, arr) {
               _this.options.push({
                 chrom: parseInt(val.chrom.split('.')[0].split('_')[1]),
                 value: val.gene,
                 label: val.gene,
                 type: data[0]['type'],
                 start: parseInt(val.start) - 1,
-                end: parseInt(val.end) + 1
+                end: parseInt(val.end) + 1,
               })
             })
             this.loading = false
@@ -151,15 +176,20 @@ export default {
         this.reload()
       }
       if (e.type === 'variant') {
-        this.$router.push('/variant?id=' + e.value)
+        this.$router.push(
+          '/variant?id=' + e.value + '&chrom=' + this.options[0].chrom
+        )
         this.$store.dispatch('variations/variationSearch', e)
         _this.options = []
         this.reload()
       }
     },
     selectBlur() {
-      if(this.options.length){
-        if (this.options[0].type === 'gene' || this.options[0].type === 'pseudogene') {
+      if (this.options.length) {
+        if (
+          this.options[0].type === 'gene' ||
+          this.options[0].type === 'pseudogene'
+        ) {
           this.$router.push('/gene')
           this.$store.dispatch('variations/geneSearch', this.options[0])
         }
@@ -168,12 +198,17 @@ export default {
           this.$store.dispatch('variations/positionSearch', this.options[0])
         }
         if (this.options[0].type === 'variant') {
-          this.$router.push('/variant?id=' + this.options[0].value)
+          this.$router.push(
+            '/variant?id=' +
+              this.options[0].value +
+              '&chrom=' +
+              this.options[0].chrom
+          )
           this.$store.dispatch('variations/variationSearch', this.options[0])
         }
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

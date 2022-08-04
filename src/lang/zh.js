@@ -42,7 +42,7 @@ export default {
       exonicFunc: '变异功能',
       variation_type: '变异类型',
       dbsnp: 'dbSNP',
-      chn100k_ALL: 'chn100k数据库',
+      chn100k_ALL: '中国人群变异频率',
       gene: '基因名',
       geneDetail: '基因详情'
     }

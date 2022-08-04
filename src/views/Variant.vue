@@ -284,7 +284,7 @@
               </div></el-col
             >
           </el-row>
-          <el-row :gutter="20">
+          <el-row :gutter="20" style="margin-top:10px">
             <el-col :span="12" :offset="0"
               ><div class="scheme-container1" />
               <el-row :gutter="0">
@@ -850,7 +850,12 @@ export default {
           response['listData'][0]['variation_position']
         _this.tableData[1]['value1'] = response['listData'][0]['dbSNPRsID']
         _this.tableData[1]['value2'] = response['listData'][0]['variation_type']
-        _this.tableData[2]['value1'] = response['listData'][0]['hgvs']
+        var hgvsArr = response['listData'][0]['hgvs'].split(',')
+        if(hgvsArr.length > 2){
+          _this.tableData[2]['value1'] = hgvsArr[0] + ',' + hgvsArr[1] + ',' + hgvsArr[2]
+        }else{
+          _this.tableData[2]['value1'] = response['listData'][0]['hgvs']
+        }
         _this.tableData[2]['value2'] =
           response['listData'][0]['variation_details']
         _this.tableData2[0]['value1'] = response['listData'][0]['polyPhen']
@@ -874,7 +879,7 @@ export default {
         _this.GCContent = [
           {
             value: response['listData'][0]['gccontent'] * 100,
-            name: 'CpG比例',
+            name: 'GC含量',
           },
           {
             value: 100 - response['listData'][0]['gccontent'] * 100,
@@ -933,21 +938,24 @@ export default {
           parseFloat(response['listData'][0]['ctcf']),
         ]
         if (response['listData'][0]['hgvs'] !== '.') {
-          if (response['listData'][0]['hgvs'].indexOf('ins') === -1) {
+          if (response['listData'][0]['hgvs'].indexOf('ins') !== -1 || response['listData'][0]['hgvs'].indexOf('dup') !== -1 || response['listData'][0]['hgvs'].indexOf('del') !== -1) {
+            this.AAchangeOne = response['listData'][0]['hgvs']
+              .split(':p.')[1]
+              .split(',')[0]
+              .match(/(\w)\d+(\w+\*\d+)/)[1]
+            this.AAchangeTwo = response['listData'][0]['hgvs']
+              .split(':p.')[1]
+              .split(',')[0]
+              .match(/(\w)\d+(\w+\*\d+)/)[2]
+          }else{
             this.AAchangeOne = response['listData'][0]['hgvs']
               .split(':p.')[1]
               .split('')[0]
             this.AAchangeTwo = response['listData'][0]['hgvs']
               .split(':p.')[1]
+              .split(',')[0]
               .split('')
               .pop()
-          } else {
-            this.AAchangeOne = response['listData'][0]['hgvs']
-              .split(':p.')[1]
-              .split('ins')[0]
-            this.AAchangeTwo = response['listData'][0]['hgvs']
-              .split(':p.')[1]
-              .split('ins')[1]
           }
         }
         this.hunkDetail = [
@@ -1123,14 +1131,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_AFR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_AFR']).toFixed(6),
+                  : parseFloat(_this.variantion['thousandG_AFR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_AFR'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['thousandG_AFR']).toFixed(6),
+                    parseFloat(_this.variantion['thousandG_AFR']),
               },
             ],
           },
@@ -1147,14 +1155,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_AMR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_AMR']).toFixed(6),
+                  : parseFloat(_this.variantion['thousandG_AMR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_AMR'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['thousandG_AMR']).toFixed(6),
+                    parseFloat(_this.variantion['thousandG_AMR']),
               },
             ],
           },
@@ -1171,14 +1179,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_EUR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_EUR']).toFixed(6),
+                  : parseFloat(_this.variantion['thousandG_EUR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_EUR'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['thousandG_EUR']).toFixed(6),
+                    parseFloat(_this.variantion['thousandG_EUR']),
               },
             ],
           },
@@ -1195,14 +1203,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_EAS'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_EAS']).toFixed(6),
+                  : parseFloat(_this.variantion['thousandG_EAS']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_EAS'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['thousandG_EAS']).toFixed(6),
+                    parseFloat(_this.variantion['thousandG_EAS']),
               },
             ],
           },
@@ -1219,14 +1227,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_SAS'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_SAS']).toFixed(6),
+                  : parseFloat(_this.variantion['thousandG_SAS']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_SAS'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['thousandG_SAS']).toFixed(6),
+                    parseFloat(_this.variantion['thousandG_SAS']),
               },
             ],
           },
@@ -1271,14 +1279,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_AFR'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_AFR']).toFixed(6),
+                  : parseFloat(_this.variantion['gnomAD_exome_AFR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_AFR'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_AFR']).toFixed(6),
+                    parseFloat(_this.variantion['gnomAD_exome_AFR']),
               },
             ],
           },
@@ -1295,14 +1303,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_AMR'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_AMR']).toFixed(6),
+                  : parseFloat(_this.variantion['gnomAD_exome_AMR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_AMR'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_AMR']).toFixed(6),
+                    parseFloat(_this.variantion['gnomAD_exome_AMR']),
               },
             ],
           },
@@ -1319,14 +1327,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_ASJ'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_ASJ']).toFixed(6),
+                  : parseFloat(_this.variantion['gnomAD_exome_ASJ']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_ASJ'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_ASJ']).toFixed(6),
+                    parseFloat(_this.variantion['gnomAD_exome_ASJ']),
               },
             ],
           },
@@ -1343,14 +1351,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_EAS'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_EAS']).toFixed(6),
+                  : parseFloat(_this.variantion['gnomAD_exome_EAS']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_EAS'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_EAS']).toFixed(6),
+                    parseFloat(_this.variantion['gnomAD_exome_EAS']),
               },
             ],
           },
@@ -1367,14 +1375,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_FIN'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_FIN']).toFixed(6),
+                  : parseFloat(_this.variantion['gnomAD_exome_FIN']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_FIN'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_FIN']).toFixed(6),
+                    parseFloat(_this.variantion['gnomAD_exome_FIN']),
               },
             ],
           },
@@ -1391,14 +1399,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_NFE'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_NFE']).toFixed(6),
+                  : parseFloat(_this.variantion['gnomAD_exome_NFE']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_NFE'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_NFE']).toFixed(6),
+                    parseFloat(_this.variantion['gnomAD_exome_NFE']),
               },
             ],
           },
@@ -1415,14 +1423,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_SAS'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_SAS']).toFixed(6),
+                  : parseFloat(_this.variantion['gnomAD_exome_SAS']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_SAS'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_SAS']).toFixed(6),
+                    parseFloat(_this.variantion['gnomAD_exome_SAS']),
               },
             ],
           },
@@ -1443,14 +1451,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_AFR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_AFR']).toFixed(6),
+                  : parseFloat(_this.variantion['thousandG_AFR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_AFR'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['thousandG_AFR']).toFixed(6),
+                    parseFloat(_this.variantion['thousandG_AFR']),
               },
             ],
           },
@@ -1467,14 +1475,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_AMR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_AMR']).toFixed(6),
+                  : parseFloat(_this.variantion['thousandG_AMR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_AMR'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['thousandG_AMR']).toFixed(6),
+                    parseFloat(_this.variantion['thousandG_AMR']),
               },
             ],
           },
@@ -1491,14 +1499,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_EUR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_EUR']).toFixed(6),
+                  : parseFloat(_this.variantion['thousandG_EUR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_EUR'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['thousandG_EUR']).toFixed(6),
+                    parseFloat(_this.variantion['thousandG_EUR']),
               },
             ],
           },
@@ -1515,14 +1523,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_EAS'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_EAS']).toFixed(6),
+                  : parseFloat(_this.variantion['thousandG_EAS']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_EAS'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['thousandG_EAS']).toFixed(6),
+                    parseFloat(_this.variantion['thousandG_EAS']),
               },
             ],
           },
@@ -1539,14 +1547,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_SAS'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_SAS']).toFixed(6),
+                  : parseFloat(_this.variantion['thousandG_SAS']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_SAS'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['thousandG_SAS']).toFixed(6),
+                    parseFloat(_this.variantion['thousandG_SAS']),
               },
             ],
           },
@@ -1567,13 +1575,13 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_AFR'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_AFR']).toFixed(6),
+                  : parseFloat(_this.variantion['exAC_AFR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_AFR'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_AFR']).toFixed(6),
+                  : 1 - parseFloat(_this.variantion['exAC_AFR']),
               },
             ],
           },
@@ -1590,13 +1598,13 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_AMR'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_AMR']).toFixed(6),
+                  : parseFloat(_this.variantion['exAC_AMR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_AMR'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_AMR']).toFixed(6),
+                  : 1 - parseFloat(_this.variantion['exAC_AMR']),
               },
             ],
           },
@@ -1613,13 +1621,13 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_EAS'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_EAS']).toFixed(6),
+                  : parseFloat(_this.variantion['exAC_EAS']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_EAS'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_EAS']).toFixed(6),
+                  : 1 - parseFloat(_this.variantion['exAC_EAS']),
               },
             ],
           },
@@ -1636,13 +1644,13 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_FIN'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_FIN']).toFixed(6),
+                  : parseFloat(_this.variantion['exAC_FIN']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_FIN'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_FIN']).toFixed(6),
+                  : 1 - parseFloat(_this.variantion['exAC_FIN']),
               },
             ],
           },
@@ -1659,13 +1667,13 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_NFE'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_NFE']).toFixed(6),
+                  : parseFloat(_this.variantion['exAC_NFE']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_NFE'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_NFE']).toFixed(6),
+                  : 1 - parseFloat(_this.variantion['exAC_NFE']),
               },
             ],
           },
@@ -1682,13 +1690,13 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_SAS'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_SAS']).toFixed(6),
+                  : parseFloat(_this.variantion['exAC_SAS']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_SAS'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_SAS']).toFixed(6),
+                  : 1 - parseFloat(_this.variantion['exAC_SAS']),
               },
             ],
           },
@@ -1709,18 +1717,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_AFR'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_AFR']).toFixed(
-                      6
-                    ),
+                  : parseFloat(_this.variantion['gnomAD_genome_AFR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_AFR'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_AFR']).toFixed(
-                      6
-                    ),
+                    parseFloat(_this.variantion['gnomAD_genome_AFR']),
               },
             ],
           },
@@ -1737,18 +1741,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_AMR'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_AMR']).toFixed(
-                      6
-                    ),
+                  : parseFloat(_this.variantion['gnomAD_genome_AMR']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_AMR'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_AMR']).toFixed(
-                      6
-                    ),
+                    parseFloat(_this.variantion['gnomAD_genome_AMR']),
               },
             ],
           },
@@ -1765,18 +1765,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_ASJ'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_ASJ']).toFixed(
-                      6
-                    ),
+                  : parseFloat(_this.variantion['gnomAD_genome_ASJ']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_ASJ'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_ASJ']).toFixed(
-                      6
-                    ),
+                    parseFloat(_this.variantion['gnomAD_genome_ASJ']),
               },
             ],
           },
@@ -1793,18 +1789,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_EAS'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_EAS']).toFixed(
-                      6
-                    ),
+                  : parseFloat(_this.variantion['gnomAD_genome_EAS']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_EAS'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_EAS']).toFixed(
-                      6
-                    ),
+                    parseFloat(_this.variantion['gnomAD_genome_EAS']),
               },
             ],
           },
@@ -1821,18 +1813,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_FIN'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_FIN']).toFixed(
-                      6
-                    ),
+                  : parseFloat(_this.variantion['gnomAD_genome_FIN']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_FIN'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_FIN']).toFixed(
-                      6
-                    ),
+                    parseFloat(_this.variantion['gnomAD_genome_FIN']),
               },
             ],
           },
@@ -1849,18 +1837,14 @@ export default {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_NFE'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_NFE']).toFixed(
-                      6
-                    ),
+                  : parseFloat(_this.variantion['gnomAD_genome_NFE']),
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_NFE'])
                   ? 1
                   : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_NFE']).toFixed(
-                      6
-                    ),
+                    parseFloat(_this.variantion['gnomAD_genome_NFE']),
               },
             ],
           },
@@ -2303,16 +2287,20 @@ export default {
         echarts.util.each(hunkDetail, function (dataItem, idx) {
           ser.push({
             name: hunkDetail[idx].name,
-            color: ['#2f54eb', '#faad14', '#1890ff', '#fa8c16', '#13c2c2'],
+            color: ['#e1494a', '#2589cf', '#1890ff', '#fa8c16', '#13c2c2'],
             type: 'pie',
             radius: '8%',
             // minAngle: 10,
             center: myChart.convertToPixel('geo', hunkDetail[idx].coord),
             label: {
               position: 'inside',
+              padding: [0,50,35,0],
+              color: '#909399',
+              fontWeight: 'bold',
+              // fontSize: 13,
               formatter: function (e) {
                 if (e.data.name !== '') {
-                  return e.seriesName + '- ' + e.data.value
+                  return e.seriesName + ': ' + (e.data.value > 0 ? (e.data.value * 100).toFixed(2) : 0)  + '%'
                 }
               },
             },
@@ -2389,16 +2377,19 @@ export default {
         echarts.util.each(worldHunkDetail, function (dataItem, idx) {
           ser.push({
             name: worldHunkDetail[idx].name,
-            color: ['#2f54eb', '#faad14', '#1890ff', '#fa8c16', '#13c2c2'],
+            color: ['#e1494a', '#2589cf', '#1890ff', '#fa8c16', '#13c2c2'],
             type: 'pie',
             radius: '8%',
             // minAngle: 10,
             center: myChart.convertToPixel('geo', worldHunkDetail[idx].coord),
             label: {
               position: 'inside',
+              padding: [0,50,35,0],
+              color: '#909399',
+              fontWeight: 'bold',
               formatter: function (e) {
                 if (e.data.name !== '') {
-                  return e.seriesName + '- ' + e.data.value
+                  return e.seriesName + ': ' + (e.data.value > 0 ? (e.data.value * 100).toFixed(2) : 0)  + '%'
                 }
               },
             },
@@ -2478,22 +2469,21 @@ export default {
     initGCContentChart(GCContent) {
       var chartDom = document.getElementById('GCContent-chart')
       var myChart = echarts.init(chartDom)
+      myChart.clear()
       var option = {
         tooltip: {
           trigger: 'item',
-          formatter: '{a} <br/>{b} :({d}%)',
+          formatter: '{b} :{d}%',
         },
         series: [
           {
             name: 'GC含量',
             type: 'pie',
             radius: '60%',
-            color: ['#2f54eb', '#faad14'],
+            color: ['#e1494a', '#2589cf'],
             center: ['50%', '50%'],
-            label: {
-              normal: {
-                show: false,
-              },
+            label:{
+              show: false,
             },
             labelLine: {
               normal: {
@@ -2519,22 +2509,21 @@ export default {
     initCpGRatioChart(CpGRatio) {
       var chartDom = document.getElementById('CpGRatio-chart')
       var myChart = echarts.init(chartDom)
+      myChart.clear()
       var option = {
         tooltip: {
           trigger: 'item',
-          formatter: '{a} <br/>{b} :({d}%)',
+          formatter: '{b} :{d}%',
         },
         series: [
           {
             name: 'CpG比例',
             type: 'pie',
             radius: '60%',
-            color: ['#2f54eb', '#faad14', '#1890ff', '#fa8c16', '#13c2c2'],
+            color: ['#e1494a', '#2589cf', '#1890ff', '#fa8c16', '#13c2c2'],
             center: ['50%', '50%'],
-            label: {
-              normal: {
-                show: false,
-              },
+            label:{
+              show: false,
             },
             labelLine: {
               normal: {

@@ -77,44 +77,61 @@
           <div class="reference">
             <el-divider content-position="left">参考文献</el-divider>
             <p>
-              1.Reddy V.S., and Reddy A.S.N., Developmental and cell-specific
-              expression of ZWICHEL is regulated by the intron and exon
-              sequences of its upstream protein-coding gene, 2004, Plant Mol.
-              Biol., 54
+              1.Howe K L, Achuthan P, Allen J, et al. Ensembl 2021[J]. Nucleic
+              acids research, 2021, 49(D1): D884-D891.
             </p>
             <p>
-              2.Wang X.S., Zhao X.Q., Zhu J., and Wu W.R., 2005, Genomewide
-              investigation of intron length polymorphisms and their potential
-              as molecular markers in rice (Oryza sativa L.), DNA Res., 12(6)
+              2.Karolchik D, Baertsch R, Diekhans M, et al. The UCSC genome
+              browser database[J]. Nucleic acids research, 2003, 31(1): 51-54.
             </p>
             <p>
-              3.Yamada T., Ohtani S., Sakurai T., Tsuji T., Kunieda T., and
-              Yanagisawa M., Reduced expression of endothelin receptor type B
-              gene in piebald mice caused by an insertion of a retroposon-like
-              element in intron 1, J. Biol. Chem., 2006
+              3.Tate J G, Bamford S, Jubb H C, et al. COSMIC: the catalogue of
+              somatic mutations in cancer[J]. Nucleic acids research, 2019,
+              47(D1): D941-D947.
             </p>
             <p>
-              4.Tabaska JE, Davuluri RV , ZhangMQ. Ident ifying the 3′2 term
-              inal exon in human DNA. Bioinformatics, 2001, 17 (7)
+              4.Hamosh A, Scott A F, Amberger J S, et al. Online Mendelian
+              Inheritance in Man (OMIM), a knowledgebase of human genes and
+              genetic disorders[J]. Nucleic acids research, 2005, 33(suppl_1):
+              D514-D517.
             </p>
             <p>
-              5.Schaal T. D. , Maniatis T. Multiple distinct splicing enchancers
-              in the protein2coding sequences of a constitutively spliced
-              pre2mRNA. Molecular and Cellular Biology , 1999 ; 19(1)
+              5.Landrum M J, Lee J M, Benson M, et al. ClinVar: public archive
+              of interpretations of clinically relevant variants[J]. Nucleic
+              acids research, 2016, 44(D1): D862-D868.
             </p>
             <p>
-              6.Moore M. J . A quantitative analysis of intron effects on
-              mammalian gene expression. RNA , 2003 ，9
+              6.Ng P C, Henikoff S. SIFT: Predicting amino acid changes that
+              affect protein function[J]. Nucleic acids research, 2003, 31(13):
+              3812-3814.
             </p>
             <p>
-              7.Ohuchil S. J . , Ikawa Y. , Shiraishi H. , et al . Modular
-              engineering of a Group I intron ribozyme. Nucleic Acids Research ,
-              2002 ; 30 ( 15)
+              7.Adzhubei I A, Schmidt S, Peshkin L, et al. A method and server
+              for predicting damaging missense mutations[J]. Nature methods,
+              2010, 7(4): 248-249.
             </p>
             <p>
-              8.Dai Lixin , Zimmerly S. Compilation and analysis of group II
-              intron insertions in bacterial genomes : evidence for retroelement
-              behavior. Nucleic Acids Research , 2002 ; 30(5)
+              8.Fairley S, Lowy-Gallego E, Perry E, et al. The International
+              Genome Sample Resource (IGSR) collection of open human genomic
+              variation resources[J]. Nucleic Acids Research, 2020, 48(D1):
+              D941-D947.
+            </p>
+            <p>
+              9.Rentzsch P, Schubach M, Shendure J, et al. CADD-Splice—improving
+              genome-wide variant effect prediction using deep learning-derived
+              splice scores[J]. Genome medicine, 2021, 13(1): 1-12.
+            </p>
+            <p>
+              10.Wang K, Li M, Hakonarson H. ANNOVAR: functional annotation of
+              genetic variants from high-throughput sequencing data[J]. Nucleic
+              acids research, 2010, 38(16): e164-e164.
+            </p>
+
+            <p>
+              11.Buniello A, MacArthur J A L, Cerezo M, et al. The NHGRI-EBI
+              GWAS Catalog of published genome-wide association studies,
+              targeted arrays and summary statistics 2019[J]. Nucleic acids
+              research, 2019, 47(D1): D1005-D1012.
             </p>
           </div>
         </div>
@@ -520,7 +537,7 @@ export default {
         })
         return data
       }
-      var drawCircos = (error, GRCh37, cytobands, es, ips) => {
+      var drawCircos = (error, GRCh38, cytobands, es, ips) => {
         var width = parseInt(document.getElementById('echart1').offsetWidth)
         document.getElementById('echart1').style.height = width + 'px'
         var circos = new Circos({
@@ -556,11 +573,15 @@ export default {
         })
 
         circos
-          .layout(GRCh37, {
-            innerRadius: width / 2 - 80,
-            outerRadius: width / 2 - 50,
+          .layout(GRCh38, {
+            innerRadius: width / 2 - 108,
+            outerRadius: width / 2 - 75,
             labels: {
-              radialOffset: 70,
+              position: 'center',
+              display: true,
+              size: 14,
+              color: '#000',
+              radialOffset: 70
             },
             ticks: {
               display: true,
@@ -573,8 +594,8 @@ export default {
             },
           })
           .highlight('cytobands', cytobands, {
-            innerRadius: width / 2 - 80,
-            outerRadius: width / 2 - 50,
+            innerRadius: width / 2 - 108,
+            outerRadius: width / 2 - 75,
             opacity: 0.3,
             color: function (d) {
               return gieStainColor[d.gieStain]
@@ -583,51 +604,51 @@ export default {
               return d.name
             },
           })
-          .histogram('es', buildData(es, ips, GRCh37), {
-            innerRadius: width / 2 - 110,
-            outerRadius: width / 2 - 80,
+          .histogram('es', buildData(es, ips, GRCh38), {
+            innerRadius: width / 2 - 140,
+            outerRadius: width / 2 - 110,
             color: 'OrRd',
           })
-          .chords('l1', data, {
-            radius: function (d) {
-              return null
-              // if (d.source.id === 'chr1') {
-              //   return 0.5
-              // } else {
-              //   return null
-              // }
-            },
-            logScale: false,
-            opacity: (d) => {
-              return d.number
-            },
-            color: (d) => {
-              return dataColor[d.source.id]
-            },
-            //strokeWidth :15,
-            tooltipContent: function (d) {
-              // return '<h3>' + d.source.id + ' ➤ ' + d.target.id + ': ' + d.value + '</h3><i>(CTRL+C to copy to clipboard)</i>'
-              return (
-                '<p><i>FG_Name : ' +
-                d.name +
-                '</i></p><i> Num_Samples : ' +
-                d.number +
-                '</i>'
-              )
-            },
-            events: {
-              'mouseover.demo': function (d, i, nodes, event) {
-                // console.log(d, i, nodes, event.pageX)
-              },
-            },
-          })
+          // .chords('l1', data, {
+          //   radius: function (d) {
+          //     return null
+          //     // if (d.source.id === 'chr1') {
+          //     //   return 0.5
+          //     // } else {
+          //     //   return null
+          //     // }
+          //   },
+          //   logScale: false,
+          //   opacity: (d) => {
+          //     return d.number
+          //   },
+          //   color: (d) => {
+          //     return dataColor[d.source.id]
+          //   },
+          //   //strokeWidth :15,
+          //   tooltipContent: function (d) {
+          //     // return '<h3>' + d.source.id + ' ➤ ' + d.target.id + ': ' + d.value + '</h3><i>(CTRL+C to copy to clipboard)</i>'
+          //     return (
+          //       '<p><i>FG_Name : ' +
+          //       d.name +
+          //       '</i></p><i> Num_Samples : ' +
+          //       d.number +
+          //       '</i>'
+          //     )
+          //   },
+          //   events: {
+          //     'mouseover.demo': function (d, i, nodes, event) {
+          //       // console.log(d, i, nodes, event.pageX)
+          //     },
+          //   },
+          // })
           .render()
       }
       d3.queue()
-        .defer(d3.json, '/GRCh37.json')
-        .defer(d3.csv, '/cytobands.csv')
-        .defer(d3.csv, '/es.csv')
-        .defer(d3.csv, '/ips.csv')
+        .defer(d3.json, './GRCh38.json')
+        .defer(d3.csv, './cytobands.csv')
+        .defer(d3.csv, './es.csv')
+        .defer(d3.csv, './ips.csv')
         .await(drawCircos)
     },
     getEchartData2() {
@@ -645,6 +666,9 @@ export default {
             type: 'pie',
             radius: '60%',
             center: ['50%', '50%'],
+            label:{
+              fontSize: 14,
+            },
             color: [
               '#eb2f96',
               '#722ed1',
@@ -657,12 +681,12 @@ export default {
               '#13c2c2',
             ],
             data: [
-              { value: 335, name: 'AC=1' },
-              { value: 310, name: 'AF<0.01%' },
-              { value: 234, name: 'AF<0.1%' },
-              { value: 135, name: 'AF<1' },
-              { value: 1548, name: 'AF<5%' },
-              { value: 1548, name: 'AF>5%' },
+              { value: 132783003, name: 'AC=1' },
+              { value: 75470019, name: 'AF<0.01%' },
+              { value: 33441788, name: 'AF<0.1%' },
+              { value: 7069182, name: 'AF<1' },
+              { value: 2686164, name: 'AF<5%' },
+              { value: 6814282, name: 'AF>5%' },
             ],
             emphasis: {
               itemStyle: {
@@ -687,8 +711,11 @@ export default {
             name: '面积模式',
             type: 'pie',
             radius: '60%',
-            radius: [20, 110],
+            radius: [20, 160],
             center: ['50%', '50%'],
+            label:{
+              fontSize: 14,
+            },
             // color: [
             //   '#b7944c',
             //   '#92924a',
@@ -755,7 +782,7 @@ export default {
             axisLabel: {
               interval: 0,
               textStyle: {
-                fontSize: 10,
+                fontSize: 14,
               },
             },
             data: ['Synonymous', 'PloF', 'Missense'],
@@ -767,6 +794,9 @@ export default {
         yAxis: [
           {
             type: 'value',
+            textStyle: {
+                fontSize: 14,
+              },
           },
         ],
         series: [
@@ -774,7 +804,7 @@ export default {
             name: '变异数量',
             type: 'bar',
             barWidth: '60%',
-            data: [10, 52, 200],
+            data: [1110270, 179317, 2183046],
           },
         ],
       }
@@ -795,7 +825,7 @@ export default {
           },
         },
         legend: {
-          data: ['SNV', 'Indel', 'SV'],
+          data: ['SNP', 'Indel', 'SV'],
         },
         grid: {
           left: '3%',
@@ -810,7 +840,7 @@ export default {
             axisLabel: {
               interval: 0,
               textStyle: {
-                fontSize: 10,
+                fontSize: 14,
               },
             },
           },
@@ -818,26 +848,31 @@ export default {
         yAxis: [
           {
             type: 'value',
+            textStyle: {
+                fontSize: 14,
+              },
           },
         ],
         series: [
           {
-            name: 'SNV',
+            name: 'SNP x1M',
             type: 'bar',
-            stack: 'SNV',
-            data: [320, 332, 301, 334, 390, 330],
+            stack: 'SNP',
+            data: [
+              121.31254, 68.965787, 29.880671, 5.744029, 2.00137, 5.545652,
+            ],
           },
           {
-            name: 'Indel',
+            name: 'Indel x100K',
             type: 'bar',
             stack: 'Indel',
-            data: [120, 132, 101, 134, 90, 230],
+            data: [111.43149, 63.62683, 34.70793, 12.96697, 6.72408, 12.50544],
           },
           {
-            name: 'SV',
+            name: 'SV x10K',
             type: 'bar',
             stack: 'SV',
-            data: [220, 182, 191, 234, 290, 330],
+            data: [32.7314, 14.1549, 9.0324, 2.8456, 1.2386, 1.8086],
           },
         ],
       }
@@ -861,6 +896,9 @@ export default {
             type: 'pie',
             radius: '40%',
             center: ['60%', '40%'],
+            label:{
+              fontSize: 16,
+            },
             color: [
               '#eb2f96',
               '#722ed1',
@@ -874,13 +912,15 @@ export default {
             ],
             label: {
               formatter: '{b}：{c}',
+              fontSize: 14,
+              lineHeight: 20
             },
             data: [
               { value: 1207, name: 'Benign' },
               { value: 1206, name: 'Likely_benign' },
               {
                 value: 192,
-                name: 'Conflicting_interpretations_of_pathogenicity',
+                name: 'Conflicting_interpretations_of\n_pathogenicity',
               },
               { value: 62, name: 'Likely_pathogenic' },
               { value: 100, name: 'Pathogenic' },
@@ -914,6 +954,7 @@ export default {
             label: {
               formatter: '{b}：{c}',
               position: 'outer',
+              fontSize: 14,
               // alignTo: 'edge',
               margin: 20,
             },
@@ -949,13 +990,23 @@ export default {
         const queryArr = query.split('-')
         this.options = []
         const _this = this
-        if ((queryArr.length > 0 && queryArr[0] < 23) || queryArr[0] === 'x') {
+        if (
+          (queryArr.length < 5 && queryArr.length > 0 && queryArr[0] < 23) ||
+          (queryArr.length < 5 && queryArr.length > 0 && queryArr[0] === 'x') ||
+          (queryArr.length < 5 && queryArr.length > 0 && queryArr[0] === 'X') ||
+          (queryArr.length < 5 &&
+            queryArr.length > 0 &&
+            queryArr[0].indexOf('chr') !== -1)
+        ) {
           if (queryArr.length === 2) {
             if (parseInt(queryArr[1]) > 10) {
               _this.options.push({
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
-                chrom: queryArr[0] === 'x' ? 23 : parseInt(queryArr[0]),
+                chrom:
+                  queryArr[0] === 'x' || queryArr[0] === 'X'
+                    ? 23
+                    : parseInt(queryArr[0]),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[1]) + 1,
                 type: 'position',
@@ -970,7 +1021,10 @@ export default {
               _this.options.push({
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
-                chrom: queryArr[0] === 'x' ? 23 : parseInt(queryArr[0]),
+                chrom:
+                  queryArr[0] === 'x' || queryArr[0] === 'X'
+                    ? 23
+                    : parseInt(queryArr[0]),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[2]) + 1,
                 type: 'position',
@@ -981,21 +1035,34 @@ export default {
             this.loading = true
             const data = {
               variantId: query.toUpperCase(),
+              chrom: null,
             }
-            variant(data).then((response) => {
-              const data = response.listData
-              data.forEach(function (val, index, arr) {
-                _this.options.push({
-                  chrom: val.chrom,
-                  value: val.uuId,
-                  label: val.uuId,
-                  type: response['type'],
-                  start: parseInt(val.start) - 1,
-                  end: parseInt(val.end) + 1,
+            if (
+              (queryArr[0].slice(0, 3) === 'chr' &&
+                queryArr[0].slice(3) < 23) ||
+              (queryArr[0].slice(0, 3) === 'chr' &&
+                queryArr[0].slice(3) === 'x') ||
+              (queryArr[0].slice(0, 3) === 'chr' &&
+                queryArr[0].slice(3) === 'X')
+            ) {
+              queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
+                ? (data.chrom = 23)
+                : (data.chrom = queryArr[0].slice(3)),
+                variant(data).then((response) => {
+                  const data = response.listData
+                  data.forEach(function (val, index, arr) {
+                    _this.options.push({
+                      chrom: val.chrom,
+                      value: val.uu_id,
+                      label: val.uu_id,
+                      type: response['type'],
+                      start: parseInt(val.start) - 1,
+                      end: parseInt(val.end) + 1,
+                    })
+                  })
+                  this.loading = false
                 })
-              })
-              this.loading = false
-            })
+            }
           }
         } else {
           this.loading = true
@@ -1028,7 +1095,9 @@ export default {
         this.$store.dispatch('variations/positionSearch', e)
       }
       if (e.type === 'variant') {
-        this.$router.push('/variant?id=' + e.value)
+        this.$router.push(
+          '/variant?id=' + e.value + '&chrom=' + this.options[0].chrom
+        )
         this.$store.dispatch('variations/variationSearch', e)
       }
     },
@@ -1046,7 +1115,12 @@ export default {
           this.$store.dispatch('variations/positionSearch', this.options[0])
         }
         if (this.options[0].type === 'variant') {
-          this.$router.push('/variant?id=' + this.options[0].value)
+          this.$router.push(
+            '/variant?id=' +
+              this.options[0].value +
+              '&chrom=' +
+              this.options[0].chrom
+          )
           this.$store.dispatch('variations/variationSearch', this.options[0])
         }
       }
@@ -1070,7 +1144,7 @@ export default {
   .tips {
     .tip {
       line-height: 1.8;
-      font-size: 12px;
+      font-size: 14px;
       padding: 18px 24px;
       background-color: rgb(244, 244, 245);
       border: 1px solid #f2f6fc;
@@ -1080,7 +1154,7 @@ export default {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
     }
     .reference {
-      font-size: 12px;
+      font-size: 14px;
       text-align: left;
       padding: 8px 16px;
       background-color: #ffffff;
@@ -1103,8 +1177,8 @@ export default {
 #line6 {
   position: absolute;
   right: 0;
-  top: 0;
-  height: 70%;
+  top: 10%;
+  height: 60%;
   width: 100%;
   border: 1px solid #1890ff;
   border-radius: 20px;

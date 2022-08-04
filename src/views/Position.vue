@@ -21,7 +21,7 @@
                 </el-checkbox-button>
               </el-checkbox-group>
             </el-row>
-            <el-divider content-position="left">SNV/Indel</el-divider>
+            <el-divider content-position="left">SNV/Indel/SV</el-divider>
             <el-row class="checkbox-container" type="flex" align="end">
               <el-checkbox-group
                 v-model="checkboxGroup3"
@@ -50,19 +50,19 @@
                 <p>{{ $t('gene.zoom') }}</p>
                 <p class="svg-container" @click="zoomClick('10')">
                   <svg-icon icon-class="narrow" />
-                  <span>-10</span>
+                  <span>-10x</span>
                 </p>
                 <p class="svg-container" @click="zoomClick('3')">
                   <svg-icon icon-class="narrow" />
-                  <span>-3</span>
+                  <span>-3x</span>
                 </p>
                 <p class="svg-container">
                   <svg-icon icon-class="enlarge" @click="zoomClick('0.3333')" />
-                  <span>+3</span>
+                  <span>+3x</span>
                 </p>
                 <p class="svg-container">
                   <svg-icon icon-class="enlarge" @click="zoomClick('0.1')" />
-                  <span>+10</span>
+                  <span>+10x</span>
                 </p>
               </div>
             </el-col>
@@ -98,15 +98,16 @@
           </el-col>
         </el-row>
         <el-divider />
-        <div class="axis-container"><svg /></div>
+        <div class="axis-container"><svg></svg></div>
         <div class="annotation-container">
-          <svg id="svg-drag" v-drag />
+          <svg id="svg-drag" v-drag></svg>
         </div>
         <div class="variation-container" @click="variationClick($event)" />
         <template>
           <el-row>
             <el-col :span="8">
-              <div id="mapChart" />
+              <el-button type="primary" @click="onReset" class="resetBtn">初始化</el-button>
+              <div id="mapChart"></div>
             </el-col>
             <el-col :span="16">
               <el-table
@@ -119,12 +120,14 @@
                 style="width: 100%"
                 @cell-click="tableCell"
                 :row-style="TableRowStyle"
+                use-virtual
+                highlight-current-row
               >
                 <el-table-column
                   prop="variatiId"
                   :label="$t('gene.table.variatiId')"
                   sortable
-                  width="180"
+                  width="220"
                 >
                   <template slot-scope="scope">
                     <el-link
@@ -132,7 +135,9 @@
                         '#/variant?id=' +
                         scope.row.variatiId +
                         '&chrom=' +
-                        scope.row.chrom
+                        scope.row.chrom +
+                        '&type=' +
+                        scope.row.variation_type
                       "
                       type="primary"
                       >{{ scope.row.variatiId }}</el-link
@@ -140,7 +145,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="gene" :label="$t('gene.table.gene')" />
-                <el-table-column prop="rsid" :label="$t('gene.table.rsid')" />
+                <el-table-column prop="rsid" :label="$t('gene.table.rsid')" width="100"/>
+                <el-table-column prop="chn100k_ALL" :label="$t('gene.table.chn100k_ALL')" />
                 <el-table-column
                   prop="exonicFunc"
                   :label="$t('gene.table.exonicFunc')"
@@ -285,7 +291,7 @@ export default {
       svg2: '',
       input: '',
       checkboxGroup1: ['pLoF', 'Missense', 'Synonymous', 'Other'],
-      checkboxGroup3: ['SNVs', 'Indels'],
+      checkboxGroup3: ['SNVs', 'Indels', 'SVs'],
       options: [
         { name: 'pLoF', num: 0 },
         { name: 'Missense', num: 0 },
@@ -299,6 +305,7 @@ export default {
       options3: [
         { name: 'SNVs', num: 0 },
         { name: 'Indels', num: 0 },
+        { name: 'SVs', num: 0 },
       ],
       tableData: [],
       colorActive: [
@@ -314,6 +321,8 @@ export default {
         'rgb(233, 233, 235)',
       ],
       tableBgPos: '',
+      mapkey: 0,
+      dataList: []
     }
   },
   computed: {
@@ -326,7 +335,6 @@ export default {
     filterData() {
       const _this = this
       this.$nextTick(() => {
-        // console.log(_this.filterData)
         const margin = (_this.containerWidth / 20) * 1.5
         const axisWidth = _this.containerWidth - margin * 2
         const positionStart =
@@ -354,7 +362,7 @@ export default {
             .attr('fill', '#409EFF')
             .attr('font-size', 20)
             .text(function () {
-              return 'chr:' + _this.position.chrom
+              return 'chr' + (_this.position.chrom === 23 ? 'X' : _this.position.chrom)
             })
           svg
             .append('g')
@@ -650,6 +658,7 @@ export default {
         let genomeNum = 0
         let snvNum = 0
         let indelNum = 0
+        let svNum = 0
         _this.filterData.variation.forEach(function (d) {
           const thisSource = []
           let exonicFunColor = ''
@@ -732,6 +741,9 @@ export default {
           if (d['variation_type'].indexOf('INDEL') !== -1) {
             indelNum = indelNum + 1
           }
+          if (d['variation_type'].indexOf('SV') !== -1) {
+            svNum = svNum + 1
+          }
 
           _this.tableData.push({
             variatiId: d['uu_id'],
@@ -741,16 +753,16 @@ export default {
             exonicFuncValue: exonicFuncValue,
             variation_type: d['variation_type'],
             dbsnp: d['af'],
-            chn100k_ALL: d['chn100k_ALL'],
+            chn100k_ALL: parseFloat(d['chn100k_ALL'] * 100).toFixed(4) + '%',
             gene: d['gene'],
             geneDetail: d['geneDetail'],
             chn100k_NE: d['chn100k_NE'],
-            chn100k_N:d['chn100k_N'],
-            chn100k_E:d['chn100k_E'],
-            chn100k_C:d['chn100k_C'],
-            chn100k_NW:d['chn100k_NW'],
-            chn100k_SW:d['chn100k_SW'],
-            chn100k_S:d['chn100k_S'],
+            chn100k_N: d['chn100k_N'],
+            chn100k_E: d['chn100k_E'],
+            chn100k_C: d['chn100k_C'],
+            chn100k_NW: d['chn100k_NW'],
+            chn100k_SW: d['chn100k_SW'],
+            chn100k_S: d['chn100k_S'],
           })
         })
 
@@ -767,6 +779,7 @@ export default {
         _this.options3 = [
           { name: 'SNVs', num: snvNum },
           { name: 'Indels', num: indelNum },
+          { name: 'SVs', num: svNum },
         ]
 
         function parseNum(num) {
@@ -807,6 +820,10 @@ export default {
         this.containerWidth = parseInt(
           d3.select('.axis-container').style('width')
         )
+        this.position.value =
+          'chr' + (this.position.chrom === 23 ? 'X' : this.position.chrom) + '：' + data.start + '-' + data.end
+        this.position.label =
+          'chr' + (this.position.chrom === 23 ? 'X' : this.position.chrom) + '：' + data.start + '-' + data.end
         this.loading = false
       })
       // if (this.position.end - this.position.start < 10003) {
@@ -967,9 +984,9 @@ export default {
           this.position.start = data.start
           this.position.end = data.end
           this.position.value =
-            this.position.chrom + '-' + data.start + '-' + data.end
+            'chr' + (this.position.chrom === 23 ? 'X' : this.position.chrom) + '：' + data.start + '-' + data.end
           this.position.label =
-            this.position.chrom + '-' + data.start + '-' + data.end
+            'chr' + (this.position.chrom === 23 ? 'X' : this.position.chrom) + '：' + data.start + '-' + data.end
           this.$store.dispatch('variations/positionSearch', this.position)
         })
       }
@@ -998,9 +1015,9 @@ export default {
           this.position.start = data.start
           this.position.end = data.end
           this.position.value =
-            this.position.chrom + '-' + data.start + '-' + data.end
+            'chr' + (this.position.chrom === 23 ? 'X' : this.position.chrom) + '：' + data.start + '-' + data.end
           this.position.label =
-            this.position.chrom + '-' + data.start + '-' + data.end
+            'chr' + (this.position.chrom === 23 ? 'X' : this.position.chrom) + '：' + data.start + '-' + data.end
           this.$store.dispatch('variations/positionSearch', this.position)
         })
       }
@@ -1236,6 +1253,12 @@ export default {
           ) {
             _this.filterData.variation.push(d)
           }
+          if (
+            _this.checkboxGroup3[i] === 'SVs' &&
+            d['variation_type'].indexOf('SV') !== -1
+          ) {
+            _this.filterData.variation.push(d)
+          }
         }
       })
     },
@@ -1376,13 +1399,14 @@ export default {
       if (chinaJson.features && chinaJson.features.length > 8) {
         this.mergeProvinces(chinaJson, params.names, params.properties)
       }
-      console.log(chinaJson)
       echarts.registerMap('china', chinaJson) // 注册地图
     },
     initChart(dataList) {
       var _this = this
+      // this.myChart.clear();
+      // this.mapkey+=1
       var chartDom = document.getElementById('mapChart')
-      var myChart = echarts.init(chartDom)
+      var myChart = echarts.init(chartDom,null)
 
       var option = {
         // center: ['80%', '50%'],
@@ -1393,15 +1417,19 @@ export default {
           },
         },
         visualMap: {
-          min: 0,
-          max: 0.01,
+          type: 'piecewise',
           left: 'left',
           top: 'top',
-          text: ['High', 'Low'], //取值范围的文字
-          inRange: {
-            color: ['#e0ffff', '#2196f3'], //取值范围的颜色
-          },
-          show: false, //图注
+          // text: ['High', 'Low'], //取值范围的文字
+          splitNumber: 4,
+          pieces: [
+            { min: 0.05, max: 1, label:'5%-100%',color: '#f96262'},
+            { min: 0.01, max: 0.05, label:'1%-5%',color: '#f5c63a'},
+            { min: 0.005, max: 0.01, label:'0.5%-1%',color: '#48bd48'},
+            { min: 0, max: 0.005, label:'0%-0.5%',color: '#40a1e5'},
+            { value: 0, label:'0%',color: '#eeeeee'}
+          ],
+          show: true, //图注
         },
         geo: {
           map: 'china',
@@ -1457,38 +1485,82 @@ export default {
           },
         ],
       }
-
-      // this.chart = echarts.init(chartDom, 'macarons')
-      myChart.setOption(option)
+      myChart.setOption(option,true)
       myChart.on('click', function (params) {
         if (params.name === '东北') {
           _this.tableBgPos = 'chn100k_NE'
+          _this.dataList = [
+            {
+              name: '东北',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '华北') {
           _this.tableBgPos = 'chn100k_N'
+          _this.dataList = [
+            {
+              name: '华北',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '华东') {
           _this.tableBgPos = 'chn100k_E'
+          _this.dataList = [
+            {
+              name: '华东',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '华中') {
           _this.tableBgPos = 'chn100k_C'
+          _this.dataList = [
+            {
+              name: '华中',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '华南') {
           _this.tableBgPos = 'chn100k_S'
+          _this.dataList = [
+            {
+              name: '华南',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '西北') {
           _this.tableBgPos = 'chn100k_NW'
+          _this.dataList = [
+            {
+              name: '西北',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '西南') {
           _this.tableBgPos = 'chn100k_SW'
+          _this.dataList = [
+            {
+              name: '西南',
+              value: 0.004,
+            },
+          ]
         }
+        myChart.clear()
+        myChart.off()
+        _this.initChart(_this.dataList)
+        _this.$refs.filterTable.setCurrentRow();
       })
       this.$nextTick(() => {
         myChart.resize() // 这里是为了解决，tab刷新的时候，图表不刷新的问题。
       })
     },
     tableCell(row, column, event, cell) {
-      var dataList = [
+      this.dataList = [
         {
           name: '东北',
           value: row.chn100k_NE,
@@ -1518,24 +1590,53 @@ export default {
           value: row.chn100k_NW,
         },
       ]
-      this.initChart(dataList)
+      if(this.tableBgPos !== ''){
+        this.tableBgPos = ''
+      }
+      this.initChart(this.dataList)
     },
     TableRowStyle(row) {
       let rowBackground = {}
-      if (this.tableBgPos) {
-        rowBackground.background =
-          'rgba(145,213,255,' + row.row[this.tableBgPos] * 1000 + ')'
+      if(0 < row.row[this.tableBgPos] && row.row[this.tableBgPos] < 0.005){
+          rowBackground.background =
+        'rgba(123,189,235,' + row.row[this.tableBgPos] * 1000 + ')'
       }
+      if(0.005 <= row.row[this.tableBgPos] && row.row[this.tableBgPos] < 0.01){
+        rowBackground.background =
+        'rgba(111,215,111,' + row.row[this.tableBgPos] * 1000 + ')'
+      }
+      if(0.01 <= row.row[this.tableBgPos] && row.row[this.tableBgPos] < 0.05){
+        rowBackground.background =
+        'rgba(245,198,58,' + row.row[this.tableBgPos] * 1000 + ')'
+      }
+      if(0.05 <= row.row[this.tableBgPos] && row.row[this.tableBgPos] < 1){
+        rowBackground.background =
+        'rgba(245,138,138,' + row.row[this.tableBgPos] * 1000 + ')'
+      }
+      // if (this.tableBgPos) {
+      //   rowBackground.background =
+      //     'rgba(145,213,255,' + row.row[this.tableBgPos] * 1000 + ')'
+      // }
       return rowBackground
     },
-  },
+    onReset(){
+      if(this.tableBgPos !== ''){
+        this.tableBgPos = ''
+      }
+      if(this.dataList.length > 0){
+        this.dataList = []
+        this.$refs.filterTable.setCurrentRow();
+        this.initChart(this.dataList)
+      }
+    }
+  }
 }
 </script>
 
 <style scoped lang="scss">
 #spage-tbshare-container {
-  width: 26px;
-  height: 92px;
+  width: 34px;
+  height: 122px;
   border-radius: 6px 0 0 6px;
   background: #84c0f2;
   position: fixed;
@@ -1543,28 +1644,32 @@ export default {
   top: 30%;
   z-index: 99;
   .tbshare_popup_enter {
-    width: 26px;
-    height: 92px;
-    padding-top: 15px;
+    width: 34px;
+    height: 122px;
+    padding-top: 24px;
     color: #ffffff;
-    font-size: 14px;
+    font-size: 18px;
   }
   .tbshare_popup_main {
     display: none;
     background: #ffffff;
     width: 180px;
     position: absolute;
-    right: 66px;
+    right: 74px;
     top: 0;
+
     .box-card {
       width: 220px;
+
       // margin-right: 4px;
       .checkbox-container {
         width: 180px;
+
         .el-checkbox-group {
           .el-checkbox-button {
             position: relative;
             margin: 2px 0;
+
             .num-tag {
               position: absolute;
               top: -1px;
@@ -1585,6 +1690,7 @@ export default {
               border-left: none;
             }
           }
+
           // .el-checkbox-button:first-child {
           //   .num-tag {
           //     border: 1px solid #409eff;
@@ -1601,49 +1707,60 @@ export default {
     }
   }
 }
+
 #spage-tbshare-container:hover {
   border-radius: 0;
+
   .tbshare_popup_main {
     display: block;
   }
 }
+
 .main-container {
   width: 96%;
   margin: 0 auto;
+
   .title {
     font-weight: bold;
     font-size: 20px;
     text-align: left;
+
     .sub-title {
       font-size: 16px;
       margin-left: 10px;
       font-weight: normal;
     }
   }
+
   .tools {
     .tools-1 {
       p {
         float: left;
       }
+
       .svg-container {
         height: 25px;
         width: 25px;
         margin-left: 12px;
         cursor: pointer;
+
         svg {
           height: 100%;
           width: 100%;
         }
+
         span {
           font-size: 12px;
           color: #666;
         }
       }
     }
+
     .tools-2 {
       p {
         float: left;
       }
+
       .svg-container {
         height: 25px;
         width: 25px;
@@ -1651,10 +1768,12 @@ export default {
         border-radius: 5px;
         margin-left: 12px;
         cursor: pointer;
+
         svg {
           height: 100%;
           width: 100%;
         }
+
         span {
           font-size: 12px;
           color: #666;
@@ -1662,31 +1781,39 @@ export default {
       }
     }
   }
+
   .chrom-container {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+
     .chrom {
       display: flex;
       height: 30px;
+
       svg {
         height: 100%;
       }
+
       .el-link {
         font-size: 18px;
       }
     }
   }
+
   .checkbox-container {
     max-width: 90%;
     margin: 0 auto 60px;
+
     .el-checkbox {
       width: 100px;
       text-align: left;
     }
+
     .el-checkbox-group {
       .el-checkbox-button {
         position: relative;
+
         .num-tag {
           position: absolute;
           bottom: -80%;
@@ -1706,12 +1833,14 @@ export default {
           border-left-color: #ecf5ff;
         }
       }
+
       .el-checkbox-button:first-child {
         .num-tag {
           border: 1px solid #409eff;
           border-radius: 0 0 0 4px;
         }
       }
+
       .el-checkbox-button:last-child {
         .num-tag {
           border-radius: 0 0 4px 0;
@@ -1719,25 +1848,36 @@ export default {
       }
     }
   }
+
   .el-table {
     max-width: 90%;
     margin: 0 auto;
   }
+
   .annotation-container {
     position: relative;
+
     svg {
       position: relative;
       top: 0;
       left: 0;
     }
   }
+
   .gene-table {
     .el-tag {
       margin: 0 2px;
     }
   }
+
   #mapChart {
     height: 540px;
+  }
+  .resetBtn{
+    position: absolute;
+    left: 5px;
+    top: -34px;
+    padding: 6px 21px;
   }
 }
 </style>
@@ -1749,14 +1889,19 @@ export default {
   border-radius: 4px 0 0 4px;
   border-left: 1px solid #dcdfe6;
 }
+
 #spage-tbshare-container
   .el-checkbox-button.is-checked
   .el-checkbox-button__inner {
   border-left-color: #409eff;
 }
+
 #spage-tbshare-container
   .el-checkbox-button.is-focus
   .el-checkbox-button__inner {
   border-left-color: #409eff;
+}
+.el-link.el-link--primary{
+  color: #0580ff;
 }
 </style>

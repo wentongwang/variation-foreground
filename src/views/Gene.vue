@@ -21,7 +21,7 @@
                 </el-checkbox-button>
               </el-checkbox-group>
             </el-row>
-            <el-divider content-position="left">SNV/Indel</el-divider>
+            <el-divider content-position="left">SNV/Indel/SV</el-divider>
             <el-row class="checkbox-container" type="flex" align="end">
               <el-checkbox-group
                 v-model="checkboxGroup3"
@@ -52,19 +52,19 @@
                 <p>{{ $t('gene.zoom') }}</p>
                 <p class="svg-container" @click="zoomClick('10')">
                   <svg-icon icon-class="narrow" />
-                  <span>-10</span>
+                  <span>-10x</span>
                 </p>
                 <p class="svg-container" @click="zoomClick('3')">
                   <svg-icon icon-class="narrow" />
-                  <span>-3</span>
+                  <span>-3x</span>
                 </p>
                 <p class="svg-container">
                   <svg-icon icon-class="enlarge" @click="zoomClick('0.3333')" />
-                  <span>+3</span>
+                  <span>+3x</span>
                 </p>
                 <p class="svg-container">
                   <svg-icon icon-class="enlarge" @click="zoomClick('0.1')" />
-                  <span>+10</span>
+                  <span>+10x</span>
                 </p>
               </div>
             </el-col>
@@ -100,14 +100,15 @@
           </el-col>
         </el-row>
         <el-divider />
-        <div class="axis-container"><svg /></div>
+        <div class="axis-container"><svg></svg></div>
         <div class="annotation-container">
-          <svg id="svg-drag" v-drag />
+          <svg id="svg-drag" v-drag></svg>
         </div>
         <div class="variation-container" @click="variationClick($event)" />
         <template>
           <el-row>
             <el-col :span="8">
+              <el-button type="primary" @click="onReset" class="resetBtn">初始化</el-button>
               <div id="mapChart" />
             </el-col>
             <el-col :span="16">
@@ -119,15 +120,29 @@
                 max-height="540"
                 @cell-click="tableCell"
                 :row-style="TableRowStyle"
+                use-virtual
+                highlight-current-row
               >
                 <el-table-column
                   prop="variatiId"
                   :label="$t('gene.table.variatiId')"
                   sortable
-                  width="180"
+                  width="220"
                 >
                   <template slot-scope="scope">
                     <el-link
+                      v-if="scope.row.variation_type === 'SV'"
+                      :href="
+                        '#/svVariant?id=' +
+                        scope.row.variatiId +
+                        '&chrom=' +
+                        scope.row.chrom
+                      "
+                      type="primary"
+                      >{{ scope.row.variatiId }}</el-link
+                    >
+                    <el-link
+                      v-else
                       :href="
                         '#/variant?id=' +
                         scope.row.variatiId +
@@ -139,8 +154,9 @@
                     >
                   </template>
                 </el-table-column>
-                <el-table-column prop="gene" :label="$t('gene.table.gene')" />
-                <el-table-column prop="rsid" :label="$t('gene.table.rsid')" />
+                <el-table-column prop="gene" :label="$t('gene.table.gene')"/>
+                <el-table-column prop="rsid" :label="$t('gene.table.rsid')" width="100"/>
+                <el-table-column prop="chn100k_ALL" :label="$t('gene.table.chn100k_ALL')" />
                 <el-table-column
                   prop="exonicFunc"
                   :label="$t('gene.table.exonicFunc')"
@@ -285,7 +301,7 @@ export default {
       svg2: '',
       input: '',
       checkboxGroup1: ['pLoF', 'Missense', 'Synonymous', 'Other'],
-      checkboxGroup3: ['SNVs', 'Indels'],
+      checkboxGroup3: ['SNVs', 'Indels', 'SVs'],
       options: [
         { name: 'pLoF', num: 0 },
         { name: 'Missense', num: 0 },
@@ -299,6 +315,7 @@ export default {
       options3: [
         { name: 'SNVs', num: 0 },
         { name: 'Indels', num: 0 },
+        { name: 'SVs', num: 0 },
       ],
       tableData: [],
       colorActive: [
@@ -314,6 +331,7 @@ export default {
         'rgb(233, 233, 235)',
       ],
       tableBgPos: '',
+      dataList: []
     }
   },
   computed: {
@@ -354,7 +372,7 @@ export default {
             .attr('fill', '#409EFF')
             .attr('font-size', 20)
             .text(function () {
-              return 'chr:' + _this.gene.chrom
+              return 'chr' + (_this.gene.chrom === 23 ? 'X' : _this.gene.chrom)
             })
           svg
             .append('g')
@@ -650,6 +668,7 @@ export default {
         let genomeNum = 0
         let snvNum = 0
         let indelNum = 0
+        let svNum = 0
         _this.filterData.variation.forEach(function (d) {
           let exonicFunColor = ''
           let exonicFuncValue = ''
@@ -721,6 +740,9 @@ export default {
           if (d['variation_type'].indexOf('INDEL') !== -1) {
             indelNum = indelNum + 1
           }
+          if (d['variation_type'].indexOf('SV') !== -1) {
+            svNum = svNum + 1
+          }
           _this.tableData.push({
             variatiId: d['uu_id'],
             chrom: d['chrom'],
@@ -729,16 +751,16 @@ export default {
             exonicFuncValue: exonicFuncValue,
             variation_type: d['variation_type'],
             dbsnp: d['af'],
-            chn100k_ALL: d['chn100k_ALL'],
+            chn100k_ALL: parseFloat(d['chn100k_ALL'] * 100).toFixed(4) + '%',
             gene: d['gene'],
             geneDetail: d['geneDetail'],
             chn100k_NE: d['chn100k_NE'],
-            chn100k_N:d['chn100k_N'],
-            chn100k_E:d['chn100k_E'],
-            chn100k_C:d['chn100k_C'],
-            chn100k_NW:d['chn100k_NW'],
-            chn100k_SW:d['chn100k_SW'],
-            chn100k_S:d['chn100k_S'],
+            chn100k_N: d['chn100k_N'],
+            chn100k_E: d['chn100k_E'],
+            chn100k_C: d['chn100k_C'],
+            chn100k_NW: d['chn100k_NW'],
+            chn100k_SW: d['chn100k_SW'],
+            chn100k_S: d['chn100k_S'],
           })
         })
         _this.options = [
@@ -754,6 +776,7 @@ export default {
         _this.options3 = [
           { name: 'SNVs', num: snvNum },
           { name: 'Indels', num: indelNum },
+          { name: 'SVs', num: svNum },
         ]
         function parseNum(num) {
           let newNum = '.'
@@ -1209,6 +1232,12 @@ export default {
           ) {
             _this.filterData.variation.push(d)
           }
+          if (
+            _this.checkboxGroup3[i] === 'SVs' &&
+            d['variation_type'].indexOf('SV') !== -1
+          ) {
+            _this.filterData.variation.push(d)
+          }
         }
       })
     },
@@ -1365,15 +1394,36 @@ export default {
           },
         },
         visualMap: {
-          min: 0,
-          max: 0.01,
+          // min: 0,
+          // max: 1,
+          type: 'piecewise',
           left: 'left',
           top: 'top',
-          text: ['High', 'Low'], //取值范围的文字
-          inRange: {
-            color: ['#e0ffff', '#2196f3'], //取值范围的颜色
-          },
-          show: false, //图注
+          // text: ['High', 'Low'], //取值范围的文字
+          splitNumber: 4,
+          pieces: [
+              { min: 0.05, max: 1, label:'5%-100%',color: '#f96262'},
+              { min: 0.01, max: 0.05, label:'1%-5%',color: '#f5c63a'},
+              { min: 0.005, max: 0.01, label:'0.5%-1%',color: '#48bd48'},
+              { min: 0, max: 0.005, label:'0%-0.5%',color: '#40a1e5'},
+              { value: 0, label:'0%',color: '#eeeeee'}
+            ],
+          // inRange: {
+            // color: ['#e0ffff', '#2196f3'], //取值范围的颜色
+            // color: ['#1f77b4', '#2ca02c', '#ff7f0e', '#d62728'],
+            // color: ['#ffffff', '#1f77b4', '#2ca02c', '#ff7f0e', '#d62728'],
+            // color: function(e){
+            //   console.log(e)
+            // }
+            // color: [['ffffff','#eeeeee'], ['ffffff','#d62728'],['ffffff','#ff7f0e'],['ffffff','#2ca02c'],['ffffff','#1f77b4']],
+            // colorLightness: [0.8, 0.2],
+            // color: ['#eeeeee', 'rgba(31,119,180,1)', 'rgba(44,160,44,1)', 'rgba(255,127,14,1)', 'rgba(214,39,40,1)'],
+            // opacity: [0.3, 1]
+            // colorLightness: [0.8, 0.2]
+            // color: ['#121122', 'rgba(3,4,5,0.4)', 'red'],
+            // symbolSize: [30, 100]
+          // },
+          show: true, //图注
         },
         geo: {
           map: 'china',
@@ -1429,38 +1479,83 @@ export default {
           },
         ],
       }
-
-      // this.chart = echarts.init(chartDom, 'macarons')
-      myChart.setOption(option)
+      myChart.setOption(option,true)
+      
       myChart.on('click', function (params) {
         if (params.name === '东北') {
           _this.tableBgPos = 'chn100k_NE'
+          _this.dataList = [
+            {
+              name: '东北',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '华北') {
           _this.tableBgPos = 'chn100k_N'
+          _this.dataList = [
+            {
+              name: '华北',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '华东') {
           _this.tableBgPos = 'chn100k_E'
+          _this.dataList = [
+            {
+              name: '华东',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '华中') {
           _this.tableBgPos = 'chn100k_C'
+          _this.dataList = [
+            {
+              name: '华中',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '华南') {
           _this.tableBgPos = 'chn100k_S'
+          _this.dataList = [
+            {
+              name: '华南',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '西北') {
           _this.tableBgPos = 'chn100k_NW'
+          _this.dataList = [
+            {
+              name: '西北',
+              value: 0.004,
+            },
+          ]
         }
         if (params.name === '西南') {
           _this.tableBgPos = 'chn100k_SW'
+          _this.dataList = [
+            {
+              name: '西南',
+              value: 0.004,
+            },
+          ]
         }
+        myChart.clear()
+        myChart.off()
+        _this.initChart(_this.dataList)
+        _this.$refs.filterTable.setCurrentRow();
       })
       this.$nextTick(() => {
         myChart.resize() // 这里是为了解决，tab刷新的时候，图表不刷新的问题。
       })
     },
     tableCell(row, column, event, cell) {
-      var dataList = [
+      this.dataList = [
         {
           name: '东北',
           value: row.chn100k_NE,
@@ -1490,24 +1585,53 @@ export default {
           value: row.chn100k_NW,
         },
       ]
-      this.initChart(dataList)
+      if(this.tableBgPos !== ''){
+        this.tableBgPos = ''
+      }
+      this.initChart(this.dataList)
     },
     TableRowStyle(row) {
       let rowBackground = {}
       if (this.tableBgPos) {
-        rowBackground.background =
-          'rgba(145,213,255,' + row.row[this.tableBgPos] * 1000 + ')'
+        if(0 < row.row[this.tableBgPos] && row.row[this.tableBgPos] < 0.005){
+           rowBackground.background =
+          'rgba(123,189,235,' + row.row[this.tableBgPos] * 1000 + ')'
+        }
+        if(0.005 <= row.row[this.tableBgPos] && row.row[this.tableBgPos] < 0.01){
+          rowBackground.background =
+          'rgba(111,215,111,' + row.row[this.tableBgPos] * 1000 + ')'
+        }
+        if(0.01 <= row.row[this.tableBgPos] && row.row[this.tableBgPos] < 0.05){
+          rowBackground.background =
+          'rgba(245,198,58,' + row.row[this.tableBgPos] * 1000 + ')'
+        }
+        if(0.05 <= row.row[this.tableBgPos] && row.row[this.tableBgPos] < 1){
+          rowBackground.background =
+          'rgba(245,138,138,' + row.row[this.tableBgPos] * 1000 + ')'
+        }
+        // rowBackground.background =
+        //   'rgba(145,213,255,' + row.row[this.tableBgPos] * 1000 + ')'
       }
       return rowBackground
     },
+    onReset(){
+      if(this.tableBgPos !== ''){
+        this.tableBgPos = ''
+      }
+      if(this.dataList.length > 0){
+        this.dataList = []
+        this.$refs.filterTable.setCurrentRow();
+        this.initChart(this.dataList)
+      }
+    }
   },
 }
 </script>
 
 <style scoped lang="scss">
 #spage-tbshare-container {
-  width: 26px;
-  height: 92px;
+  width: 34px;
+  height: 122px;
   border-radius: 6px 0 0 6px;
   background: #84c0f2;
   position: fixed;
@@ -1515,18 +1639,18 @@ export default {
   top: 30%;
   z-index: 99;
   .tbshare_popup_enter {
-    width: 26px;
-    height: 92px;
-    padding-top: 15px;
+    width: 34px;
+    height: 122px;
+    padding-top: 24px;
     color: #ffffff;
-    font-size: 14px;
+    font-size: 18px;
   }
   .tbshare_popup_main {
     display: none;
     background: #ffffff;
     width: 180px;
     position: absolute;
-    right: 66px;
+    right: 74px;
     top: 0;
     .box-card {
       width: 220px;
@@ -1669,6 +1793,12 @@ export default {
   #mapChart {
     height: 540px;
   }
+  .resetBtn{
+    position: absolute;
+    left: 5px;
+    top: -34px;
+    padding: 6px 21px;
+  }
 }
 </style>
 <style>
@@ -1688,5 +1818,8 @@ export default {
   .el-checkbox-button.is-focus
   .el-checkbox-button__inner {
   border-left-color: #409eff;
+}
+.el-link.el-link--primary{
+  color: #0580ff;
 }
 </style>

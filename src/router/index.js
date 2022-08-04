@@ -66,6 +66,14 @@ export const constantRoutes = [
       roles: ['admin']
     }
   },
+  {
+    path: '/svVariant',
+    name: 'svVariant',
+    component: () => import('@/views/svVariant.vue'),
+    meta: {
+      roles: ['admin']
+    }
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 
