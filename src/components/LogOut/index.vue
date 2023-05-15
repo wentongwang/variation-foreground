@@ -8,7 +8,7 @@
     </div>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item>
-        退出登录
+        {{ $t('index.logout') }}
       </el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     handleLogOut() {
-      this.$store.dispatch('user/logout', this.loginForm)
+      this.$store.dispatch('user/logout')
         .then(() => {
           this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
           this.loading = false

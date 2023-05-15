@@ -1,13 +1,35 @@
 export default {
+  register:{
+    title: "If you don't already have an account, please ",
+    toRegister: ' account application',
+    email: 'Please fill in the email address for receiving application results',
+    validateEmail: 'Email format error, please re-enter',
+    principalType: 'Please enter the entity type',
+    IDCardName: 'ID card name',
+    IDCardNo: 'ID card No',
+    emailCode: 'Please enter the email verification code',
+    sendCode: 'Send verification code',
+    validateIDCardNo: 'ID card No format error, please re-enter',
+    applicationPurpose: 'Please explain the purpose of applying for an account',
+    successMessage: 'The application request has been successfully sent. After approval is completed, we will contact you via email',
+    sendCodeSuccessMessage: 'The verification code was successfully sent. Please check your email address',
+    warnMessage: 'Your verification code has expired',
+    errorMessage: 'Request to send failed',
+    sendCodeErrorMessage: 'Verification code sending failed',
+    loginTitle: 'Existing database account？',
+    toLogin: 'Log in now',
+  },
   login: {
     title: 'genome aggregation database',
     name: 'Username',
     pass: 'Password',
-    login: 'Login'
+    login: 'Login',
+    validatePassword: '密码不能少于6位',
   },
   index: {
     name: 'genome aggregation database',
-    search: 'search'
+    search: 'search',
+    logout: 'logout'
   },
   home: {
     name: 'genome aggregation database',

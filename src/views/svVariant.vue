@@ -11,7 +11,9 @@
           </el-row>
           <div class="content" v-for = "(v, k,i) in value" :key="i">
             <div class="div-striped">{{k}}：</div>
-            <div>{{v}}</div>
+            <el-tooltip class="item" :disabled="v.length > 50 ? false : true" effect="dark" :content=v placement="top-start">
+              <div>{{v | filterAmount(50)}}</div>
+            </el-tooltip>
           </div>
         </div>
       </div>
@@ -23,6 +25,8 @@
 import { svVariantDetail } from '@/api/variation'
 import Nav from '@/components/Nav'
 require('echarts/theme/macarons') // echarts theme
+import '@/utils/filters.js'
+import { decrypt } from '@/utils/crypto.js'
 export default {
   name: 'Variation',
   components: {
@@ -33,6 +37,7 @@ export default {
       geneDetailData: null,
       variantId: '',
       loading: true,
+      code: '4t5dac4nhxz41e6u'
     }
   },
   watch: {
@@ -48,10 +53,9 @@ export default {
     }
     svVariantDetail(data).then((response) => {
       if(response.code === 200){
-        _this.geneDetailData = response.listData
+        _this.geneDetailData = JSON.parse(decrypt(response.listData,decrypt(response.key,this.code)))
         _this.loading = false
       }
-      
     })
   },
   methods: {

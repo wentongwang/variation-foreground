@@ -146,7 +146,7 @@
 <script>
 import Circos from 'circos'
 import * as d3 from 'd3'
-import { search, variant } from '@/api/variation'
+import { search, variant, svVariant } from '@/api/variation'
 import echarts from 'echarts'
 import Nav from '@/components/Nav'
 
@@ -579,9 +579,9 @@ export default {
             labels: {
               position: 'center',
               display: true,
-              size: 14,
+              size: 12,
               color: '#000',
-              radialOffset: 70
+              radialOffset: 70,
             },
             ticks: {
               display: true,
@@ -666,7 +666,7 @@ export default {
             type: 'pie',
             radius: '60%',
             center: ['50%', '50%'],
-            label:{
+            label: {
               fontSize: 14,
             },
             color: [
@@ -713,7 +713,7 @@ export default {
             radius: '60%',
             radius: [20, 160],
             center: ['50%', '50%'],
-            label:{
+            label: {
               fontSize: 14,
             },
             // color: [
@@ -795,8 +795,8 @@ export default {
           {
             type: 'value',
             textStyle: {
-                fontSize: 14,
-              },
+              fontSize: 14,
+            },
           },
         ],
         series: [
@@ -849,8 +849,8 @@ export default {
           {
             type: 'value',
             textStyle: {
-                fontSize: 14,
-              },
+              fontSize: 14,
+            },
           },
         ],
         series: [
@@ -896,7 +896,7 @@ export default {
             type: 'pie',
             radius: '40%',
             center: ['60%', '40%'],
-            label:{
+            label: {
               fontSize: 16,
             },
             color: [
@@ -913,7 +913,7 @@ export default {
             label: {
               formatter: '{b}：{c}',
               fontSize: 14,
-              lineHeight: 20
+              lineHeight: 20,
             },
             data: [
               { value: 1207, name: 'Benign' },
@@ -1004,9 +1004,12 @@ export default {
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
                 chrom:
-                  queryArr[0] === 'x' || queryArr[0] === 'X'
+                  queryArr[0] === 'x' ||
+                  queryArr[0] === 'X' ||
+                  queryArr[0] === 'chrx' ||
+                  queryArr[0] === 'chrX'
                     ? 23
-                    : parseInt(queryArr[0]),
+                    : parseInt(queryArr[0].replace(/[^\d]/g, ' ')),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[1]) + 1,
                 type: 'position',
@@ -1022,16 +1025,26 @@ export default {
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
                 chrom:
-                  queryArr[0] === 'x' || queryArr[0] === 'X'
+                  queryArr[0] === 'x' ||
+                  queryArr[0] === 'X' ||
+                  queryArr[0] === 'chrx' ||
+                  queryArr[0] === 'chrX'
                     ? 23
-                    : parseInt(queryArr[0]),
+                    : parseInt(queryArr[0].replace(/[^\d]/g, ' ')),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[2]) + 1,
                 type: 'position',
               })
             }
           }
-          if (queryArr.length >= 4) {
+          if (
+            queryArr.length >= 4 &&
+            (queryArr[3] === 'DEL' ||
+              queryArr[3] === 'INS' ||
+              queryArr[3] === 'BND' ||
+              queryArr[3] === 'INV' ||
+              queryArr[3] === 'DUP')
+          ) {
             this.loading = true
             const data = {
               variantId: query.toUpperCase(),
@@ -1048,7 +1061,7 @@ export default {
               queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
                 ? (data.chrom = 23)
                 : (data.chrom = queryArr[0].slice(3)),
-                variant(data).then((response) => {
+                svVariant(data).then((response) => {
                   const data = response.listData
                   data.forEach(function (val, index, arr) {
                     _this.options.push({
@@ -1063,6 +1076,37 @@ export default {
                   this.loading = false
                 })
             }
+          }
+          if (
+            (queryArr[0].slice(0, 3) === 'chr' &&
+              queryArr[0].slice(3) < 23) ||
+            (queryArr[0].slice(0, 3) === 'chr' &&
+              queryArr[0].slice(3) === 'x') ||
+            (queryArr[0].slice(0, 3) === 'chr' &&
+              queryArr[0].slice(3) === 'X')
+          ) {
+            this.loading = true
+            const data = {
+              variantId: query.toUpperCase(),
+              chrom: null,
+            }
+            queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
+              ? (data.chrom = 23)
+              : (data.chrom = queryArr[0].slice(3)),
+              variant(data).then((response) => {
+                const data = response.listData
+                data.forEach(function (val, index, arr) {
+                  _this.options.push({
+                    chrom: val.chrom,
+                    value: val.uu_id,
+                    label: val.uu_id,
+                    type: response['type'],
+                    start: parseInt(val.start) - 1,
+                    end: parseInt(val.end) + 1,
+                  })
+                })
+                this.loading = false
+              })
           }
         } else {
           this.loading = true
@@ -1100,6 +1144,12 @@ export default {
         )
         this.$store.dispatch('variations/variationSearch', e)
       }
+      if (e.type === 'svVariant') {
+        this.$router.push(
+          '/svVariant?id=' + e.value + '&chrom=' + this.options[0].chrom
+        )
+        this.$store.dispatch('variations/variationSearch', e)
+      }
     },
     selectBlur() {
       if (this.options.length) {
@@ -1122,6 +1172,12 @@ export default {
               this.options[0].chrom
           )
           this.$store.dispatch('variations/variationSearch', this.options[0])
+        }
+        if (e.type === 'svVariant') {
+          this.$router.push(
+            '/svVariant?id=' + e.value + '&chrom=' + this.options[0].chrom
+          )
+          this.$store.dispatch('variations/variationSearch', e)
         }
       }
     },

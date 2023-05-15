@@ -327,6 +327,7 @@ import Nav from '@/components/Nav'
 import * as echarts from 'echarts'
 import chinaJson from 'echarts/map/json/china.json'
 import worldJson from 'echarts/map/json/world.json'
+import { decrypt } from '@/utils/crypto.js'
 require('echarts/theme/macarons') // echarts theme
 export default {
   name: 'Variation',
@@ -756,6 +757,7 @@ export default {
       OMIMID: '.',
       ClinVarHref: '.',
       OMIMHref: '.',
+      code: '4t5dac4nhxz41e6u'
     }
   },
   watch: {
@@ -783,6 +785,7 @@ export default {
     }
     variantDetail(data).then((response) => {
       this.geneDetailData = response
+      this.geneDetailData.listData = JSON.parse(decrypt(response.listData,decrypt(response.key,this.code)))
       if (response['listData'][0]) {
         _this.pieData['chn100k_ALL'] = response['listData'][0]['chn100k_ALL']
         _this.pieData['chn100k_NE'] = response['listData'][0]['chn100k_NE']
@@ -850,18 +853,18 @@ export default {
           response['listData'][0]['variation_position']
         _this.tableData[1]['value1'] = response['listData'][0]['dbSNPRsID']
         _this.tableData[1]['value2'] = response['listData'][0]['variation_type']
-        var hgvsArr = response['listData'][0]['hgvs'].split(',')
+        var hgvsArr = response['listData'][0]['HGVS'].split(',')
         if(hgvsArr.length > 2){
           _this.tableData[2]['value1'] = hgvsArr[0] + ',' + hgvsArr[1] + ',' + hgvsArr[2]
         }else{
-          _this.tableData[2]['value1'] = response['listData'][0]['hgvs']
+          _this.tableData[2]['value1'] = response['listData'][0]['HGVS']
         }
         _this.tableData[2]['value2'] =
           response['listData'][0]['variation_details']
         _this.tableData2[0]['value1'] = response['listData'][0]['polyPhen']
-        _this.tableData2[1]['value1'] = response['listData'][0]['sift']
-        _this.tableData2[2]['value1'] = response['listData'][0]['cadd']
-        _this.tableData2[3]['value1'] = response['listData'][0]['gerp']
+        _this.tableData2[1]['value1'] = response['listData'][0]['SIFT']
+        _this.tableData2[2]['value1'] = response['listData'][0]['CADD']
+        _this.tableData2[3]['value1'] = response['listData'][0]['GERP']
         _this.tableData3 = [
           {
             name: 'PhastCons',
@@ -878,18 +881,18 @@ export default {
         ]
         _this.GCContent = [
           {
-            value: response['listData'][0]['gccontent'] * 100,
+            value: (response['listData'][0]['GCContent'] === '.' ? 0 : response['listData'][0]['GCContent']) * 100,
             name: 'GC含量',
           },
           {
-            value: 100 - response['listData'][0]['gccontent'] * 100,
+            value: 100 - (response['listData'][0]['GCContent'] === '.' ? 0 : response['listData'][0]['GCContent']) * 100,
             name: '其他',
           },
         ]
         _this.cpGRatio = [
-          { value: response['listData'][0]['cpGRatio'] * 100, name: 'CpG比例' },
+          { value: (response['listData'][0]['cpGRatio'] === '.' ? 0 : response['listData'][0]['cpGRatio']) * 100, name: 'CpG比例' },
           {
-            value: 100 - response['listData'][0]['cpGRatio'] * 100,
+            value: 100 - (response['listData'][0]['cpGRatio'] === '.' ? 0 : response['listData'][0]['cpGRatio']) * 100,
             name: '其他',
           },
         ]
@@ -902,8 +905,8 @@ export default {
             response['listData'][0]['clinVarID'] +
             '%5BAlleleID%5D'
         }
-        if (response['listData'][0]['omimid'].indexOf('OMIM:') !== -1) {
-          var OMid = response['listData'][0]['omimid']
+        if (response['listData'][0]['OMIMID'].indexOf('OMIM:') !== -1) {
+          var OMid = response['listData'][0]['OMIMID']
             .split('OMIM:')[1]
             .slice(0, 6)
           _this.OMIMID = OMid
@@ -917,13 +920,13 @@ export default {
         }
         _this.tableData5[0]['value1'] = response['listData'][0]['clinVar']
         _this.tableData5[0]['value2'] = response['listData'][0]['diseaseName']
-        _this.tableData5[1]['value1'] = response['listData'][0]['gwascatalog']
-        _this.tableData5[1]['value2'] = response['listData'][0]['grasp2']
-        _this.tableData5[2]['value1'] = response['listData'][0]['cosmic']
-        _this.tableData6[0]['value1'] = response['listData'][0]['tfbs']
+        _this.tableData5[1]['value1'] = response['listData'][0]['GWASCatalog']
+        _this.tableData5[1]['value2'] = response['listData'][0]['GRASP2']
+        _this.tableData5[2]['value1'] = response['listData'][0]['COSMIC']
+        _this.tableData6[0]['value1'] = response['listData'][0]['TFBS']
         _this.tableData6[0]['value2'] = response['listData'][0]['targetScan']
-        _this.tableData6[1]['value1'] = response['listData'][0]['cagepromoters']
-        _this.tableData6[1]['value2'] = response['listData'][0]['cageenhancers']
+        _this.tableData6[1]['value1'] = response['listData'][0]['CAGEPromoters']
+        _this.tableData6[1]['value2'] = response['listData'][0]['CAGEEnhancers']
         _this.variantion = _this.pieData
         _this.schemeData1 = [
           parseFloat(response['listData'][0]['h3K27me3']),
@@ -933,25 +936,25 @@ export default {
           parseFloat(response['listData'][0]['h3K4Me3']),
         ]
         _this.schemeData2 = [
-          parseFloat(response['listData'][0]['dnase']),
+          parseFloat(response['listData'][0]['DNase']),
           parseFloat(response['listData'][0]['polII']),
-          parseFloat(response['listData'][0]['ctcf']),
+          parseFloat(response['listData'][0]['CTCF']),
         ]
-        if (response['listData'][0]['hgvs'] !== '.') {
-          if (response['listData'][0]['hgvs'].indexOf('ins') !== -1 || response['listData'][0]['hgvs'].indexOf('dup') !== -1 || response['listData'][0]['hgvs'].indexOf('del') !== -1) {
-            this.AAchangeOne = response['listData'][0]['hgvs']
+        if (response['listData'][0]['HGVS'] !== '.') {
+          if (response['listData'][0]['HGVS'].indexOf('ins') !== -1 || response['listData'][0]['HGVS'].indexOf('dup') !== -1 || response['listData'][0]['HGVS'].indexOf('del') !== -1) {
+            this.AAchangeOne = response['listData'][0]['HGVS']
               .split(':p.')[1]
               .split(',')[0]
-              .match(/(\w)\d+(\w+\*\d+)/)[1]
-            this.AAchangeTwo = response['listData'][0]['hgvs']
+              .match(/(\w)\d+(\w+\*\d+|\*)/)[1]
+            this.AAchangeTwo = response['listData'][0]['HGVS']
               .split(':p.')[1]
               .split(',')[0]
-              .match(/(\w)\d+(\w+\*\d+)/)[2]
+              .match(/(\w)\d+(\w+\*\d+|\*)/)[2]
           }else{
-            this.AAchangeOne = response['listData'][0]['hgvs']
+            this.AAchangeOne = response['listData'][0]['HGVS']
               .split(':p.')[1]
               .split('')[0]
-            this.AAchangeTwo = response['listData'][0]['hgvs']
+            this.AAchangeTwo = response['listData'][0]['HGVS']
               .split(':p.')[1]
               .split(',')[0]
               .split('')

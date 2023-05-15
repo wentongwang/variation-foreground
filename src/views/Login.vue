@@ -57,14 +57,22 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
       <el-button
         :loading="loading"
         type="primary"
-        style="width:100%;margin-bottom:30px;"
+        style="width: 100%; margin-bottom: 10px"
         @click.native.prevent="handleLogin"
-      >{{ $t('login.login') }}</el-button>
+        >{{ $t('login.login') }}</el-button
+      >
     </el-form>
+    <div class="register-container">
+      <span class="title"
+        >{{ $t('register.title')
+        }}<el-link type="primary" @click.native.prevent="handleRegister">{{
+          $t('register.toRegister')
+        }}</el-link></span
+      >
+    </div>
   </div>
 </template>
 
@@ -74,40 +82,40 @@ export default {
   data() {
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error(this.$t('login.validatePassword')))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin123456'
+        username: '',
+        password: '',
       },
       loginRules: {
         password: [
-          { required: true, trigger: 'blur', validator: validatePassword }
-        ]
+          { required: true, trigger: 'blur', validator: validatePassword },
+        ],
       },
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
     }
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         const query = route.query
         if (query) {
           this.redirect = query.redirect
           this.otherQuery = this.getOtherQuery(query)
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   created() {
     // window.addEventListener('storage', this.afterQRScan)
@@ -138,7 +146,7 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true
           this.$store
@@ -146,7 +154,7 @@ export default {
             .then(() => {
               this.$router.push({
                 path: this.redirect || '/',
-                query: this.otherQuery
+                query: this.otherQuery,
               })
               this.loading = false
             })
@@ -159,6 +167,9 @@ export default {
         }
       })
     },
+    handleRegister(){
+      this.$router.push({path:'/register'})
+    },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== 'redirect') {
@@ -166,8 +177,8 @@ export default {
         }
         return acc
       }, {})
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -267,6 +278,18 @@ $light_gray: #eee;
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;
+    }
+  }
+  .register-container {
+    position: relative;
+    .title {
+      font-size: 14px;
+      color: $light_gray;
+      margin: 0px auto 40px auto;
+      text-align: left;
+    }
+    a {
+      font-size: 14px;
     }
   }
 

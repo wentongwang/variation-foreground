@@ -1,11 +1,23 @@
 import axios from 'axios'
-
+import { getToken,removeToken } from '@/utils/auth'
+import store from '@/store'
 // create an axios instance
-const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 50000 // request timeout
-})
+let envService
+let pathname = window.location.pathname === '/' ? '' : window.location.pathname
+if(process.env.NODE_ENV !== 'development'){
+  envService = axios.create({
+    baseURL: window.location.protocol + '//' + window.location.host + pathname + process.env.VUE_APP_BASE_API, // url = base url + request url
+    // withCredentials: true, // send cookies when cross-domain requests
+    timeout: 50000 // request timeout
+  })
+}else{
+  envService = axios.create({
+    baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+    // withCredentials: true, // send cookies when cross-domain requests
+    timeout: 50000 // request timeout
+  })
+}
+const service = envService
 const pending = [] // 声明一个数组用于存储每个ajax请求的取消函数和ajax标识
 const CancelToken = axios.CancelToken
 const removeRepeatUrl = ever => {
@@ -27,6 +39,9 @@ service.interceptors.request.use(
       // 自定义唯一标识
       pending.push({ u: config.url + '&' + config.method, f: c })
     })
+    if (store.getters.token) {
+      config.headers['X-Token'] = getToken()
+    }
     return config
   },
   error => {
@@ -55,6 +70,13 @@ service.interceptors.response.use(
     if (response.status !== 200) {
       return Promise.reject(res.msg || 'error')
     } else {
+      if(res.code === 100){//token过期
+        // removeToken()
+        store.dispatch('user/logout').then(() => {
+          location.reload(true)
+        })
+        return null
+      }
       return res
     }
   },

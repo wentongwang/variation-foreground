@@ -27,7 +27,14 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col class="input-contaner" :span="2" :offset="5">
+      <el-col class="input-contaner" :span="2" :offset="3">
+        <el-link href="http://bioinformatics.hit.edu.cn/imputation/" target="_blank"
+          ><span class="svg-container">
+            <i class="el-icon-link" /> </span
+          >IMPUTATION</el-link
+        >
+      </el-col>
+      <el-col class="input-contaner" :span="2">
         <lang-select class="right-menu-item hover-effect" />
       </el-col>
       <el-col class="input-contaner" :span="2">
@@ -38,7 +45,7 @@
 </template>
 
 <script>
-import { search, variant } from '@/api/variation'
+import { search, variant, svVariant } from '@/api/variation'
 import LangSelect from '@/components/LangSelect'
 import LogOut from '@/components/LogOut'
 
@@ -80,9 +87,9 @@ export default {
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
                 chrom:
-                  queryArr[0] === 'x' || queryArr[0] === 'X'
+                queryArr[0] === 'x' || queryArr[0] === 'X' || queryArr[0] === 'chrx' || queryArr[0] === 'chrX'
                     ? 23
-                    : parseInt(queryArr[0]),
+                    : parseInt(queryArr[0].replace(/[^\d]/g, " ")),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[1]) + 1,
                 type: 'position',
@@ -98,16 +105,23 @@ export default {
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
                 chrom:
-                  queryArr[0] === 'x' || queryArr[0] === 'X'
+                queryArr[0] === 'x' || queryArr[0] === 'X' || queryArr[0] === 'chrx' || queryArr[0] === 'chrX'
                     ? 23
-                    : parseInt(queryArr[0]),
+                    : parseInt(queryArr[0].replace(/[^\d]/g, " ")),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[2]) + 1,
                 type: 'position',
               })
             }
           }
-          if (queryArr.length >= 4) {
+          if (
+            queryArr.length >= 4 &&
+            (queryArr[3] === 'DEL' ||
+              queryArr[3] === 'INS' ||
+              queryArr[3] === 'BND' ||
+              queryArr[3] === 'INV' ||
+              queryArr[3] === 'DUP')
+          ) {
             this.loading = true
             const data = {
               variantId: query.toUpperCase(),
@@ -124,7 +138,7 @@ export default {
               queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
                 ? (data.chrom = 23)
                 : (data.chrom = queryArr[0].slice(3)),
-                variant(data).then((response) => {
+                svVariant(data).then((response) => {
                   const data = response.listData
                   data.forEach(function (val, index, arr) {
                     _this.options.push({
@@ -139,6 +153,37 @@ export default {
                   this.loading = false
                 })
             }
+          }
+          if (
+            (queryArr[0].slice(0, 3) === 'chr' &&
+              queryArr[0].slice(3) < 23) ||
+            (queryArr[0].slice(0, 3) === 'chr' &&
+              queryArr[0].slice(3) === 'x') ||
+            (queryArr[0].slice(0, 3) === 'chr' &&
+              queryArr[0].slice(3) === 'X')
+          ) {
+            this.loading = true
+            const data = {
+              variantId: query.toUpperCase(),
+              chrom: null,
+            }
+            queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
+              ? (data.chrom = 23)
+              : (data.chrom = queryArr[0].slice(3)),
+              variant(data).then((response) => {
+                const data = response.listData
+                data.forEach(function (val, index, arr) {
+                  _this.options.push({
+                    chrom: val.chrom,
+                    value: val.uu_id,
+                    label: val.uu_id,
+                    type: response['type'],
+                    start: parseInt(val.start) - 1,
+                    end: parseInt(val.end) + 1,
+                  })
+                })
+                this.loading = false
+              })
           }
         } else {
           this.loading = true
@@ -183,6 +228,14 @@ export default {
         _this.options = []
         this.reload()
       }
+      if (e.type === 'svVariant') {
+        this.$router.push(
+          '/svVariant?id=' + e.value + '&chrom=' + this.options[0].chrom
+        )
+        this.$store.dispatch('variations/variationSearch', e)
+        _this.options = []
+        this.reload()
+      }
     },
     selectBlur() {
       if (this.options.length) {
@@ -206,6 +259,12 @@ export default {
           )
           this.$store.dispatch('variations/variationSearch', this.options[0])
         }
+        if (e.type === 'svVariant') {
+        this.$router.push(
+          '/svVariant?id=' + e.value + '&chrom=' + this.options[0].chrom
+        )
+        this.$store.dispatch('variations/variationSearch', this.options[0])
+      }
       }
     },
   },
@@ -227,9 +286,13 @@ export default {
     float: left;
   }
   .input-contaner {
+    text-align: center;
     float: left;
     .header-search {
       width: 100%;
+    }
+    a {
+      color: #ffffff;
     }
   }
   span {

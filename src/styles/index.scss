@@ -6,6 +6,12 @@ body {
   font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
 }
 
+
+@font-face{font-family: "mtsi-font";src:url("./font/stone.eot");src:url("./font/stone.eot?#iefix") format("embedded-opentype"),url("./font/stone.woff");}
+.stonefont {
+  font-family: mtsi-font;
+}
+
 label {
   font-weight: 700;
 }

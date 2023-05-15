@@ -27,6 +27,11 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/register',
+    component: () => import('@/views/Register.vue'),
+    hidden: true
+  },
+  {
     path: '/',
     component: () => import('@/views/Home.vue'),
     name: 'Home',

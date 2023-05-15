@@ -104,93 +104,120 @@
         <div class="annotation-container">
           <svg id="svg-drag" v-drag></svg>
         </div>
-        <div class="variation-container" @click="variationClick($event)" />
+        <div class="variation-container" @click="variationClick($event)"><canvas id="canvas"></canvas></div>
         <template>
           <el-row>
             <el-col :span="8">
-              <el-button type="primary" @click="onReset" class="resetBtn">初始化</el-button>
+              <el-button type="primary" @click="onReset" class="resetBtn"
+                >初始化</el-button
+              >
               <div id="mapChart" />
             </el-col>
             <el-col :span="16">
-              <el-table
-                ref="filterTable"
-                class="gene-table"
-                size="mini"
+              <VirtualScroll
+                ref="virtualScroll"
+                :virtualized="true"
                 :data="tableData"
-                max-height="540"
-                @cell-click="tableCell"
-                :row-style="TableRowStyle"
-                use-virtual
-                highlight-current-row
+                :key="virtualListValue"
+                :height="50"
+                key-prop="id"
+                @change="(data) => (virtualList = data)"
               >
-                <el-table-column
-                  prop="variatiId"
-                  :label="$t('gene.table.variatiId')"
-                  sortable
-                  width="220"
+                <el-table
+                  row-key="id"
+                  ref="filterTable"
+                  class="gene-table"
+                  size="mini"
+                  :data="virtualList"
+                  height="540"
+                  style="width: 100%"
+                  @cell-click="tableCell"
+                  :row-style="TableRowStyle"
+                  highlight-current-row
                 >
+                  <el-table-column
+                    prop="variatiId"
+                    :label="$t('gene.table.variatiId')"
+                    width="220"
+                  >
+                    <template slot-scope="scope">
+                      <el-link
+                        class="stonefont"
+                        style="font-size: 12px"
+                        v-if="scope.row.variation_type === 'SV'"
+                        :href="
+                          '#/svVariant?id=' +
+                          scope.row.variatiId +
+                          '&chrom=' +
+                          scope.row.chrom
+                        "
+                        type="primary"
+                        target="_blank"
+                        >
+                        {{ scope.row.variatiId | filterAmount(27) }}
+                        <!-- &#xF7B3;&#xEDBA;&#xF0F0;&#xE85F;&#xEFE9;&#xED4F;&#xF70E;&#xE916;&#xE83F;&#xED98; -->
+                        </el-link
+                      >
+                      <el-link
+                        v-else
+                        style="font-size: 12px"
+                        :href="
+                          '#/variant?id=' +
+                          scope.row.variatiId +
+                          '&chrom=' +
+                          scope.row.chrom
+                        "
+                        type="primary"
+                        target="_blank"
+                        >{{ scope.row.variatiId | filterAmount(27) }}</el-link
+                      >
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="gene" :label="$t('gene.table.gene')" />
+                  <el-table-column
+                    prop="rsid"
+                    :label="$t('gene.table.rsid')"
+                    width="100"
+                  />
+                  <el-table-column
+                    prop="chn100k_ALL"
+                    :label="$t('gene.table.chn100k_ALL')"
+                  />
+                  <el-table-column
+                    prop="exonicFunc"
+                    :label="$t('gene.table.exonicFunc')"
+                  >
+                    <template slot-scope="scope">
+                      <el-badge
+                        class="mark"
+                        is-dot
+                        :type="
+                          scope.row.exonicFunColor === 'danger'
+                            ? 'danger'
+                            : scope.row.exonicFunColor === 'success'
+                            ? 'success'
+                            : 'info'
+                        "
+                        style="margin-top: 15px; margin-right: 5px"
+                      />{{ scope.row.exonicFuncValue }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="variation_type"
+                    :label="$t('gene.table.variation_type')"
+                    width="70"
+                  />
+                  <el-table-column
+                    prop="geneDetail"
+                    :label="$t('gene.table.geneDetail')"
+                    show-overflow-tooltip
+                  >
                   <template slot-scope="scope">
-                    <el-link
-                      v-if="scope.row.variation_type === 'SV'"
-                      :href="
-                        '#/svVariant?id=' +
-                        scope.row.variatiId +
-                        '&chrom=' +
-                        scope.row.chrom
-                      "
-                      type="primary"
-                      >{{ scope.row.variatiId }}</el-link
-                    >
-                    <el-link
-                      v-else
-                      :href="
-                        '#/variant?id=' +
-                        scope.row.variatiId +
-                        '&chrom=' +
-                        scope.row.chrom
-                      "
-                      type="primary"
-                      >{{ scope.row.variatiId }}</el-link
-                    >
+                    {{ scope.row.geneDetail | filterAmount(100) }}
                   </template>
-                </el-table-column>
-                <el-table-column prop="gene" :label="$t('gene.table.gene')"/>
-                <el-table-column prop="rsid" :label="$t('gene.table.rsid')" width="100"/>
-                <el-table-column prop="chn100k_ALL" :label="$t('gene.table.chn100k_ALL')" />
-                <el-table-column
-                  prop="exonicFunc"
-                  :label="$t('gene.table.exonicFunc')"
-                >
-                  <template slot-scope="scope">
-                    <el-badge
-                      class="mark"
-                      is-dot
-                      :type="
-                        scope.row.exonicFunColor === 'danger'
-                          ? 'danger'
-                          : scope.row.exonicFunColor === 'success'
-                          ? 'success'
-                          : 'info'
-                      "
-                      style="margin-top: 15px; margin-right: 5px"
-                    />{{ scope.row.exonicFuncValue }}
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  prop="variation_type"
-                  :label="$t('gene.table.variation_type')"
-                  width="70"
-                />
-                <!-- <el-table-column prop="dbsnp" :label="$t('gene.table.dbsnp')" /> -->
-                <!-- <el-table-column
-              prop="chn100k_ALL"
-              :label="$t('gene.table.chn100k_ALL')"
-            /> -->
-                <el-table-column
-                  prop="geneDetail"
-                  :label="$t('gene.table.geneDetail')"
-                />
-              </el-table>
+                  </el-table-column>
+                </el-table>
+              </VirtualScroll>
             </el-col>
           </el-row>
         </template>
@@ -206,11 +233,15 @@ import * as d3 from 'd3'
 import Nav from '@/components/Nav'
 import * as echarts from 'echarts'
 import chinaJson from 'echarts/map/json/china.json'
+import VirtualScroll from 'el-table-virtual-scroll'
+import '@/utils/filters.js'
+import { decrypt } from '@/utils/crypto.js'
 require('echarts/theme/macarons') // echarts theme
 export default {
   name: 'Gene',
   components: {
     Nav,
+    VirtualScroll,
   },
   directives: {
     drag: {
@@ -273,6 +304,8 @@ export default {
   },
   data() {
     return {
+      virtualList: [],
+      virtualListValue: undefined,
       geneData: {
         genomic: [
           {
@@ -331,7 +364,8 @@ export default {
         'rgb(233, 233, 235)',
       ],
       tableBgPos: '',
-      dataList: []
+      dataList: [],
+      code: '4t5dac4nhxz41e6u'
     }
   },
   computed: {
@@ -597,13 +631,11 @@ export default {
         const margin = (_this.containerWidth / 20) * 1.5
         const width = _this.containerWidth - margin * 2
         const height = 100
+        const canvas = document.getElementById('canvas')
         let thisColor, activeColor, cx
-        d3.select('.variation-container').selectAll('*').remove()
-        const svg = d3
-          .select('.variation-container')
-          .append('svg')
-          .attr('width', width)
-          .attr('height', height)
+        canvas.height = height
+        canvas.width = width
+        const ctx = canvas.getContext('2d')
         _this.filterData.variation.forEach(function (d, i) {
           cx =
             ((d['start'] +
@@ -636,24 +668,10 @@ export default {
             activeColor = _this.colorActive[3]
           }
           if (d['chn100k_ALL'] !== '.') {
-            if (i < 11) {
-              svg
-                .append('ellipse')
-                .attr('cx', cx)
-                .attr('cy', 50)
-                .attr('rx', parseInt(d['end'] - d['start'] + 5))
-                .attr('ry', parseInt(35 * d['chn100k_ALL']))
-                .attr('stroke', '#DCDFE6')
-                .attr('fill', activeColor)
+            if (i < 10) {
+              _this.BezierEllipse1(ctx,cx,50,parseInt(d['end'] - d['start'] + 5),parseInt(35 * d['chn100k_ALL']),'#DCDFE6',activeColor)
             } else {
-              svg
-                .append('ellipse')
-                .attr('cx', cx)
-                .attr('cy', 50)
-                .attr('rx', parseInt(d['end'] - d['start'] + 5))
-                .attr('ry', parseInt(35 * d['chn100k_ALL']))
-                .attr('stroke', '#C0C4CC')
-                .attr('fill', thisColor)
+              _this.BezierEllipse1(ctx,cx,50,parseInt(d['end'] - d['start'] + 5),parseInt(35 * d['chn100k_ALL']),'#C0C4CC',thisColor)
             }
           }
         })
@@ -744,6 +762,7 @@ export default {
             svNum = svNum + 1
           }
           _this.tableData.push({
+            id:d['id'],
             variatiId: d['uu_id'],
             chrom: d['chrom'],
             rsid: d['rsid'],
@@ -811,7 +830,9 @@ export default {
         chrom: this.gene.chrom === 'x' ? 23 : this.gene.chrom,
       }
       genePositionData(data).then((response) => {
+        response.variation = JSON.parse(decrypt(response.variation,decrypt(response.key,this.code)))
         this.geneData = response
+        this.scrollHeight = this.geneData.variation.length * 51
         this.filterData = Object.assign({}, response)
         this.containerWidth = parseInt(
           d3.select('.axis-container').style('width')
@@ -823,83 +844,70 @@ export default {
   mounted() {
     const _this = this
     if (this.$refs.filterTable) {
-      this.dom = this.$refs.filterTable.bodyWrapper
-      this.dom.addEventListener('scroll', function () {
-        const windowHeight = _this.dom.clientHeight
-        const scrollHeight = _this.dom.scrollHeight
-        const needScroll = scrollHeight - windowHeight
-        const scrollTop = _this.dom.scrollTop
-        const positionStart =
-          _this.gene.start - 100 < 0 ? 0 : _this.gene.start - 100
-        const positionEnd = _this.gene.end + 100
-        const geneLength = positionEnd - positionStart
-        const margin = (_this.containerWidth / 20) * 1.5
-        const width = _this.containerWidth - margin * 2
-        let cx, thisColor, activeColor
-        const svg = d3.select('.variation-container').select('svg')
-        svg.selectAll('*').remove()
-        _this.minIdxSC = Math.ceil(
-          (scrollTop * (_this.filterData.variation.length - 1)) / needScroll
-        )
-        if (_this.minIdxSC < 5) {
-          _this.minIdxSC = 5
-        } else if (_this.minIdxSC > _this.filterData.variation.length - 6) {
-          _this.minIdxSC = _this.filterData.variation.length - 5
-        }
-        _this.filterData.variation.forEach(function (d, i) {
-          if (
-            d['func'].indexOf('ncRNA_exonic') !== -1 ||
-            d['func'].indexOf('ncRNA_intronic') !== -1 ||
-            d['func'].indexOf('intronic') !== -1 ||
-            d['func'].indexOf('UTR5') !== -1 ||
-            d['func'].indexOf('UTR3') !== -1 ||
-            d['func'].indexOf('ncRNA_splicing') !== -1 ||
-            d['func'].indexOf('UTR5;UTR3') !== -1 ||
-            d['func'].indexOf('ncRNA_exonic;splicing') !== -1 ||
-            d['func'].indexOf('ncRNA_UTR5') !== -1
-          ) {
-            thisColor = _this.color[2]
-            activeColor = _this.colorActive[2]
-          } else if (
-            d['func'].indexOf('exonic') !== -1 ||
-            d['func'].indexOf('splicing') !== -1 ||
-            d['func'].indexOf('exonic;splicing') !== -1
-          ) {
-            thisColor = _this.color[0]
-            activeColor = _this.colorActive[0]
-          } else {
-            thisColor = _this.color[3]
-            activeColor = _this.colorActive[3]
-          }
-          cx =
-            ((d['start'] +
-              parseInt(d['end'] - d['start'] + 3) / 2 -
-              positionStart) /
-              geneLength) *
-            width
-          if (d['chn100k_ALL'] !== '.') {
-            if (_this.minIdxSC - i < 6 && _this.minIdxSC - i > -6) {
-              svg
-                .append('ellipse')
-                .attr('cx', cx)
-                .attr('cy', 50)
-                .attr('rx', parseInt(d['end'] - d['start'] + 5))
-                .attr('ry', parseInt(35 * d['chn100k_ALL']))
-                .attr('stroke', '#DCDFE6')
-                .attr('fill', activeColor)
-            } else {
-              svg
-                .append('ellipse')
-                .attr('cx', cx)
-                .attr('cy', 50)
-                .attr('rx', parseInt(d['end'] - d['start'] + 5))
-                .attr('ry', parseInt(35 * d['chn100k_ALL']))
-                .attr('stroke', '#C0C4CC')
-                .attr('fill', thisColor)
-            }
-          }
-        })
-      })
+      //   this.dom = this.$refs.filterTable.bodyWrapper
+      //   this.dom.addEventListener('scroll', function () {
+      //   const windowHeight = _this.dom.clientHeight
+      //   const scrollHeight = _this.dom.scrollHeight
+      //   const needScroll = scrollHeight - windowHeight
+      //   const scrollTop = _this.dom.scrollTop
+      //   const positionStart =
+      //     _this.gene.start - 100 < 0 ? 0 : _this.gene.start - 100
+      //   const positionEnd = _this.gene.end + 100
+      //   const geneLength = positionEnd - positionStart
+      //   const margin = (_this.containerWidth / 20) * 1.5
+      //   const width = _this.containerWidth - margin * 2
+      //   const canvas = document.getElementById('canvas')
+      //   let thisColor, activeColor, cx
+      //   const ctx = canvas.getContext('2d')
+      //   ctx.clearRect(0,0,width,100)
+      //   _this.minIdxSC = Math.ceil(
+      //     (scrollTop * (_this.filterData.variation.length - 1)) / needScroll
+      //   )
+      //   if (_this.minIdxSC < 5) {
+      //     _this.minIdxSC = 5
+      //   } else if (_this.minIdxSC > _this.filterData.variation.length - 6) {
+      //     _this.minIdxSC = _this.filterData.variation.length - 5
+      //   }
+      //   _this.filterData.variation.forEach(function (d, i) {
+      //     if (
+      //       d['func'].indexOf('ncRNA_exonic') !== -1 ||
+      //       d['func'].indexOf('ncRNA_intronic') !== -1 ||
+      //       d['func'].indexOf('intronic') !== -1 ||
+      //       d['func'].indexOf('UTR5') !== -1 ||
+      //       d['func'].indexOf('UTR3') !== -1 ||
+      //       d['func'].indexOf('ncRNA_splicing') !== -1 ||
+      //       d['func'].indexOf('UTR5;UTR3') !== -1 ||
+      //       d['func'].indexOf('ncRNA_exonic;splicing') !== -1 ||
+      //       d['func'].indexOf('ncRNA_UTR5') !== -1
+      //     ) {
+      //       thisColor = _this.color[2]
+      //       activeColor = _this.colorActive[2]
+      //     } else if (
+      //       d['func'].indexOf('exonic') !== -1 ||
+      //       d['func'].indexOf('splicing') !== -1 ||
+      //       d['func'].indexOf('exonic;splicing') !== -1
+      //     ) {
+      //       thisColor = _this.color[0]
+      //       activeColor = _this.colorActive[0]
+      //     } else {
+      //       thisColor = _this.color[3]
+      //       activeColor = _this.colorActive[3]
+      //     }
+      //     cx =
+      //       ((d['start'] +
+      //         parseInt(d['end'] - d['start'] + 3) / 2 -
+      //         positionStart) /
+      //         geneLength) *
+      //       width
+      //     if (d['chn100k_ALL'] !== '.') {
+      //       if (_this.minIdxSC - i < 6 && _this.minIdxSC - i > -6) {
+      //         _this.BezierEllipse1(ctx,cx,50,parseInt(d['end'] - d['start'] + 5),parseInt(35 * d['chn100k_ALL']),'#DCDFE6',activeColor)
+      //       } else {
+      //         _this.BezierEllipse1(ctx,cx,50,parseInt(d['end'] - d['start'] + 5),parseInt(35 * d['chn100k_ALL']),'#C0C4CC',thisColor)
+      //       }
+      //     }
+      //   })
+      // })
       const svgDrag = document.getElementById('svg-drag')
       // 火狐
       if (window.addEventListener) {
@@ -949,7 +957,9 @@ export default {
           chrom: this.gene.chrom === 'x' ? 23 : this.gene.chrom,
         }
         genePositionData(data).then((response) => {
+          response.variation = JSON.parse(decrypt(response.variation,decrypt(response.key,this.code)))
           this.geneData = response
+          this.scrollHeight = this.geneData.variation.length * 51
           this.filterData = Object.assign({}, response)
           this.containerWidth = parseInt(
             d3.select('.axis-container').style('width')
@@ -976,7 +986,9 @@ export default {
           chrom: this.gene.chrom,
         }
         genePositionData(data).then((response) => {
+          response.variation = JSON.parse(decrypt(response.variation,decrypt(response.key,this.code)))
           this.geneData = response
+          this.scrollHeight = this.geneData.variation.length * 51
           this.filterData = Object.assign({}, response)
           this.containerWidth = parseInt(
             d3.select('.axis-container').style('width')
@@ -1017,6 +1029,7 @@ export default {
     },
     variationClick(e) {
       const _this = this
+      this.dom = this.$refs.filterTable.bodyWrapper
       const windowHeight = this.dom.clientHeight
       const scrollHeight = this.dom.scrollHeight
       const needScroll = scrollHeight - windowHeight
@@ -1026,11 +1039,12 @@ export default {
       const geneLength = positionEnd - positionStart
       const margin = (_this.containerWidth / 20) * 1.5
       const width = _this.containerWidth - margin * 2
-      let cx, thisColor, activeColor
       let temp = Infinity
       let scrollIndex = 0
-      const svg = d3.select('.variation-container').select('svg')
-      svg.selectAll('*').remove()
+      const canvas = document.getElementById('canvas')
+      let thisColor, activeColor, cx
+      const ctx = canvas.getContext('2d')
+      ctx.clearRect(0,0,width,100)
       this.filterData.variation.forEach(function (d1, i1) {
         cx =
           ((d1['start'] +
@@ -1053,11 +1067,12 @@ export default {
         }
       })
       this.filterData.variation.forEach(function (d, i) {
-        cx =
-          (d['start'] +
-            parseInt(d['end'] - d['start'] + 5) / 2 -
-            positionStart / geneLength) *
-          width
+          cx =
+            ((d['start'] +
+              parseInt(d['end'] - d['start'] + 3) / 2 -
+              positionStart) /
+              geneLength) *
+            width
         if (
           d['func'].indexOf('ncRNA_exonic') !== -1 ||
           d['func'].indexOf('ncRNA_intronic') !== -1 ||
@@ -1082,28 +1097,16 @@ export default {
           thisColor = _this.color[3]
           activeColor = _this.colorActive[3]
         }
+      
         if (d['chn100k_ALL'] !== '.') {
           if (_this.minIdxSC - i < 6 && _this.minIdxSC - i > -6) {
-            svg
-              .append('ellipse')
-              .attr('cx', cx)
-              .attr('cy', 50)
-              .attr('rx', parseInt(d['end'] - d['start'] + 5))
-              .attr('ry', parseInt(35 * d['chn100k_ALL']))
-              .attr('stroke', '#DCDFE6')
-              .attr('fill', activeColor)
+            _this.BezierEllipse1(ctx,cx,50,parseInt(d['end'] - d['start'] + 5),parseInt(35 * d['chn100k_ALL']),'#DCDFE6',activeColor)
           } else {
-            svg
-              .append('ellipse')
-              .attr('cx', cx)
-              .attr('cy', 50)
-              .attr('rx', parseInt(d['end'] - d['start'] + 5))
-              .attr('ry', parseInt(35 * d['chn100k_ALL']))
-              .attr('stroke', '#C0C4CC')
-              .attr('fill', thisColor)
+            _this.BezierEllipse1(ctx,cx,50,parseInt(d['end'] - d['start'] + 5),parseInt(35 * d['chn100k_ALL']),'#C0C4CC',thisColor)
           }
         }
       })
+      console.log((needScroll * scrollIndex) / (this.filterData.variation.length - 1))
       this.dom.scrollTop =
         (needScroll * scrollIndex) / (this.filterData.variation.length - 1)
     },
@@ -1383,6 +1386,8 @@ export default {
     initChart(dataList) {
       var _this = this
       var chartDom = document.getElementById('mapChart')
+      var clientWidth = document.body.clientWidth
+      chartDom.style.height = (540 / 1903) * clientWidth + 'px'
       var myChart = echarts.init(chartDom)
 
       var option = {
@@ -1402,26 +1407,26 @@ export default {
           // text: ['High', 'Low'], //取值范围的文字
           splitNumber: 4,
           pieces: [
-              { min: 0.05, max: 1, label:'5%-100%',color: '#f96262'},
-              { min: 0.01, max: 0.05, label:'1%-5%',color: '#f5c63a'},
-              { min: 0.005, max: 0.01, label:'0.5%-1%',color: '#48bd48'},
-              { min: 0, max: 0.005, label:'0%-0.5%',color: '#40a1e5'},
-              { value: 0, label:'0%',color: '#eeeeee'}
-            ],
+            { min: 0.05, max: 1, label: '5%-100%', color: '#f96262' },
+            { min: 0.01, max: 0.05, label: '1%-5%', color: '#f5c63a' },
+            { min: 0.005, max: 0.01, label: '0.5%-1%', color: '#48bd48' },
+            { min: 0, max: 0.005, label: '0%-0.5%', color: '#40a1e5' },
+            { value: 0, label: '0%', color: '#eeeeee' },
+          ],
           // inRange: {
-            // color: ['#e0ffff', '#2196f3'], //取值范围的颜色
-            // color: ['#1f77b4', '#2ca02c', '#ff7f0e', '#d62728'],
-            // color: ['#ffffff', '#1f77b4', '#2ca02c', '#ff7f0e', '#d62728'],
-            // color: function(e){
-            //   console.log(e)
-            // }
-            // color: [['ffffff','#eeeeee'], ['ffffff','#d62728'],['ffffff','#ff7f0e'],['ffffff','#2ca02c'],['ffffff','#1f77b4']],
-            // colorLightness: [0.8, 0.2],
-            // color: ['#eeeeee', 'rgba(31,119,180,1)', 'rgba(44,160,44,1)', 'rgba(255,127,14,1)', 'rgba(214,39,40,1)'],
-            // opacity: [0.3, 1]
-            // colorLightness: [0.8, 0.2]
-            // color: ['#121122', 'rgba(3,4,5,0.4)', 'red'],
-            // symbolSize: [30, 100]
+          // color: ['#e0ffff', '#2196f3'], //取值范围的颜色
+          // color: ['#1f77b4', '#2ca02c', '#ff7f0e', '#d62728'],
+          // color: ['#ffffff', '#1f77b4', '#2ca02c', '#ff7f0e', '#d62728'],
+          // color: function(e){
+          //   console.log(e)
+          // }
+          // color: [['ffffff','#eeeeee'], ['ffffff','#d62728'],['ffffff','#ff7f0e'],['ffffff','#2ca02c'],['ffffff','#1f77b4']],
+          // colorLightness: [0.8, 0.2],
+          // color: ['#eeeeee', 'rgba(31,119,180,1)', 'rgba(44,160,44,1)', 'rgba(255,127,14,1)', 'rgba(214,39,40,1)'],
+          // opacity: [0.3, 1]
+          // colorLightness: [0.8, 0.2]
+          // color: ['#121122', 'rgba(3,4,5,0.4)', 'red'],
+          // symbolSize: [30, 100]
           // },
           show: true, //图注
         },
@@ -1479,8 +1484,8 @@ export default {
           },
         ],
       }
-      myChart.setOption(option,true)
-      
+      myChart.setOption(option, true)
+
       myChart.on('click', function (params) {
         if (params.name === '东北') {
           _this.tableBgPos = 'chn100k_NE'
@@ -1548,7 +1553,7 @@ export default {
         myChart.clear()
         myChart.off()
         _this.initChart(_this.dataList)
-        _this.$refs.filterTable.setCurrentRow();
+        _this.$refs.filterTable.setCurrentRow()
       })
       this.$nextTick(() => {
         myChart.resize() // 这里是为了解决，tab刷新的时候，图表不刷新的问题。
@@ -1585,7 +1590,7 @@ export default {
           value: row.chn100k_NW,
         },
       ]
-      if(this.tableBgPos !== ''){
+      if (this.tableBgPos !== '') {
         this.tableBgPos = ''
       }
       this.initChart(this.dataList)
@@ -1593,36 +1598,58 @@ export default {
     TableRowStyle(row) {
       let rowBackground = {}
       if (this.tableBgPos) {
-        if(0 < row.row[this.tableBgPos] && row.row[this.tableBgPos] < 0.005){
-           rowBackground.background =
-          'rgba(123,189,235,' + row.row[this.tableBgPos] * 1000 + ')'
-        }
-        if(0.005 <= row.row[this.tableBgPos] && row.row[this.tableBgPos] < 0.01){
+        if (0 < row.row[this.tableBgPos] && row.row[this.tableBgPos] < 0.005) {
           rowBackground.background =
-          'rgba(111,215,111,' + row.row[this.tableBgPos] * 1000 + ')'
+            'rgba(123,189,235,' + row.row[this.tableBgPos] * 1000 + ')'
         }
-        if(0.01 <= row.row[this.tableBgPos] && row.row[this.tableBgPos] < 0.05){
+        if (
+          0.005 <= row.row[this.tableBgPos] &&
+          row.row[this.tableBgPos] < 0.01
+        ) {
           rowBackground.background =
-          'rgba(245,198,58,' + row.row[this.tableBgPos] * 1000 + ')'
+            'rgba(111,215,111,' + row.row[this.tableBgPos] * 1000 + ')'
         }
-        if(0.05 <= row.row[this.tableBgPos] && row.row[this.tableBgPos] < 1){
+        if (
+          0.01 <= row.row[this.tableBgPos] &&
+          row.row[this.tableBgPos] < 0.05
+        ) {
           rowBackground.background =
-          'rgba(245,138,138,' + row.row[this.tableBgPos] * 1000 + ')'
+            'rgba(245,198,58,' + row.row[this.tableBgPos] * 1000 + ')'
+        }
+        if (0.05 <= row.row[this.tableBgPos] && row.row[this.tableBgPos] < 1) {
+          rowBackground.background =
+            'rgba(245,138,138,' + row.row[this.tableBgPos] * 1000 + ')'
         }
         // rowBackground.background =
         //   'rgba(145,213,255,' + row.row[this.tableBgPos] * 1000 + ')'
       }
       return rowBackground
     },
-    onReset(){
-      if(this.tableBgPos !== ''){
+    onReset() {
+      if (this.tableBgPos !== '') {
         this.tableBgPos = ''
       }
-      if(this.dataList.length > 0){
+      if (this.dataList.length > 0) {
         this.dataList = []
-        this.$refs.filterTable.setCurrentRow();
+        this.$refs.filterTable.setCurrentRow()
         this.initChart(this.dataList)
       }
+    },
+    BezierEllipse1(context, x, y, a, b, strokeColor, fillColor){
+        context.save();
+        var r = (a > b) ? a : b; 
+        var ratioX = a / r;
+        var ratioY = b / r;
+        context.scale(ratioX, ratioY);
+        context.beginPath();
+        context.moveTo((x + a) / ratioX, y / ratioY);
+        context.arc(x / ratioX, y / ratioY, r, 0, 2 * Math.PI);
+        context.closePath();
+        context.strokeStyle = strokeColor
+        context.fillStyle = fillColor
+        context.fill();
+        context.stroke();
+        context.restore();
     }
   },
 }
@@ -1793,7 +1820,7 @@ export default {
   #mapChart {
     height: 540px;
   }
-  .resetBtn{
+  .resetBtn {
     position: absolute;
     left: 5px;
     top: -34px;
@@ -1819,7 +1846,7 @@ export default {
   .el-checkbox-button__inner {
   border-left-color: #409eff;
 }
-.el-link.el-link--primary{
+.el-link.el-link--primary {
   color: #0580ff;
 }
 </style>

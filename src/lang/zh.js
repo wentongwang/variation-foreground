@@ -1,13 +1,35 @@
 export default {
+  register:{
+    title: '如果您还没有账号请先 ',
+    toRegister: ' 账号申请',
+    email: '请填写邮箱，用于接收申请结果',
+    validateEmail: '邮箱格式错误, 请重新输入',
+    principalType: '请输入主体类型，如政府、媒体、企业、个人、其他组织',
+    IDCardName: '请填写身份证姓名',
+    IDCardNo: '请填写身份证号码',
+    validateIDCardNo: '身份证号码错误, 请重新输入',
+    applicationPurpose: '请说明申请账号的用途',
+    emailCode: '请输入邮箱验证码',
+    sendCode: '发送验证码',
+    successMessage: '申请请求发送成功，审批完成后我们会通过邮件与您联系',
+    sendCodeSuccessMessage: '验证码发送成功，请查看您的邮箱',
+    warnMessage: '您的验证码已过期',
+    errorMessage: '申请请求发送失败',
+    sendCodeErrorMessage: '验证码发送失败',
+    loginTitle: '已有数据库账号？',
+    toLogin: '立即登录',
+  },
   login: {
     title: '中国人群多组学参比数据库',
     name: '用户名',
     pass: '密码',
-    login: '登录'
+    login: '登录',
+    validatePassword: '密码不能少于6位',
   },
   index: {
     name: '中国人群多组学参比数据库',
-    search: '搜索'
+    search: '搜索',
+    logout: '退出登录'
   },
   home: {
     name: '中国人群多组学参比数据库',
