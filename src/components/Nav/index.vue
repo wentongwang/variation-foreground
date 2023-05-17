@@ -28,11 +28,22 @@
         </el-select>
       </el-col>
       <el-col class="input-contaner" :span="2" :offset="3">
-        <el-link href="http://bioinformatics.hit.edu.cn/imputation/" target="_blank"
-          ><span class="svg-container">
-            <i class="el-icon-link" /> </span
-          >IMPUTATION</el-link
-        >
+        <el-link href="http://bioinformatics.hit.edu.cn/imputation/" target="_blank" style="animate__bounce"
+          >
+          <span class="word-container">I</span>
+          <span class="word-container">M</span>
+          <span class="word-container">P</span>
+          <span class="word-container">U</span>
+          <span class="word-container">T</span>
+          <span class="word-container">A</span>
+          <span class="word-container">T</span>
+          <span class="word-container">I</span>
+          <span class="word-container">O</span>
+          <span class="word-container">N</span>
+          <span class="svg-container">
+            <i class="el-icon-top-right" /> </span
+          >
+        </el-link>
       </el-col>
       <el-col class="input-contaner" :span="2">
         <lang-select class="right-menu-item hover-effect" />
@@ -298,6 +309,54 @@ export default {
   span {
     display: inline-block;
     height: 100%;
+  }
+  .svg-container{
+    font-size: 16px;
+  }
+  .word-container{
+    font-size: 18px;
+    text-shadow: 2px 2px 5px #409EFF;
+    animation:change 1s ease infinite alternate;
+  }
+  .el-link--inner .word-container:nth-child(2){
+      animation-delay:0.1s;
+  }
+  .el-link--inner .word-container:nth-child(3){
+      animation-delay:0.2s;
+  }
+  .el-link--inner .word-container:nth-child(4){
+      animation-delay:0.3s;
+  }
+  .el-link--inner .word-container:nth-child(5){
+      animation-delay:0.4s;
+  }
+  .el-link--inner .word-container:nth-child(6){
+      animation-delay:0.5s;
+  }
+  .el-link--inner .word-container:nth-child(7){
+      animation-delay:0.6s;
+  }
+  .el-link--inner .word-container:nth-child(8){
+      animation-delay:0.7s;
+  }
+  .el-link--inner .word-container:nth-child(9){
+      animation-delay:0.8s;
+  }
+  .el-link--inner .word-container:nth-child(10){
+      animation-delay:0.9s;
+  }
+
+  @keyframes change{
+    50%{
+      //  transform: translateY(-5px);
+      opacity: 0.75;
+      filter: alpha(opacity = 75);
+    }
+    100%{
+      //  transform: translateY(-5px);
+      opacity: 0.5;
+      filter: alpha(opacity = 50);
+    }
   }
 }
 </style>
