@@ -1,10 +1,13 @@
 <template>
   <el-header class="hello" :gutter="20">
     <el-row>
-      <el-col class="logo" :span="6"
+      <el-col class="logo" :span="5"
         ><span @click="GoToIndex">{{ $t('index.name') }}</span></el-col
       >
-      <el-col class="input-contaner" :span="5" :offset="4">
+      <el-col class="contact" :span="5"
+        ><span>{{ $t('home.contact') }}</span></el-col
+      >
+      <el-col class="input-contaner" :span="5">
         <el-select
           v-model="value"
           class="header-search"
@@ -27,9 +30,13 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col class="input-contaner" :span="2" :offset="3">
-        <el-link href="http://bioinformatics.hit.edu.cn/imputation/" target="_blank" style="animate__bounce"
-          >
+      <el-col class="input-contaner" :span="3">
+        <el-link
+          href="http://bioinformatics.hit.edu.cn/imputation/"
+          target="_blank"
+          style="animate__bounce"
+          class="imputation-btn"
+        >
           <span class="word-container">I</span>
           <span class="word-container">M</span>
           <span class="word-container">P</span>
@@ -40,15 +47,16 @@
           <span class="word-container">I</span>
           <span class="word-container">O</span>
           <span class="word-container">N</span>
-          <span class="svg-container">
-            <i class="el-icon-top-right" /> </span
-          >
+          <span class="svg-container"> <i class="el-icon-top-right" /> </span>
         </el-link>
+      </el-col>
+      <el-col class="input-contaner" :span="1" style="cursor: pointer;">
+        <span @click="GoToHelp">{{ $t('index.gotohelp') }}</span>
       </el-col>
       <el-col class="input-contaner" :span="2">
         <lang-select class="right-menu-item hover-effect" />
       </el-col>
-      <el-col class="input-contaner" :span="2">
+      <el-col class="input-contaner" :span="3">
         <log-out class="right-menu-item hover-effect" />
       </el-col>
     </el-row>
@@ -79,11 +87,57 @@ export default {
     GoToIndex: function () {
       this.$router.replace('/')
     },
+    GoToAbout: function () {
+      this.$router.replace('/about')
+    },
+    GoToHelp: function () {
+      this.$router.replace('/help')
+    },
     remoteMethod(query) {
       if (query !== '') {
-        const queryArr = query.split('-')
+        let newQuery = query.replace(/:|：/g, '-')
+        const queryArr = newQuery.split('-')
         this.options = []
         const _this = this
+        if (
+          queryArr.length >= 4 &&
+          (queryArr[3] === 'DEL' ||
+            queryArr[3] === 'INS' ||
+            queryArr[3] === 'BND' ||
+            queryArr[3] === 'INV' ||
+            queryArr[3] === 'DUP')
+        ) {
+          this.loading = true
+          const data = {
+            variantId: query.toUpperCase(),
+            chrom: null,
+          }
+          if (
+            (queryArr[0].slice(0, 3) === 'chr' && queryArr[0].slice(3) < 23) ||
+            (queryArr[0].slice(0, 3) === 'chr' &&
+              queryArr[0].slice(3) === 'x') ||
+            (queryArr[0].slice(0, 3) === 'chr' && queryArr[0].slice(3) === 'X')
+          ) {
+            queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
+              ? (data.chrom = 23)
+              : (data.chrom = queryArr[0].slice(3)),
+              svVariant(data).then((response) => {
+                const data = response.listData
+                data.forEach(function (val, index, arr) {
+                  _this.options.push({
+                    chrom: val.chrom,
+                    value: val.uu_id,
+                    label: val.uu_id,
+                    type: response['type'],
+                    start: parseInt(val.start) - 1,
+                    end: parseInt(val.end) + 1,
+                  })
+                })
+                this.loading = false
+              })
+          }
+          return null
+        }
         if (
           (queryArr.length < 5 && queryArr.length > 0 && queryArr[0] < 23) ||
           (queryArr.length < 5 && queryArr.length > 0 && queryArr[0] === 'x') ||
@@ -98,9 +152,12 @@ export default {
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[1],
                 chrom:
-                queryArr[0] === 'x' || queryArr[0] === 'X' || queryArr[0] === 'chrx' || queryArr[0] === 'chrX'
+                  queryArr[0] === 'x' ||
+                  queryArr[0] === 'X' ||
+                  queryArr[0] === 'chrx' ||
+                  queryArr[0] === 'chrX'
                     ? 23
-                    : parseInt(queryArr[0].replace(/[^\d]/g, " ")),
+                    : parseInt(queryArr[0].replace(/[^\d]/g, ' ')),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[1]) + 1,
                 type: 'position',
@@ -116,28 +173,19 @@ export default {
                 value: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
                 label: queryArr[0] + '-' + queryArr[1] + '-' + queryArr[2],
                 chrom:
-                queryArr[0] === 'x' || queryArr[0] === 'X' || queryArr[0] === 'chrx' || queryArr[0] === 'chrX'
+                  queryArr[0] === 'x' ||
+                  queryArr[0] === 'X' ||
+                  queryArr[0] === 'chrx' ||
+                  queryArr[0] === 'chrX'
                     ? 23
-                    : parseInt(queryArr[0].replace(/[^\d]/g, " ")),
+                    : parseInt(queryArr[0].replace(/[^\d]/g, ' ')),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[2]) + 1,
                 type: 'position',
               })
             }
           }
-          if (
-            queryArr.length >= 4 &&
-            (queryArr[3] === 'DEL' ||
-              queryArr[3] === 'INS' ||
-              queryArr[3] === 'BND' ||
-              queryArr[3] === 'INV' ||
-              queryArr[3] === 'DUP')
-          ) {
-            this.loading = true
-            const data = {
-              variantId: query.toUpperCase(),
-              chrom: null,
-            }
+          if (queryArr.length === 4) {
             if (
               (queryArr[0].slice(0, 3) === 'chr' &&
                 queryArr[0].slice(3) < 23) ||
@@ -146,16 +194,23 @@ export default {
               (queryArr[0].slice(0, 3) === 'chr' &&
                 queryArr[0].slice(3) === 'X')
             ) {
+              this.loading = true
+              const data = {
+                variantId: query.toUpperCase(),
+                chrom: null,
+              }
               queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
                 ? (data.chrom = 23)
                 : (data.chrom = queryArr[0].slice(3)),
-                svVariant(data).then((response) => {
+                variant(data).then((response) => {
                   const data = response.listData
                   data.forEach(function (val, index, arr) {
                     _this.options.push({
                       chrom: val.chrom,
                       value: val.uu_id,
                       label: val.uu_id,
+                      func: val.exonicFunc,
+                      AC: val.chn100k_ALL === '0.0' ? 1 : Math.ceil(val.chn100k_ALL * 25169 * 2),
                       type: response['type'],
                       start: parseInt(val.start) - 1,
                       end: parseInt(val.end) + 1,
@@ -164,37 +219,6 @@ export default {
                   this.loading = false
                 })
             }
-          }
-          if (
-            (queryArr[0].slice(0, 3) === 'chr' &&
-              queryArr[0].slice(3) < 23) ||
-            (queryArr[0].slice(0, 3) === 'chr' &&
-              queryArr[0].slice(3) === 'x') ||
-            (queryArr[0].slice(0, 3) === 'chr' &&
-              queryArr[0].slice(3) === 'X')
-          ) {
-            this.loading = true
-            const data = {
-              variantId: query.toUpperCase(),
-              chrom: null,
-            }
-            queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
-              ? (data.chrom = 23)
-              : (data.chrom = queryArr[0].slice(3)),
-              variant(data).then((response) => {
-                const data = response.listData
-                data.forEach(function (val, index, arr) {
-                  _this.options.push({
-                    chrom: val.chrom,
-                    value: val.uu_id,
-                    label: val.uu_id,
-                    type: response['type'],
-                    start: parseInt(val.start) - 1,
-                    end: parseInt(val.end) + 1,
-                  })
-                })
-                this.loading = false
-              })
           }
         } else {
           this.loading = true
@@ -233,7 +257,11 @@ export default {
       }
       if (e.type === 'variant') {
         this.$router.push(
-          '/variant?id=' + e.value + '&chrom=' + this.options[0].chrom
+          '/variant?id=' + e.value + '&chrom=' + this.options[0].chrom +
+              '&func=' +
+              this.options[0].func +
+              '&AC=' +
+              this.options[0].AC
         )
         this.$store.dispatch('variations/variationSearch', e)
         _this.options = []
@@ -266,16 +294,20 @@ export default {
             '/variant?id=' +
               this.options[0].value +
               '&chrom=' +
-              this.options[0].chrom
+              this.options[0].chrom +
+              '&func=' +
+              this.options[0].func +
+              '&AC=' +
+              this.options[0].AC
           )
           this.$store.dispatch('variations/variationSearch', this.options[0])
         }
         if (e.type === 'svVariant') {
-        this.$router.push(
-          '/svVariant?id=' + e.value + '&chrom=' + this.options[0].chrom
-        )
-        this.$store.dispatch('variations/variationSearch', this.options[0])
-      }
+          this.$router.push(
+            '/svVariant?id=' + e.value + '&chrom=' + this.options[0].chrom
+          )
+          this.$store.dispatch('variations/variationSearch', this.options[0])
+        }
       }
     },
   },
@@ -285,7 +317,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .el-header {
-  background-color: #000000;
+  background-color: #141414;
   color: #ffffff;
   text-align: left;
   line-height: 60px;
@@ -295,6 +327,15 @@ export default {
     font-weight: bold;
     cursor: pointer;
     float: left;
+    span {
+      background-color: #141414;
+    }
+  }
+  .contact{
+    font-size: 14px;
+    font-weight: bold;
+    float: left;
+    color: #909399;
   }
   .input-contaner {
     text-align: center;
@@ -310,49 +351,58 @@ export default {
     display: inline-block;
     height: 100%;
   }
-  .svg-container{
+  .svg-container {
     font-size: 16px;
   }
-  .word-container{
-    font-size: 18px;
-    text-shadow: 2px 2px 5px #409EFF;
-    animation:change 1s ease infinite alternate;
-  }
-  .el-link--inner .word-container:nth-child(2){
-      animation-delay:0.1s;
-  }
-  .el-link--inner .word-container:nth-child(3){
-      animation-delay:0.2s;
-  }
-  .el-link--inner .word-container:nth-child(4){
-      animation-delay:0.3s;
-  }
-  .el-link--inner .word-container:nth-child(5){
-      animation-delay:0.4s;
-  }
-  .el-link--inner .word-container:nth-child(6){
-      animation-delay:0.5s;
-  }
-  .el-link--inner .word-container:nth-child(7){
-      animation-delay:0.6s;
-  }
-  .el-link--inner .word-container:nth-child(8){
-      animation-delay:0.7s;
-  }
-  .el-link--inner .word-container:nth-child(9){
-      animation-delay:0.8s;
-  }
-  .el-link--inner .word-container:nth-child(10){
-      animation-delay:0.9s;
+
+  .imputation-btn {
+    background-color: #141414;
+    .word-container {
+      font-size: 18px;
+      text-shadow: 2px 2px 5px #409eff;
+      animation: change 1s ease infinite alternate;
+    }
   }
 
-  @keyframes change{
-    50%{
+  .el-link--inner .word-container:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+  .el-link--inner .word-container:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+  .el-link--inner .word-container:nth-child(4) {
+    animation-delay: 0.3s;
+  }
+  .el-link--inner .word-container:nth-child(5) {
+    animation-delay: 0.4s;
+  }
+  .el-link--inner .word-container:nth-child(6) {
+    animation-delay: 0.5s;
+  }
+  .el-link--inner .word-container:nth-child(7) {
+    animation-delay: 0.6s;
+  }
+  .el-link--inner .word-container:nth-child(8) {
+    animation-delay: 0.7s;
+  }
+  .el-link--inner .word-container:nth-child(9) {
+    animation-delay: 0.8s;
+  }
+  .el-link--inner .word-container:nth-child(10) {
+    animation-delay: 0.9s;
+  }
+  .el-dropdown{
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  @keyframes change {
+    50% {
       //  transform: translateY(-5px);
       opacity: 0.75;
       filter: alpha(opacity = 75);
     }
-    100%{
+    100% {
       //  transform: translateY(-5px);
       opacity: 0.5;
       filter: alpha(opacity = 50);

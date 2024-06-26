@@ -11,6 +11,20 @@
       <div class="title-container">
         <h3 class="title">{{ $t('register.toRegister') }}</h3>
       </div>
+      <el-form-item prop="username">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          ref="username"
+          v-model="registerForm.username"
+          :placeholder="$t('register.username')"
+          name="username"
+          type="text"
+          autocomplete="off"
+        >
+        </el-input>
+      </el-form-item>
       <el-form-item prop="email">
         <span class="svg-container">
           <i class="el-icon-message" />
@@ -21,6 +35,35 @@
           :placeholder="$t('register.email')"
           name="email"
           type="text"
+          autocomplete="off"
+        >
+        </el-input>
+      </el-form-item>
+      <el-form-item prop="password">
+        <span class="svg-container">
+          <i class="el-icon-key" />
+        </span>
+        <el-input
+          ref="password"
+          v-model="registerForm.password"
+          :placeholder="$t('register.password')"
+          name="password"
+          type="password"
+          autocomplete="off"
+        >
+        </el-input>
+      </el-form-item>
+      <el-form-item prop="checkPass">
+        <span class="svg-container">
+          <i class="el-icon-key" />
+        </span>
+        <el-input
+          ref="checkPass"
+          v-model="registerForm.checkPass"
+          :placeholder="$t('register.checkPass')"
+          name="checkPass"
+          type="password"
+          autocomplete="off"
         >
         </el-input>
       </el-form-item>
@@ -37,7 +80,7 @@
         >
         </el-input>
       </el-form-item>
-      <el-form-item prop="IDCardName">
+      <!-- <el-form-item prop="IDCardName">
         <span class="svg-container">
           <i class="el-icon-s-custom" />
         </span>
@@ -62,7 +105,7 @@
           type="text"
         >
         </el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item prop="applicationPurpose">
         <span class="svg-container">
           <i class="el-icon-edit" />
@@ -123,6 +166,13 @@ import { register, sendCode } from '@/api/user'
 export default {
   name: 'register',
   data() {
+    const validateUsername = (rule, value, callback) => {
+      if (value.length < 6 || value.length > 20) {
+        return callback(this.$t('register.validateUsername'))
+      } else {
+        callback()
+      }
+    }
     const validateEmail = (rule, value, callback) => {
       var verify = /^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/
       if (!verify.test(value)) {
@@ -139,9 +189,33 @@ export default {
         callback()
       }
     }
+    const validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        }else if (value.length < 8){
+          callback(new Error('密码不得少于8位数'));
+        } else {
+          if (this.registerForm.checkPass !== '') {
+            this.$refs.registerForm.validateField('checkPass');
+          }
+          callback();
+        }
+      };
+      const validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.registerForm.password) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      };
     return {
       registerForm: {
+        username: '',
         email: '',
+        password: '',
+        checkPass: '',
         principalType: '',
         applicationPurpose: '',
         IDCardName: '',
@@ -149,7 +223,10 @@ export default {
         emailCode: '',
       },
       registerRules: {
+        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         email: [{ required: true, trigger: 'blur', validator: validateEmail }],
+        password: [{ required: true, trigger: 'blur', validator: validatePass }],
+        checkPass: [{ required: true, trigger: 'blur', validator: validatePass2 }],
         principalType: [{ required: true, trigger: 'blur' }],
         applicationPurpose: [{ required: true, trigger: 'blur' }],
         IDCardName: [{ required: true, trigger: 'blur' }],
@@ -170,9 +247,9 @@ export default {
           this.loading = true
           register(this.registerForm)
             .then((response) => {
-              console.log(response)
               if (response.code === 200) {
                 this.registerForm = {
+                  username: '',
                   email: '',
                   principalType: '',
                   applicationPurpose: '',
@@ -183,9 +260,17 @@ export default {
                   message: this.$t('register.successMessage'),
                   type: 'success',
                 })
+                setTimeout(() => {
+                  this.$router.push('/login');
+                }, 2000);
               } else if(response.code === 201){
                 this.$message({
                   message: this.$t('register.warnMessage'),
+                  type: 'warning',
+                })
+              } else if(response.code === 202){
+                this.$message({
+                  message: this.$t('register.usernameWarnMessage'),
                   type: 'warning',
                 })
               }else {
@@ -214,10 +299,16 @@ export default {
       this.SendCodeDisabled = true
       if (verify.test(this.registerForm.email)) {
         sendCode({'email':this.registerForm.email}).then((response) => {
-          if (response === 'error') {
+          if (response.code === 500) {
             that.SendCodeDisabled = false
             this.$message({
               message: this.$t('register.sendCodeErrorMessage'),
+              type: 'error',
+            })
+          }else if (response.code === 201) {
+            that.SendCodeDisabled = false
+            this.$message({
+              message: this.$t('register.isReregistedMessage'),
               type: 'error',
             })
           } else {
@@ -237,6 +328,8 @@ export default {
             }, 1000)
           }
         })
+      }else{
+        that.SendCodeDisabled = false
       }
     },
   },
@@ -312,7 +405,7 @@ $light_gray: #eee;
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
+    padding: 60px 35px 0;
     margin: 0 auto;
     overflow: hidden;
   }

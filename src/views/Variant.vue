@@ -17,13 +17,26 @@
               textAlign: 'center',
               fontSize: '18px',
               width: '100%',
-              border: '1px solid #EBEEF5',
+              border: '1px solid #EBEEF5'
             }"
           >
             <el-table-column prop="name1"> </el-table-column>
-            <el-table-column prop="value1"> </el-table-column>
+            <el-table-column prop="value1">
+              <template slot-scope="scope">
+                <span
+                  class="stonebox"
+                  v-html="secretNumber(scope.row.value1)"
+                ></span>
+              </template>
+            </el-table-column>
             <el-table-column prop="name2"> </el-table-column>
-            <el-table-column prop="value2"> </el-table-column>
+            <el-table-column prop="value2">
+              <template slot-scope="scope">
+                <span
+                  v-html="scope.row.value2"
+                ></span>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
         <div class="sub-content-1">
@@ -53,26 +66,58 @@
                   textAlign: 'center',
                   fontSize: '18px',
                   width: '100%',
-                  border: '1px solid #EBEEF5',
+                  border: '1px solid #EBEEF5'
                 }"
               >
                 <el-table-column prop="name1"> </el-table-column>
-                <el-table-column prop="value1"> </el-table-column>
+                <el-table-column prop="value1">
+                  <template slot-scope="scope">
+                    <span
+                      v-html="scope.row.value1"
+                    ></span>
+                  </template>
+                </el-table-column>
               </el-table>
             </el-col>
           </el-row>
         </div>
         <div class="sub-content-2">
           <el-row :gutter="0" class="grid-title">
-            <el-col :span="24" :offset="0"
-              ><div>{{ $t('variat.AlleleFrequency') }}</div></el-col
-            >
+            <el-col :span="24" :offset="0">
+                <div>{{ $t('variat.AlleleFrequency') }} {{ '(AC:' + AC + ')' }}</div>
+            </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="24" :offset="0"
               ><div class="pie-container" id="pie-container" />
             </el-col>
           </el-row>
+          <div>
+            <div class="tableSubData-title" style="color: #909399;padding: 5px 0;">Allele Frequency (AF)</div>
+            <template>
+              <el-table
+                :data="tableSubData"
+                border
+                style="width: 100%">
+                <el-table-column prop="All" :show-overflow-tooltip="true" :label="this.$t('variat.AllAF')">
+                </el-table-column>
+                <el-table-column prop="NorthEastAF" :show-overflow-tooltip="true" :label="this.$t('variat.NorthEastAF')">
+                </el-table-column>
+                <el-table-column prop="NorthChinaAF" :show-overflow-tooltip="true" :label="this.$t('variat.NorthChinaAF')">
+                </el-table-column>
+                <el-table-column prop="EastChinaAF" :show-overflow-tooltip="true" :label="this.$t('variat.EastChinaAF')">
+                </el-table-column>
+                <el-table-column prop="CentralChinaAF" :show-overflow-tooltip="true" :label="this.$t('variat.CentralChinaAF')">
+                </el-table-column>
+                <el-table-column prop="NorthWestAF" :show-overflow-tooltip="true" :label="this.$t('variat.NorthWestAF')">
+                </el-table-column>
+                <el-table-column prop="SouthWestAF" :show-overflow-tooltip="true" :label="this.$t('variat.SouthWestAF')">
+                </el-table-column>
+                <el-table-column prop="SouthChinaAF" :show-overflow-tooltip="true" :label="this.$t('variat.SouthChinaAF')">
+                </el-table-column>
+              </el-table>
+            </template>
+          </div>
         </div>
         <div class="sub-content-1">
           <el-row :gutter="0" class="grid-title">
@@ -88,12 +133,12 @@
             :cell-style="{
               textAlign: 'center',
               fontSize: '18px',
-              border: '1px solid #EBEEF5',
+              border: '1px solid #EBEEF5'
             }"
             :header-cell-style="{
               textAlign: 'center',
               fontSize: '18px',
-              border: '1px solid #EBEEF5',
+              border: '1px solid #EBEEF5'
             }"
             style="width: 100%"
           >
@@ -101,24 +146,42 @@
             </el-table-column>
             <el-table-column
               prop="Vertebrate"
-              label="脊椎动物"
+              :label="$t('variat.vertebrateLable')"
               :index="1"
               :render-header="renderHeader"
             >
+              <template slot-scope="scope">
+                <span
+                  class="stonebox"
+                  v-html="secretNumber(scope.row.Vertebrate)"
+                ></span>
+              </template>
             </el-table-column>
             <el-table-column
               prop="Mammals"
-              label="哺乳类"
+              :label="$t('variat.mammalsLable')"
               :index="2"
               :render-header="renderHeader"
             >
+              <template slot-scope="scope">
+                <span
+                  class="stonebox"
+                  v-html="secretNumber(scope.row.Mammals)"
+                ></span>
+              </template>
             </el-table-column>
             <el-table-column
               prop="Primates"
-              label="灵长目"
+              :label="$t('variat.primatesLable')"
               :index="3"
               :render-header="renderHeader"
             >
+              <template slot-scope="scope">
+                <span
+                  class="stonebox"
+                  v-html="secretNumber(scope.row.Primates)"
+                ></span>
+              </template>
             </el-table-column>
           </el-table>
         </div>
@@ -155,14 +218,28 @@
             :cell-style="{
               textAlign: 'center',
               fontSize: '18px',
-              border: '1px solid #EBEEF5',
+              border: '1px solid #EBEEF5'
             }"
             style="width: 100%"
           >
             <el-table-column prop="name1"> </el-table-column>
-            <el-table-column prop="value1"></el-table-column>
+            <el-table-column prop="value1">
+              <template slot-scope="scope">
+                <span
+                  class="stonebox"
+                  v-html="secretNumber(scope.row.value1)"
+                ></span>
+              </template>
+            </el-table-column>
             <el-table-column prop="name2"> </el-table-column>
-            <el-table-column prop="value2"> </el-table-column>
+            <el-table-column prop="value2">
+              <template slot-scope="scope">
+                <span
+                  class="stonebox"
+                  v-html="secretNumber(scope.row.value2)"
+                ></span>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
         <div class="sub-content-1">
@@ -187,8 +264,8 @@
                       ? 'javascript:void(0)'
                       : this.ClinVarHref
                   "
-                  >{{ this.ClinVarID }}</el-link
-                >
+                  >{{ this.ClinVarID }}
+                  </el-link>
               </div></el-col
             >
             <el-col :span="6"
@@ -214,14 +291,28 @@
             :cell-style="{
               textAlign: 'center',
               fontSize: '18px',
-              border: '1px solid #EBEEF5',
+              border: '1px solid #EBEEF5'
             }"
             style="width: 100%"
           >
             <el-table-column prop="name1"> </el-table-column>
-            <el-table-column prop="value1"> </el-table-column>
+            <el-table-column prop="value1">
+              <template slot-scope="scope">
+                <span
+                  class="stonebox"
+                  v-html="secretNumber(scope.row.value1)"
+                ></span>
+              </template>
+            </el-table-column>
             <el-table-column prop="name2"> </el-table-column>
-            <el-table-column prop="value2"> </el-table-column>
+            <el-table-column prop="value2">
+              <template slot-scope="scope">
+                <span
+                  class="stonebox"
+                  v-html="secretNumber(scope.row.value21)"
+                ></span>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
         <div class="sub-content-2">
@@ -251,6 +342,91 @@
                   <el-radio-button label="gnomAD Genomes" />
                 </el-radio-group>
                 <div id="pie-container2" class="pie-container2" />
+                <div class="pie-container2-table">
+                  <div class="tableSubData-title" style="text-align: center; font-size: 16px; color: #909399;padding: 5px 0;">Allele Frequency (AF)</div>
+                  <template>
+                    <el-table
+                      :data="tableSubData2"
+                      v-if="showtableSubData2 === 'tableSubData2'"
+                      border
+                      style="width: 100%">
+                      <el-table-column prop="All" :show-overflow-tooltip="true" :label="this.$t('variat.AllAF')">
+                      </el-table-column>
+                      <el-table-column prop="AmishAF" :show-overflow-tooltip="true" :label="this.$t('variat.AmishAF')">
+                      </el-table-column>
+                      <el-table-column prop="AfricanAF" :show-overflow-tooltip="true" :label="this.$t('variat.AfricanAF')">
+                      </el-table-column>
+                      <el-table-column prop="EastAsianAF" :show-overflow-tooltip="true" :label="this.$t('variat.EastAsianAF')">
+                      </el-table-column>
+                      <el-table-column prop="EuropeanAF" :show-overflow-tooltip="true" :label="this.$t('variat.EuropeanAF')">
+                      </el-table-column>
+                      <el-table-column prop="SouthAsianAF" :show-overflow-tooltip="true" :label="this.$t('variat.SouthAsianAF')">
+                      </el-table-column>
+                    </el-table>
+                    <el-table
+                      :data="tableSubData3"
+                      v-if="showtableSubData2 === 'tableSubData3'"
+                      border
+                      style="width: 100%">
+                      <el-table-column prop="All" :show-overflow-tooltip="true" :label="this.$t('variat.AllAF')">
+                      </el-table-column>
+                      <el-table-column prop="AmishAF" :show-overflow-tooltip="true" :label="this.$t('variat.AmishAF')">
+                      </el-table-column>
+                      <el-table-column prop="AfricanAF" :show-overflow-tooltip="true" :label="this.$t('variat.AfricanAF')">
+                      </el-table-column>
+                      <el-table-column prop="EastAsianAF" :show-overflow-tooltip="true" :label="this.$t('variat.EastAsianAF')">
+                      </el-table-column>
+                      <el-table-column prop="EuropeanFinnishAF" min-width="90" :show-overflow-tooltip="true" :label="this.$t('variat.EuropeanFinnishAF')">
+                      </el-table-column>
+                      <el-table-column prop="EuropeanNonFinnishAF" min-width="100" :show-overflow-tooltip="true" :label="this.$t('variat.EuropeanNonFinnishAF')">
+                      </el-table-column>
+                      <el-table-column prop="SouthAsianAF" :show-overflow-tooltip="true" :label="this.$t('variat.SouthAsianAF')">
+                      </el-table-column>
+                    </el-table>
+                    <el-table
+                      :data="tableSubData4"
+                      v-if="showtableSubData2 === 'tableSubData4'"
+                      border
+                      style="width: 100%">
+                      <el-table-column prop="All" :show-overflow-tooltip="true" :label="this.$t('variat.AllAF')">
+                      </el-table-column>
+                      <el-table-column prop="AmishAF" :show-overflow-tooltip="true" :label="this.$t('variat.AmishAF')">
+                      </el-table-column>
+                      <el-table-column prop="AfricanAF" :show-overflow-tooltip="true" :label="this.$t('variat.AfricanAF')">
+                      </el-table-column>
+                      <el-table-column prop="AshkenaziJewishAF" min-width="85" :show-overflow-tooltip="true" :label="this.$t('variat.AshkenaziJewishAF')">
+                      </el-table-column>
+                      <el-table-column prop="EastAsianAF" :show-overflow-tooltip="true" :label="this.$t('variat.EastAsianAF')">
+                      </el-table-column>
+                      <el-table-column prop="EuropeanFinnishAF" min-width="90" :show-overflow-tooltip="true" :label="this.$t('variat.EuropeanFinnishAF')">
+                      </el-table-column>
+                      <el-table-column prop="EuropeanNonFinnishAF" min-width="100" :show-overflow-tooltip="true" :label="this.$t('variat.EuropeanNonFinnishAF')">
+                      </el-table-column>
+                      <el-table-column prop="SouthAsianAF" :show-overflow-tooltip="true" :label="this.$t('variat.SouthAsianAF')">
+                      </el-table-column>
+                    </el-table>
+                    <el-table
+                      :data="tableSubData5"
+                      v-if="showtableSubData2 === 'tableSubData5'"
+                      border
+                      style="width: 100%">
+                      <el-table-column prop="All" :show-overflow-tooltip="true" :label="this.$t('variat.AllAF')">
+                      </el-table-column>
+                      <el-table-column prop="AmishAF" :show-overflow-tooltip="true" :label="this.$t('variat.AmishAF')">
+                      </el-table-column>
+                      <el-table-column prop="AfricanAF" :show-overflow-tooltip="true" :label="this.$t('variat.AfricanAF')">
+                      </el-table-column>
+                      <el-table-column prop="AshkenaziJewishAF" min-width="85" :show-overflow-tooltip="true" :label="this.$t('variat.AshkenaziJewishAF')">
+                      </el-table-column>
+                      <el-table-column prop="EastAsianAF" :show-overflow-tooltip="true" :label="this.$t('variat.EastAsianAF')">
+                      </el-table-column>
+                      <el-table-column prop="EuropeanFinnishAF" min-width="90" :show-overflow-tooltip="true" :label="this.$t('variat.EuropeanFinnishAF')">
+                      </el-table-column>
+                      <el-table-column prop="EuropeanNonFinnishAF" min-width="100" :show-overflow-tooltip="true" :label="this.$t('variat.EuropeanNonFinnishAF')">
+                      </el-table-column>
+                    </el-table>
+                  </template>
+                </div>
               </div>
             </el-col>
           </el-row>
@@ -271,9 +447,23 @@
             style="width: 100%"
           >
             <el-table-column prop="name1"> </el-table-column>
-            <el-table-column prop="value1"></el-table-column>
+            <el-table-column prop="value1">
+              <template slot-scope="scope">
+                <span
+                  class="stonebox"
+                  v-html="secretNumber(scope.row.value1)"
+                ></span>
+              </template>
+            </el-table-column>
             <el-table-column prop="name2"> </el-table-column>
-            <el-table-column prop="value2"> </el-table-column>
+            <el-table-column prop="value2">
+              <template slot-scope="scope">
+                <span
+                  class="stonebox"
+                  v-html="secretNumber(scope.row.value2)"
+                ></span>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
         <div class="sub-content-2">
@@ -332,11 +522,23 @@ require('echarts/theme/macarons') // echarts theme
 export default {
   name: 'Variation',
   components: {
-    Nav,
+    Nav
   },
   data() {
     let name = window.location.href.split('?')[1].split('=')[1]
     return {
+      numberMap: {
+        0: '&#59854;',
+        1: '&#58670;',
+        2: '&#59246;',
+        3: '&#59537;',
+        4: '&#57808;',
+        5: '&#60146;',
+        6: '&#60492;',
+        7: '&#58149;',
+        8: '&#58928;',
+        9: '&#58397;'
+      },
       geneDetailData: null,
       variantId: '',
       radio2: '1000G',
@@ -344,6 +546,54 @@ export default {
       variantion: null,
       schemeData1: [0, 0, 0, 0, 0],
       schemeData2: [0, 0, 0],
+      AC: '',
+      tableSubData: [{
+        All: 0,
+        NorthEastAF: 0,
+        NorthChinaAF: 0,
+        EastChinaAF: 0,
+        CentralChinaAF: 0,
+        NorthWestAF: 0,
+        SouthWestAF: 0,
+        SouthChinaAF: 0,
+      }],
+      showtableSubData2: 'tableSubData2',
+      tableSubData2: [{
+        All: 0,
+        AfricanAF: 0,
+        AmishAF: 0,
+        EastAsianAF: 0,
+        EuropeanAF: 0,
+        SouthAsianAF: 0,
+      }],
+      tableSubData3: [{
+        All: 0,
+        AfricanAF: 0,
+        AmishAF: 0,
+        EastAsianAF: 0,
+        EuropeanFinnishAF: 0,
+        EuropeanNonFinnishAF: 0,
+        SouthAsianAF: 0,
+      }],
+      tableSubData4: [{
+        All: 0,
+        AfricanAF: 0,
+        AmishAF: 0,
+        AshkenaziJewishAF: 0,
+        EastAsianAF: 0,
+        EuropeanFinnishAF: 0,
+        EuropeanNonFinnishAF: 0,
+        SouthAsianAF: 0,
+      }],
+      tableSubData5: [{
+        All: 0,
+        AfricanAF: 0,
+        AmishAF: 0,
+        AshkenaziJewishAF: 0,
+        EastAsianAF: 0,
+        EuropeanFinnishAF: 0,
+        EuropeanNonFinnishAF: 0,
+      }],
       pieData: {
         aachange: '.',
         ac: '1',
@@ -416,44 +666,54 @@ export default {
         vcf_CHROM: 'chr1',
         vcf_POS: '10321',
         vcf_QUAL: '168.86',
-        vcf_REF: 'C',
+        vcf_REF: 'C'
       },
       tableData: [
         {
-          name1: this.$t('variat.CHN100K'),
-          value1: '.',
-          name2: this.$t('variat.VariationPosition'),
+          name1: this.$t('variat.ReferenceGenome'),
+          value1: 'GRCh38',
+          name2: this.$t('variat.CHN100K'),
           value2: '.',
         },
         {
-          name1: this.$t('variat.dbSNPRsID'),
+          name1: this.$t('variat.VariationPosition'),
           value1: '.',
-          name2: this.$t('variat.VariationType'),
+          name2: this.$t('variat.dbSNPRsID'),
           value2: '.',
         },
         {
-          name1: this.$t('variat.HGVS'),
+          name1: this.$t('variat.VariationType'),
           value1: '.',
-          name2: this.$t('variat.VariationDetails'),
+          name2: this.$t('variat.HGVS'),
           value2: '.',
         },
+        {
+          name1: this.$t('variat.VariationDetails'),
+          value1: '.',
+          name2: '',
+          value2: ' ',
+        }
       ],
       tableData2: [
         {
+          name1: this.$t('variat.ExonicFunction'),
+          value1: '.'
+        },
+        {
           name1: this.$t('variat.PolyPhen'),
-          value1: '.',
+          value1: '.'
         },
         {
           name1: this.$t('variat.SIFT'),
-          value1: '.',
+          value1: '.'
         },
         {
           name1: this.$t('variat.CADD'),
-          value1: '.',
+          value1: '.'
         },
         {
           name1: this.$t('variat.GERP'),
-          value1: '.',
+          value1: '.'
         },
       ],
       tableData3: [
@@ -461,54 +721,54 @@ export default {
           name: 'PhastCons',
           Vertebrate: '.',
           Mammals: '.',
-          Primates: '.',
+          Primates: '.'
         },
         {
           name: 'PhyloP',
           Vertebrate: '.',
           Mammals: '.',
-          Primates: '.',
-        },
+          Primates: '.'
+        }
       ],
       tableData4: [
         {
           name1: this.$t('variat.RepeatMasker'),
           value1: '.',
           name2: this.$t('variat.TiTv'),
-          value2: '.',
-        },
+          value2: '.'
+        }
       ],
       tableData5: [
         {
           name1: this.$t('variat.ClinVar'),
           value1: '.',
           name2: this.$t('variat.DiseaseName'),
-          value2: '.',
+          value2: '.'
         },
         {
           name1: this.$t('variat.GWASCatalog'),
           value1: '.',
           name2: this.$t('variat.GRASP2'),
-          value2: '.',
+          value2: '.'
         },
         {
           name1: this.$t('variat.COSMIC'),
-          value1: '.',
-        },
+          value1: '.'
+        }
       ],
       tableData6: [
         {
           name1: this.$t('variat.TFBS'),
           value1: '.',
           name2: this.$t('variat.TargetScan'),
-          value2: '.',
+          value2: '.'
         },
         {
           name1: this.$t('variat.CAGEPromoters'),
           value1: '.',
           name2: this.$t('variat.CAGEEnhancers'),
-          value2: '.',
-        },
+          value2: '.'
+        }
       ],
       AAchangeOne: '.',
       AAchangeTwo: '.',
@@ -518,134 +778,134 @@ export default {
           coord: [116.24, 39.54],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
+              value: 1
+            }
+          ]
         },
         {
           name: window.vm.$t('variat.NorthEast'),
           coord: [126.32, 43.5],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
+              value: 1
+            }
+          ]
         },
         {
           name: window.vm.$t('variat.EastChina'),
           coord: [121.28, 31.13],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
+              value: 1
+            }
+          ]
         },
         {
           name: window.vm.$t('variat.CentralChina'),
           coord: [114.2, 30.32],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
+              value: 1
+            }
+          ]
         },
         {
           name: window.vm.$t('variat.SouthChina'),
           coord: [113.15, 23.08],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
+              value: 1
+            }
+          ]
         },
         {
           name: window.vm.$t('variat.SouthWest'),
           coord: [104.04, 30.39],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
+              value: 1
+            }
+          ]
         },
         {
           name: window.vm.$t('variat.NorthWest'),
           coord: [103.49, 36.03],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
-        },
+              value: 1
+            }
+          ]
+        }
       ],
       worldHunkDetail: [
         {
@@ -653,105 +913,105 @@ export default {
           coord: [17.873887, -11.202692],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
+              value: 1
+            }
+          ]
         },
         {
           name: window.vm.$t('variat.Amish'),
           coord: [-95.712891, 37.09024],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
+              value: 1
+            }
+          ]
         },
         {
           name: window.vm.$t('variat.European'),
           coord: [-3.435973, 55.378051],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
+              value: 1
+            }
+          ]
         },
         {
           name: window.vm.$t('variat.EastAsian'),
           coord: [104.195397, 35.86166],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
+              value: 1
+            }
+          ]
         },
         {
           name: window.vm.$t('variat.SouthAsian'),
           coord: [78.96288, 20.593684],
           labelLine: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           data: [
             {
               name: '等位基因频率',
-              value: 0,
+              value: 0
             },
             {
               name: '',
-              value: 1,
-            },
-          ],
-        },
+              value: 1
+            }
+          ]
+        }
       ],
       img: require('../assets/logo.png'),
       GCContent: [
         { value: 0, name: 'GC含量' },
-        { value: 100, name: '其他' },
+        { value: 100, name: '其他' }
       ],
       CpGRatio: [
         { value: 0, name: 'CpG比例' },
-        { value: 100, name: '其他' },
+        { value: 100, name: '其他' }
       ],
       ClinVarID: '.',
       OMIMID: '.',
@@ -762,7 +1022,7 @@ export default {
   },
   watch: {
     variantion() {
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.funcAnnotationChart()
         this.initMap()
         this.initChinaChart(this.hunkDetail)
@@ -772,21 +1032,34 @@ export default {
         this.initGCContentChart(this.GCContent)
         this.initCpGRatioChart(this.CpGRatio)
       })
-    },
+    }
   },
-  created: function () {
+  created: function() {
     const _this = this
     _this.variantId = this.$route.query['id']
-    _this.tableData[0]['value1'] = _this.variantId
+    _this.tableData[0]['value2'] = _this.variantId
     const data = {
       variantId: _this.variantId,
       chrom:
-        this.$route.query['chrom'] === 'x' ? 23 : this.$route.query['chrom'],
+        this.$route.query['chrom'] === 'x' ? 23 : this.$route.query['chrom']
     }
-    variantDetail(data).then((response) => {
+    variantDetail(data).then(response => {
       this.geneDetailData = response
-      this.geneDetailData.listData = JSON.parse(decrypt(response.listData,decrypt(response.key,this.code)))
+      this.geneDetailData.listData = JSON.parse(
+        decrypt(response.listData, decrypt(response.key, this.code))
+      )
       if (response['listData'][0]) {
+        _this.AC = this.$route.query['AC'];
+        _this.tableSubData = [{
+          All: response['listData'][0]['chn100k_ALL'],
+          NorthEastAF: response['listData'][0]['chn100k_NE'],
+          NorthChinaAF: response['listData'][0]['chn100k_N'],
+          EastChinaAF: response['listData'][0]['chn100k_E'],
+          CentralChinaAF: response['listData'][0]['chn100k_C'],
+          NorthWestAF: response['listData'][0]['chn100k_NW'],
+          SouthWestAF: response['listData'][0]['chn100k_SW'],
+          SouthChinaAF: response['listData'][0]['chn100k_S'],
+        }],
         _this.pieData['chn100k_ALL'] = response['listData'][0]['chn100k_ALL']
         _this.pieData['chn100k_NE'] = response['listData'][0]['chn100k_NE']
         _this.pieData['chn100k_N'] = response['listData'][0]['chn100k_N']
@@ -849,52 +1122,73 @@ export default {
         _this.pieData['exAC_NFE'] = response['listData'][0]['exAC_NFE']
         _this.pieData['exAC_OTH'] = response['listData'][0]['exAC_OTH']
         _this.pieData['exAC_SAS'] = response['listData'][0]['exAC_SAS']
-        _this.tableData[0]['value2'] =
+        _this.tableData[1]['value1'] =
           response['listData'][0]['variation_position']
-        _this.tableData[1]['value1'] = response['listData'][0]['dbSNPRsID']
-        _this.tableData[1]['value2'] = response['listData'][0]['variation_type']
+        _this.tableData[1]['value2'] = response['listData'][0]['dbSNPRsID']
+        _this.tableData[2]['value1'] = response['listData'][0]['variation_type']
         var hgvsArr = response['listData'][0]['HGVS'].split(',')
-        if(hgvsArr.length > 2){
-          _this.tableData[2]['value1'] = hgvsArr[0] + ',' + hgvsArr[1] + ',' + hgvsArr[2]
-        }else{
-          _this.tableData[2]['value1'] = response['listData'][0]['HGVS']
+        if (hgvsArr.length > 2) {
+          _this.tableData[2]['value2'] =
+            hgvsArr[0] + ',' + hgvsArr[1] + ',' + hgvsArr[2]
+        } else {
+          _this.tableData[1]['value2'] = response['listData'][0]['HGVS']
         }
-        _this.tableData[2]['value2'] =
+        _this.tableData[3]['value1'] =
           response['listData'][0]['variation_details']
-        _this.tableData2[0]['value1'] = response['listData'][0]['polyPhen']
-        _this.tableData2[1]['value1'] = response['listData'][0]['SIFT']
-        _this.tableData2[2]['value1'] = response['listData'][0]['CADD']
-        _this.tableData2[3]['value1'] = response['listData'][0]['GERP']
+          _this.tableData2[0]['value1'] = this.$route.query['func']
+        _this.tableData2[1]['value1'] = response['listData'][0]['polyPhen']
+        _this.tableData2[2]['value1'] = response['listData'][0]['SIFT']
+        _this.tableData2[3]['value1'] = response['listData'][0]['CADD']
+        _this.tableData2[4]['value1'] = response['listData'][0]['GERP']
         _this.tableData3 = [
           {
             name: 'PhastCons',
             Vertebrate: response['listData'][0]['vertebratePhastCons'],
             Mammals: response['listData'][0]['mammalsPhastCons'],
-            Primates: response['listData'][0]['primatesPhastCons'],
+            Primates: response['listData'][0]['primatesPhastCons']
           },
           {
             name: 'PhyloP',
             Vertebrate: response['listData'][0]['vertebratePhyloP'],
             Mammals: response['listData'][0]['mammalsPhyloP'],
-            Primates: response['listData'][0]['primatesPhyloP'],
-          },
+            Primates: response['listData'][0]['primatesPhyloP']
+          }
         ]
         _this.GCContent = [
           {
-            value: (response['listData'][0]['GCContent'] === '.' ? 0 : response['listData'][0]['GCContent']) * 100,
-            name: 'GC含量',
+            value:
+              (response['listData'][0]['GCContent'] === '.'
+                ? 0
+                : response['listData'][0]['GCContent']) * 100,
+            name: 'GC含量'
           },
           {
-            value: 100 - (response['listData'][0]['GCContent'] === '.' ? 0 : response['listData'][0]['GCContent']) * 100,
-            name: '其他',
-          },
+            value:
+              100 -
+              (response['listData'][0]['GCContent'] === '.'
+                ? 0
+                : response['listData'][0]['GCContent']) *
+                100,
+            name: '其他'
+          }
         ]
         _this.cpGRatio = [
-          { value: (response['listData'][0]['cpGRatio'] === '.' ? 0 : response['listData'][0]['cpGRatio']) * 100, name: 'CpG比例' },
           {
-            value: 100 - (response['listData'][0]['cpGRatio'] === '.' ? 0 : response['listData'][0]['cpGRatio']) * 100,
-            name: '其他',
+            value:
+              (response['listData'][0]['cpGRatio'] === '.'
+                ? 0
+                : response['listData'][0]['cpGRatio']) * 100,
+            name: 'CpG比例'
           },
+          {
+            value:
+              100 -
+              (response['listData'][0]['cpGRatio'] === '.'
+                ? 0
+                : response['listData'][0]['cpGRatio']) *
+                100,
+            name: '其他'
+          }
         ]
         _this.tableData4[0]['value1'] = response['listData'][0]['repeatMasker']
         _this.tableData4[0]['value2'] = response['listData'][0]['ti_Tv']
@@ -929,19 +1223,23 @@ export default {
         _this.tableData6[1]['value2'] = response['listData'][0]['CAGEEnhancers']
         _this.variantion = _this.pieData
         _this.schemeData1 = [
-          parseFloat(response['listData'][0]['h3K27me3']),
-          parseFloat(response['listData'][0]['h3K9me3']),
-          parseFloat(response['listData'][0]['h3K27Ac']),
-          parseFloat(response['listData'][0]['h3K4Me1']),
-          parseFloat(response['listData'][0]['h3K4Me3']),
+          parseFloat(response['listData'][0]['h3K27me3'] === '.' ? 0 : response['listData'][0]['h3K27me3']),
+          parseFloat(response['listData'][0]['h3K9me3'] === '.' ? 0 : response['listData'][0]['h3K9me3']),
+          parseFloat(response['listData'][0]['h3K27Ac'] === '.' ? 0 : response['listData'][0]['h3K27Ac']),
+          parseFloat(response['listData'][0]['h3K4Me1'] === '.' ? 0 : response['listData'][0]['h3K4Me1']),
+          parseFloat(response['listData'][0]['h3K4Me3'] === '.' ? 0 : response['listData'][0]['h3K4Me3'])
         ]
         _this.schemeData2 = [
-          parseFloat(response['listData'][0]['DNase']),
-          parseFloat(response['listData'][0]['polII']),
-          parseFloat(response['listData'][0]['CTCF']),
+          parseFloat(response['listData'][0]['DNase'] === '.' ? 0 : response['listData'][0]['DNase']),
+          parseFloat(response['listData'][0]['polII'] === '.' ? 0 : response['listData'][0]['polII']),
+          parseFloat(response['listData'][0]['CTCF'] === '.' ? 0 : response['listData'][0]['CTCF'])
         ]
         if (response['listData'][0]['HGVS'] !== '.') {
-          if (response['listData'][0]['HGVS'].indexOf('ins') !== -1 || response['listData'][0]['HGVS'].indexOf('dup') !== -1 || response['listData'][0]['HGVS'].indexOf('del') !== -1) {
+          if (
+            response['listData'][0]['HGVS'].indexOf('ins') !== -1 ||
+            response['listData'][0]['HGVS'].indexOf('dup') !== -1 ||
+            response['listData'][0]['HGVS'].indexOf('del') !== -1
+          ) {
             this.AAchangeOne = response['listData'][0]['HGVS']
               .split(':p.')[1]
               .split(',')[0]
@@ -950,7 +1248,7 @@ export default {
               .split(':p.')[1]
               .split(',')[0]
               .match(/(\w)\d+(\w+\*\d+|\*)/)[2]
-          }else{
+          } else {
             this.AAchangeOne = response['listData'][0]['HGVS']
               .split(':p.')[1]
               .split('')[0]
@@ -967,8 +1265,8 @@ export default {
             coord: [116.24, 39.54],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
@@ -976,21 +1274,21 @@ export default {
                 value:
                   _this.variantion['chn100k_N'] === '0.0'
                     ? 0
-                    : parseFloat(_this.variantion['chn100k_N']).toFixed(6),
+                    : parseFloat(_this.variantion['chn100k_N']).toFixed(6)
               },
               {
                 name: '',
-                value: 1 - parseFloat(_this.variantion['chn100k_N']).toFixed(6),
-              },
-            ],
+                value: 1 - parseFloat(_this.variantion['chn100k_N']).toFixed(6)
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.NorthEast'),
             coord: [126.32, 43.5],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
@@ -998,22 +1296,21 @@ export default {
                 value:
                   _this.variantion['chn100k_NE'] === '0.0'
                     ? 0
-                    : parseFloat(_this.variantion['chn100k_NE']).toFixed(6),
+                    : parseFloat(_this.variantion['chn100k_NE']).toFixed(6)
               },
               {
                 name: '',
-                value:
-                  1 - parseFloat(_this.variantion['chn100k_NE']).toFixed(6),
-              },
-            ],
+                value: 1 - parseFloat(_this.variantion['chn100k_NE']).toFixed(6)
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EastChina'),
             coord: [121.28, 31.13],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
@@ -1021,21 +1318,21 @@ export default {
                 value:
                   _this.variantion['chn100k_E'] === '0.0'
                     ? 0
-                    : parseFloat(_this.variantion['chn100k_E']).toFixed(6),
+                    : parseFloat(_this.variantion['chn100k_E']).toFixed(6)
               },
               {
                 name: '',
-                value: 1 - parseFloat(_this.variantion['chn100k_E']).toFixed(6),
-              },
-            ],
+                value: 1 - parseFloat(_this.variantion['chn100k_E']).toFixed(6)
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.CentralChina'),
             coord: [114.2, 30.32],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
@@ -1043,21 +1340,21 @@ export default {
                 value:
                   _this.variantion['chn100k_C'] === '0.0'
                     ? 0
-                    : parseFloat(_this.variantion['chn100k_C']).toFixed(6),
+                    : parseFloat(_this.variantion['chn100k_C']).toFixed(6)
               },
               {
                 name: '',
-                value: 1 - parseFloat(_this.variantion['chn100k_C']).toFixed(6),
-              },
-            ],
+                value: 1 - parseFloat(_this.variantion['chn100k_C']).toFixed(6)
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.SouthChina'),
             coord: [113.15, 23.08],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
@@ -1065,21 +1362,21 @@ export default {
                 value:
                   _this.variantion['chn100k_S'] === '0.0'
                     ? 0
-                    : parseFloat(_this.variantion['chn100k_S']).toFixed(6),
+                    : parseFloat(_this.variantion['chn100k_S']).toFixed(6)
               },
               {
                 name: '',
-                value: 1 - parseFloat(_this.variantion['chn100k_S']).toFixed(6),
-              },
-            ],
+                value: 1 - parseFloat(_this.variantion['chn100k_S']).toFixed(6)
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.SouthWest'),
             coord: [104.04, 30.39],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
@@ -1087,22 +1384,21 @@ export default {
                 value:
                   _this.variantion['chn100k_SW'] === '0.0'
                     ? 0
-                    : parseFloat(_this.variantion['chn100k_SW']).toFixed(6),
+                    : parseFloat(_this.variantion['chn100k_SW']).toFixed(6)
               },
               {
                 name: '',
-                value:
-                  1 - parseFloat(_this.variantion['chn100k_SW']).toFixed(6),
-              },
-            ],
+                value: 1 - parseFloat(_this.variantion['chn100k_SW']).toFixed(6)
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.NorthWest'),
             coord: [103.49, 36.03],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
@@ -1110,137 +1406,167 @@ export default {
                 value:
                   _this.variantion['chn100k_NW'] === '0.0'
                     ? 0
-                    : parseFloat(_this.variantion['chn100k_NW']).toFixed(6),
+                    : parseFloat(_this.variantion['chn100k_NW']).toFixed(6)
               },
               {
                 name: '',
-                value:
-                  1 - parseFloat(_this.variantion['chn100k_NW']).toFixed(6),
-              },
-            ],
-          },
+                value: 1 - parseFloat(_this.variantion['chn100k_NW']).toFixed(6)
+              }
+            ]
+          }
         ]
+        this.tableSubData2 = [{
+          All: _this.variantion['thousandG_ALL'] === '.' ? 0 : _this.variantion['thousandG_ALL'],
+          AfricanAF: _this.variantion['thousandG_AFR'] === '.' ? 0 : _this.variantion['thousandG_AFR'],
+          AmishAF: _this.variantion['thousandG_AMR'] === '.' ? 0 : _this.variantion['thousandG_AMR'],
+          EastAsianAF: _this.variantion['thousandG_EAS'] === '.' ? 0 : _this.variantion['thousandG_EAS'],
+          EuropeanAF: _this.variantion['thousandG_EUR'] === '.' ? 0 : _this.variantion['thousandG_EUR'],
+          SouthAsianAF: _this.variantion['thousandG_SAS'] === '.' ? 0 : _this.variantion['thousandG_SAS'],
+        }]
+        this.tableSubData3 = [{
+          All: _this.variantion['exAC_ALL'] === '.' ? 0 : _this.variantion['exAC_ALL'],
+          AfricanAF: _this.variantion['exAC_AFR'] === '.' ? 0 : _this.variantion['exAC_AFR'],
+          AmishAF: _this.variantion['exAC_AMR'] === '.' ? 0 : _this.variantion['exAC_AMR'],
+          EastAsianAF: _this.variantion['exAC_EAS'] === '.' ? 0 : _this.variantion['exAC_EAS'],
+          EuropeanFinnishAF: _this.variantion['exAC_FIN'] === '.' ? 0 : _this.variantion['exAC_FIN'],
+          EuropeanNonFinnishAF: _this.variantion['exAC_NFE'] === '.' ? 0 : _this.variantion['exAC_NFE'],
+          SouthAsianAF: _this.variantion['exAC_SAS'] === '.' ? 0 : _this.variantion['exAC_SAS'],
+        }]
+        this.tableSubData4 = [{
+          All: _this.variantion['gnomAD_exome_ALL'] === '.' ? 0 : _this.variantion['gnomAD_exome_ALL'],
+          AfricanAF: _this.variantion['gnomAD_exome_AFR'] === '.' ? 0 : _this.variantion['gnomAD_exome_AFR'],
+          AmishAF: _this.variantion['gnomAD_exome_AMR'] === '.' ? 0 : _this.variantion['gnomAD_exome_AMR'],
+          AshkenaziJewishAF: _this.variantion['gnomAD_exome_ASJ'] === '.' ? 0 : _this.variantion['gnomAD_exome_ASJ'],
+          EastAsianAF: _this.variantion['gnomAD_exome_EAS'] === '.' ? 0 : _this.variantion['gnomAD_exome_EAS'],
+          EuropeanFinnishAF: _this.variantion['gnomAD_exome_FIN'] === '.' ? 0 : _this.variantion['gnomAD_exome_FIN'],
+          EuropeanNonFinnishAF: _this.variantion['gnomAD_exome_NFE'] === '.' ? 0 : _this.variantion['gnomAD_exome_NFE'],
+          SouthAsianAF: _this.variantion['gnomAD_exome_SAS'] === '.' ? 0 : _this.variantion['gnomAD_exome_SAS'],
+        }]
+        this.tableSubData5 = [{
+          All: _this.variantion['gnomAD_genome_ALL'] === '.' ? 0 : _this.variantion['gnomAD_genome_ALL'],
+          AfricanAF: _this.variantion['gnomAD_genome_AFR'] === '.' ? 0 : _this.variantion['gnomAD_genome_AFR'],
+          AmishAF: _this.variantion['gnomAD_genome_AMR'] === '.' ? 0 : _this.variantion['gnomAD_genome_AMR'],
+          AshkenaziJewishAF: _this.variantion['gnomAD_genome_ASJ'] === '.' ? 0 : _this.variantion['gnomAD_genome_ASJ'],
+          EastAsianAF: _this.variantion['gnomAD_genome_EAS'] === '.' ? 0 : _this.variantion['gnomAD_genome_EAS'],
+          EuropeanFinnishAF: _this.variantion['gnomAD_genome_FIN'] === '.' ? 0 : _this.variantion['gnomAD_genome_FIN'],
+          EuropeanNonFinnishAF: _this.variantion['gnomAD_genome_NFE'] === '.' ? 0 : _this.variantion['gnomAD_genome_NFE'],
+        }]
         this.worldHunkDetail = [
           {
             name: window.vm.$t('variat.African'),
             coord: [17.873887, -11.202692],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_AFR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_AFR']),
+                  : parseFloat(_this.variantion['thousandG_AFR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_AFR'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['thousandG_AFR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['thousandG_AFR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.Amish'),
             coord: [-95.712891, 37.09024],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_AMR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_AMR']),
+                  : parseFloat(_this.variantion['thousandG_AMR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_AMR'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['thousandG_AMR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['thousandG_AMR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.European'),
             coord: [-3.435973, 55.378051],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_EUR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_EUR']),
+                  : parseFloat(_this.variantion['thousandG_EUR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_EUR'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['thousandG_EUR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['thousandG_EUR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EastAsian'),
             coord: [104.195397, 35.86166],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_EAS'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_EAS']),
+                  : parseFloat(_this.variantion['thousandG_EAS'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_EAS'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['thousandG_EAS']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['thousandG_EAS'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.SouthAsian'),
             coord: [78.96288, 20.593684],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_SAS'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_SAS']),
+                  : parseFloat(_this.variantion['thousandG_SAS'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_SAS'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['thousandG_SAS']),
-              },
-            ],
-          },
+                  : 1 - parseFloat(_this.variantion['thousandG_SAS'])
+              }
+            ]
+          }
         ]
         _this.loading = false
       } else {
@@ -1268,589 +1594,575 @@ export default {
       this.worldHunkDetail = []
       const _this = this
       if (this.radio2 === 'gnomAD Exomes') {
+        this.showtableSubData2 = 'tableSubData4'
         this.worldHunkDetail = [
           {
             name: window.vm.$t('variat.African'),
             coord: [17.873887, -11.202692],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_AFR'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_AFR']),
+                  : parseFloat(_this.variantion['gnomAD_exome_AFR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_AFR'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_AFR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_exome_AFR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.Amish'),
             coord: [-95.712891, 37.09024],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_AMR'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_AMR']),
+                  : parseFloat(_this.variantion['gnomAD_exome_AMR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_AMR'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_AMR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_exome_AMR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.AshkenaziJewish'),
             coord: [34.851612, 31.046051],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_ASJ'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_ASJ']),
+                  : parseFloat(_this.variantion['gnomAD_exome_ASJ'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_ASJ'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_ASJ']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_exome_ASJ'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EastAsian'),
             coord: [104.195397, 35.86166],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_EAS'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_EAS']),
+                  : parseFloat(_this.variantion['gnomAD_exome_EAS'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_EAS'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_EAS']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_exome_EAS'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EuropeanFinnish'),
             coord: [25.748151, 61.92410999999999],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_FIN'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_FIN']),
+                  : parseFloat(_this.variantion['gnomAD_exome_FIN'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_FIN'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_FIN']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_exome_FIN'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EuropeanNonFinnish'),
             coord: [-3.435973, 55.378051],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_NFE'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_NFE']),
+                  : parseFloat(_this.variantion['gnomAD_exome_NFE'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_NFE'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_NFE']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_exome_NFE'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.SouthAsian'),
             coord: [78.96288, 20.593684],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_exome_SAS'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_exome_SAS']),
+                  : parseFloat(_this.variantion['gnomAD_exome_SAS'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_exome_SAS'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_exome_SAS']),
-              },
-            ],
-          },
+                  : 1 - parseFloat(_this.variantion['gnomAD_exome_SAS'])
+              }
+            ]
+          }
         ]
       }
       if (this.radio2 === '1000G') {
+        this.showtableSubData2 = 'tableSubData2'
         this.worldHunkDetail = [
           {
             name: window.vm.$t('variat.African'),
             coord: [17.873887, -11.202692],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_AFR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_AFR']),
+                  : parseFloat(_this.variantion['thousandG_AFR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_AFR'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['thousandG_AFR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['thousandG_AFR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.Amish'),
             coord: [-95.712891, 37.09024],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_AMR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_AMR']),
+                  : parseFloat(_this.variantion['thousandG_AMR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_AMR'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['thousandG_AMR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['thousandG_AMR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.European'),
             coord: [-3.435973, 55.378051],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_EUR'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_EUR']),
+                  : parseFloat(_this.variantion['thousandG_EUR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_EUR'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['thousandG_EUR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['thousandG_EUR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EastAsian'),
             coord: [104.195397, 35.86166],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_EAS'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_EAS']),
+                  : parseFloat(_this.variantion['thousandG_EAS'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_EAS'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['thousandG_EAS']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['thousandG_EAS'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.SouthAsian'),
             coord: [78.96288, 20.593684],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['thousandG_SAS'])
                   ? 0
-                  : parseFloat(_this.variantion['thousandG_SAS']),
+                  : parseFloat(_this.variantion['thousandG_SAS'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['thousandG_SAS'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['thousandG_SAS']),
-              },
-            ],
-          },
+                  : 1 - parseFloat(_this.variantion['thousandG_SAS'])
+              }
+            ]
+          }
         ]
       }
       if (this.radio2 === 'ExAC') {
+        this.showtableSubData2 = 'tableSubData3'
         this.worldHunkDetail = [
           {
             name: window.vm.$t('variat.African'),
             coord: [17.873887, -11.202692],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_AFR'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_AFR']),
+                  : parseFloat(_this.variantion['exAC_AFR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_AFR'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_AFR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['exAC_AFR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.Amish'),
             coord: [-95.712891, 37.09024],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_AMR'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_AMR']),
+                  : parseFloat(_this.variantion['exAC_AMR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_AMR'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_AMR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['exAC_AMR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EastAsian'),
             coord: [104.195397, 35.86166],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_EAS'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_EAS']),
+                  : parseFloat(_this.variantion['exAC_EAS'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_EAS'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_EAS']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['exAC_EAS'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EuropeanFinnish'),
             coord: [25.748151, 61.92410999999999],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_FIN'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_FIN']),
+                  : parseFloat(_this.variantion['exAC_FIN'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_FIN'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_FIN']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['exAC_FIN'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EuropeanNonFinnish'),
             coord: [-3.435973, 55.378051],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_NFE'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_NFE']),
+                  : parseFloat(_this.variantion['exAC_NFE'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_NFE'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_NFE']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['exAC_NFE'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.SouthAsian'),
             coord: [78.96288, 20.593684],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['exAC_SAS'])
                   ? 0
-                  : parseFloat(_this.variantion['exAC_SAS']),
+                  : parseFloat(_this.variantion['exAC_SAS'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['exAC_SAS'])
                   ? 1
-                  : 1 - parseFloat(_this.variantion['exAC_SAS']),
-              },
-            ],
-          },
+                  : 1 - parseFloat(_this.variantion['exAC_SAS'])
+              }
+            ]
+          }
         ]
       }
       if (this.radio2 === 'gnomAD Genomes') {
+        this.showtableSubData2 = 'tableSubData5'
         this.worldHunkDetail = [
           {
             name: window.vm.$t('variat.African'),
             coord: [17.873887, -11.202692],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_AFR'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_AFR']),
+                  : parseFloat(_this.variantion['gnomAD_genome_AFR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_AFR'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_AFR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_genome_AFR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.Amish'),
             coord: [-95.712891, 37.09024],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_AMR'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_AMR']),
+                  : parseFloat(_this.variantion['gnomAD_genome_AMR'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_AMR'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_AMR']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_genome_AMR'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.AshkenaziJewish'),
             coord: [34.851612, 31.046051],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_ASJ'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_ASJ']),
+                  : parseFloat(_this.variantion['gnomAD_genome_ASJ'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_ASJ'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_ASJ']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_genome_ASJ'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EastAsian'),
             coord: [104.195397, 35.86166],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_EAS'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_EAS']),
+                  : parseFloat(_this.variantion['gnomAD_genome_EAS'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_EAS'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_EAS']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_genome_EAS'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EuropeanFinnish'),
             coord: [25.748151, 61.92410999999999],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_FIN'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_FIN']),
+                  : parseFloat(_this.variantion['gnomAD_genome_FIN'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_FIN'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_FIN']),
-              },
-            ],
+                  : 1 - parseFloat(_this.variantion['gnomAD_genome_FIN'])
+              }
+            ]
           },
           {
             name: window.vm.$t('variat.EuropeanNonFinnish'),
             coord: [-3.435973, 55.378051],
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: [
               {
                 name: '等位基因频率',
                 value: isNaN(_this.variantion['gnomAD_genome_NFE'])
                   ? 0
-                  : parseFloat(_this.variantion['gnomAD_genome_NFE']),
+                  : parseFloat(_this.variantion['gnomAD_genome_NFE'])
               },
               {
                 name: '',
                 value: isNaN(_this.variantion['gnomAD_genome_NFE'])
                   ? 1
-                  : 1 -
-                    parseFloat(_this.variantion['gnomAD_genome_NFE']),
-              },
-            ],
-          },
+                  : 1 - parseFloat(_this.variantion['gnomAD_genome_NFE'])
+              }
+            ]
+          }
         ]
       }
       this.initWorldChart(this.worldHunkDetail)
@@ -1863,17 +2175,20 @@ export default {
       const height = 100
       const margin = (width / 20) * 1.5
       const axisWidth = width - margin * 2
-      const variatPos =
-        this.geneDetailData.listData[0].variation_position.split(':')[1]
+      const variatPos = this.geneDetailData.listData[0].variation_position.split(
+        ':'
+      )[1]
       let positionStart = Infinity
       let positionEnd = 0
-      d3.select('.funcAnnotation-container').selectAll('*').remove()
+      d3.select('.funcAnnotation-container')
+        .selectAll('*')
+        .remove()
       const svg = d3
         .select('.funcAnnotation-container')
         .append('svg')
         .attr('width', width)
         .attr('height', height)
-      this.geneDetailData.relateList.forEach(function (d, i) {
+      this.geneDetailData.relateList.forEach(function(d, i) {
         if (d.start < positionStart) {
           positionStart = d.start - 200
         }
@@ -1881,7 +2196,7 @@ export default {
           positionEnd = d.end + 200
         }
       })
-      this.geneDetailData.listData.forEach(function (d, i) {
+      this.geneDetailData.listData.forEach(function(d, i) {
         if (variatPos < positionStart) {
           positionStart = variatPos - 200
         }
@@ -1920,7 +2235,7 @@ export default {
         .attr('stroke', '#69c0ff')
         .attr('stroke-width', 2)
         .attr('transform', 'translate(' + margin + ',0)')
-      this.geneDetailData.relateList.forEach(function (d, i) {
+      this.geneDetailData.relateList.forEach(function(d, i) {
         svg
           .append('rect')
           .attr('x', ((d['start'] - positionStart) / geneLength) * axisWidth)
@@ -1936,7 +2251,7 @@ export default {
           .attr('fill', '#409EFF')
           .attr('font-size', 12)
           .attr('gene', d['gene'])
-          .text(function () {
+          .text(function() {
             return d['gene']
           })
           .attr('transform', 'translate(' + margin + ',0)')
@@ -1964,7 +2279,7 @@ export default {
         .attr('fill', '#409EFF')
         .attr('font-size', 12)
         .attr('gene', this.geneDetailData.listData[0]['chn100K'])
-        .text(function () {
+        .text(function() {
           return _this.geneDetailData.listData[0]['chn100K']
         })
         .attr('transform', 'translate(' + margin + ',0)')
@@ -1980,7 +2295,7 @@ export default {
         top: 10,
         right: 40,
         bottom: 40,
-        left: 40,
+        left: 40
       }
 
       var svg = d3
@@ -2008,19 +2323,29 @@ export default {
         .scaleLinear()
         .domain([0, d3.max(datay)])
         .range([height - padding.bottom, padding.top])
-      var yAxis = d3.axisLeft().scale(yScale).ticks(10)
+      var yAxis = d3
+        .axisLeft()
+        .scale(yScale)
+        .ticks(10)
       svg
         .append('g')
         .call(yAxis)
         .attr('font-size', '14px')
         .attr('transform', 'translate(' + 100 + ',0)')
+      svg
+        .append('text')
+        .attr('font-size', '14px')
+        .attr('text-anchor', 'middle')
+        .attr('fill','black')
+        .attr('transform', 'rotate(270) translate(-50,60)')
+        .text("Levels")
       var bar = svg
         .selectAll('.bar')
         .data(datay)
         .enter()
         .append('g')
         .attr('class', 'bar')
-        .attr('transform', function (d, i) {
+        .attr('transform', function(d, i) {
           return (
             'translate(' +
             xScale(i * 100) +
@@ -2033,16 +2358,16 @@ export default {
         .append('rect')
         .attr('x', 1)
         .attr('width', 80)
-        .attr('height', function (d) {
+        .attr('height', function(d) {
           return parseInt(
             height - (isNaN(yScale(d)) ? 0 : yScale(d)) - padding.bottom
           )
         })
         .attr('stroke', 'White')
-        .attr('fill', function (d, i) {
+        .attr('fill', function(d, i) {
           return sp[i] // 设定弧的颜色
         })
-        .attr('transform', function (d, i) {
+        .attr('transform', function(d, i) {
           return 'translate(10,0)'
         })
 
@@ -2068,7 +2393,7 @@ export default {
         top: 10,
         right: 40,
         bottom: 40,
-        left: 40,
+        left: 40
       }
 
       var svg = d3
@@ -2078,7 +2403,10 @@ export default {
         .attr('height', height + 'px')
 
       // x轴
-      var xScale = d3.scaleOrdinal().domain(datax).range([100, 200, 300, 400])
+      var xScale = d3
+        .scaleOrdinal()
+        .domain(datax)
+        .range([100, 200, 300, 400])
       var xAxis = d3.axisBottom().scale(xScale)
       svg
         .append('g')
@@ -2087,13 +2415,22 @@ export default {
         .selectAll('text')
         .attr('dx', '50px')
         .attr('font-size', '16px')
-
+      svg
+        .append('text')
+        .attr('font-size', '14px')
+        .attr('text-anchor', 'middle')
+        .attr('fill','black')
+        .attr('transform', 'rotate(270) translate(-50,140)')
+        .text("Levels")
       // y轴
       var yScale = d3
         .scaleLinear()
         .domain([0, d3.max(datay)])
         .range([height - padding.bottom, padding.top])
-      var yAxis = d3.axisLeft().scale(yScale).ticks(10)
+      var yAxis = d3
+        .axisLeft()
+        .scale(yScale)
+        .ticks(10)
       svg
         .append('g')
         .call(yAxis)
@@ -2105,7 +2442,7 @@ export default {
         .enter()
         .append('g')
         .attr('class', 'bar')
-        .attr('transform', function (d, i) {
+        .attr('transform', function(d, i) {
           return (
             'translate(' +
             xScale(i * 100) +
@@ -2118,16 +2455,16 @@ export default {
         .append('rect')
         .attr('x', 1)
         .attr('width', 80)
-        .attr('height', function (d) {
+        .attr('height', function(d) {
           return parseInt(
             height - (isNaN(yScale(d)) ? 0 : yScale(d)) - padding.bottom
           )
         })
         .attr('stroke', 'White')
-        .attr('fill', function (d, i) {
+        .attr('fill', function(d, i) {
           return sp[i] // 设定弧的颜色
         })
-        .attr('transform', function (d, i) {
+        .attr('transform', function(d, i) {
           return 'translate(110,0)'
         })
 
@@ -2233,12 +2570,12 @@ export default {
           geometry: {
             type: 'Polygon',
             coordinates: polygons[a],
-            encodeOffsets: polygons2[a],
+            encodeOffsets: polygons2[a]
           },
           properties: {
             name: properties.name[a] || '',
-            childNum: polygons[a].length,
-          },
+            childNum: polygons[a].length
+          }
         }
         if (properties.cp[a]) {
           feature.properties.cp = properties.cp[a]
@@ -2259,7 +2596,7 @@ export default {
           ['河南', '湖北', '湖南'],
           ['广东', '广西', '海南', '香港', '澳门'],
           ['重庆', '四川', '云南', '西藏', '贵州'],
-          ['陕西', '甘肃', '青海', '宁夏', '新疆'],
+          ['陕西', '甘肃', '青海', '宁夏', '新疆']
         ],
         properties: {
           //自定义大区的名字，要和上面的大区省份一一对应
@@ -2272,9 +2609,9 @@ export default {
             [114.2, 30.32],
             [113.15, 23.08],
             [104.04, 30.39],
-            [103.49, 36.03],
-          ],
-        },
+            [103.49, 36.03]
+          ]
+        }
       }
       if (chinaJson.features && chinaJson.features.length > 8) {
         this.mergeProvinces(chinaJson, params.names, params.properties)
@@ -2287,7 +2624,7 @@ export default {
       var myChart = echarts.init(chartDom)
       function getDe() {
         var ser = []
-        echarts.util.each(hunkDetail, function (dataItem, idx) {
+        echarts.util.each(hunkDetail, function(dataItem, idx) {
           ser.push({
             name: hunkDetail[idx].name,
             color: ['#e1494a', '#2589cf', '#1890ff', '#fa8c16', '#13c2c2'],
@@ -2297,18 +2634,23 @@ export default {
             center: myChart.convertToPixel('geo', hunkDetail[idx].coord),
             label: {
               position: 'inside',
-              padding: [0,50,35,0],
+              padding: [0, 50, 35, 0],
               color: '#909399',
               fontWeight: 'bold',
               // fontSize: 13,
-              formatter: function (e) {
+              formatter: function(e) {
                 if (e.data.name !== '') {
-                  return e.seriesName + ': ' + (e.data.value > 0 ? (e.data.value * 100).toFixed(2) : 0)  + '%'
+                  return (
+                    e.seriesName +
+                    ': ' +
+                    (e.data.value > 0 ? (e.data.value * 100).toFixed(2) : 0) +
+                    '%'
+                  )
                 }
-              },
+              }
             },
             labelLine: hunkDetail[idx].labelLine,
-            data: hunkDetail[idx].data,
+            data: hunkDetail[idx].data
           })
         })
         return ser
@@ -2317,9 +2659,9 @@ export default {
         // center: ['80%', '50%'],
         tooltip: {
           trigger: 'item',
-          formatter: function (params) {
+          formatter: function(params) {
             return params.name // 自行定义formatter格式
-          },
+          }
         },
         geo: {
           map: 'china',
@@ -2331,17 +2673,17 @@ export default {
             normal: {
               show: true,
               fontSize: '12',
-              color: 'rgba(0,0,0,0.7)',
+              color: 'rgba(0,0,0,0.7)'
             },
             emphasis: {
               textStyle: {
-                color: '#fff',
-              },
-            },
+                color: '#fff'
+              }
+            }
           },
           itemStyle: {
             normal: {
-              borderColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: 'rgba(0, 0, 0, 0.2)'
             },
             emphasis: {
               areaColor: '#F3B329', //鼠标选择区域颜色
@@ -2349,22 +2691,22 @@ export default {
               shadowOffsetY: 0,
               shadowBlur: 20,
               borderWidth: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-            },
-          },
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
         },
         series: [
           {
             name: '变异数量',
             type: 'map',
-            geoIndex: 0,
+            geoIndex: 0
             // data: dataList,
-          },
-        ],
+          }
+        ]
       }
       myChart.setOption(option)
       var option2 = {
-        series: getDe(),
+        series: getDe()
       }
       myChart.setOption(option2)
       this.$nextTick(() => {
@@ -2377,7 +2719,7 @@ export default {
       myChart.clear()
       function getDe() {
         var ser = []
-        echarts.util.each(worldHunkDetail, function (dataItem, idx) {
+        echarts.util.each(worldHunkDetail, function(dataItem, idx) {
           ser.push({
             name: worldHunkDetail[idx].name,
             color: ['#e1494a', '#2589cf', '#1890ff', '#fa8c16', '#13c2c2'],
@@ -2387,17 +2729,22 @@ export default {
             center: myChart.convertToPixel('geo', worldHunkDetail[idx].coord),
             label: {
               position: 'inside',
-              padding: [0,50,35,0],
+              padding: [0, 50, 35, 0],
               color: '#909399',
               fontWeight: 'bold',
-              formatter: function (e) {
+              formatter: function(e) {
                 if (e.data.name !== '') {
-                  return e.seriesName + ': ' + (e.data.value > 0 ? (e.data.value * 100).toFixed(2) : 0)  + '%'
+                  return (
+                    e.seriesName +
+                    ': ' +
+                    (e.data.value > 0 ? (e.data.value * 100).toFixed(2) : 0) +
+                    '%'
+                  )
                 }
-              },
+              }
             },
             labelLine: worldHunkDetail[idx].labelLine,
-            data: worldHunkDetail[idx].data,
+            data: worldHunkDetail[idx].data
           })
         })
         return ser
@@ -2406,9 +2753,9 @@ export default {
         // center: ['80%', '50%'],
         tooltip: {
           trigger: 'item',
-          formatter: function (params) {
+          formatter: function(params) {
             return params.name // 自行定义formatter格式
-          },
+          }
         },
         geo: {
           map: 'world',
@@ -2419,12 +2766,12 @@ export default {
           silent: true,
           label: {
             normal: {
-              show: false,
-            },
+              show: false
+            }
           },
           itemStyle: {
             normal: {
-              borderColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: 'rgba(0, 0, 0, 0.2)'
             },
             emphasis: {
               areaColor: '#F3B329', //鼠标选择区域颜色
@@ -2432,22 +2779,22 @@ export default {
               shadowOffsetY: 0,
               shadowBlur: 20,
               borderWidth: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-            },
-          },
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
         },
         series: [
           {
             name: '变异数量',
             type: 'map',
-            geoIndex: 0,
+            geoIndex: 0
             // data: dataList,
-          },
-        ],
+          }
+        ]
       }
       myChart.setOption(option)
       var option2 = {
-        series: getDe(),
+        series: getDe()
       }
       myChart.setOption(option2)
       this.$nextTick(() => {
@@ -2460,13 +2807,13 @@ export default {
           style: {
             width: '60px',
             marginRight: '5px',
-            verticalAlign: 'middle',
+            verticalAlign: 'middle'
           },
           attrs: {
-            src: require('../assets/PhastCons-' + column.index + '.png'),
-          },
+            src: require('../assets/PhastCons-' + column.index + '.png')
+          }
         }),
-        h('span', column.label),
+        h('span', column.label)
       ])
     },
     initGCContentChart(GCContent) {
@@ -2476,7 +2823,7 @@ export default {
       var option = {
         tooltip: {
           trigger: 'item',
-          formatter: '{b} :{d}%',
+          formatter: '{b} :{d}%'
         },
         series: [
           {
@@ -2485,24 +2832,24 @@ export default {
             radius: '60%',
             color: ['#e1494a', '#2589cf'],
             center: ['50%', '50%'],
-            label:{
-              show: false,
+            label: {
+              show: false
             },
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: GCContent,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)',
-              },
-            },
-          },
-        ],
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
       }
       myChart.setOption(option)
       this.$nextTick(() => {
@@ -2516,7 +2863,7 @@ export default {
       var option = {
         tooltip: {
           trigger: 'item',
-          formatter: '{b} :{d}%',
+          formatter: '{b} :{d}%'
         },
         series: [
           {
@@ -2525,35 +2872,60 @@ export default {
             radius: '60%',
             color: ['#e1494a', '#2589cf', '#1890ff', '#fa8c16', '#13c2c2'],
             center: ['50%', '50%'],
-            label:{
-              show: false,
+            label: {
+              show: false
             },
             labelLine: {
               normal: {
-                show: false,
-              },
+                show: false
+              }
             },
             data: CpGRatio,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)',
-              },
-            },
-          },
-        ],
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
       }
       myChart.setOption(option)
       this.$nextTick(() => {
         myChart.resize() // 这里是为了解决，tab刷新的时候，图表不刷新的问题。
       })
     },
-  },
+    secretNumber(value) {
+      var newval = value
+      if(value){
+        var newvalArr = newval.split('')
+        for (var i = 0; i < newvalArr.length; i++) {
+          if (this.numberMap[newvalArr[i]]) {
+            newvalArr[i] = this.numberMap[newvalArr[i]]
+          }
+        }
+        newval = newvalArr.join('')
+      }else{
+        newval = '.'
+      }
+      return newval
+    }
+  }
 }
 </script>
 
 <style scoped lang="scss">
+@font-face {
+  font-family: 'stone-secret';
+  src: url('../assets/font/stone.woff2') format('truetype');
+}
+
+.stonebox {
+  font-family: 'stone-secret', 'Hiragino Sans GB', 'Microsoft yahei', Arial,
+    sans-serif, '宋体' !important;
+}
+
 .main-container {
   width: 80%;
   margin: 0 auto;
@@ -2619,6 +2991,9 @@ export default {
         .grid-title {
           font-weight: bold;
           margin-bottom: 10px;
+        }
+        .pie-container2-table div{
+          font-size: 14px
         }
       }
     }

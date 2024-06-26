@@ -6,13 +6,15 @@
         <div class="sub-content-1 clearfix" v-for="(value, key, index) in geneDetailData" :key="index">
           <el-row :gutter="0" class="grid-title">
             <el-col :span="24" :offset="0"
-              ><div>{{value.uu_id}}</div></el-col
+              ><div class="stonebox"
+                  v-html="secretNumber(value.uu_id)"></div></el-col
             >
           </el-row>
-          <div class="content" v-for = "(v, k,i) in value" :key="i">
+          <div class="content" v-for = "(v, k,i) in value" :key="i" v-if = "k !== 'id'">
+            
             <div class="div-striped">{{k}}：</div>
-            <el-tooltip class="item" :disabled="v.length > 50 ? false : true" effect="dark" :content=v placement="top-start">
-              <div>{{v | filterAmount(50)}}</div>
+            <el-tooltip class="item" :disabled="v.length > 50 ? false : true" effect="light" :content="v" placement="top-start">
+              <div class="stonebox" v-html="secretNumber(v)"></div>
             </el-tooltip>
           </div>
         </div>
@@ -25,7 +27,6 @@
 import { svVariantDetail } from '@/api/variation'
 import Nav from '@/components/Nav'
 require('echarts/theme/macarons') // echarts theme
-import '@/utils/filters.js'
 import { decrypt } from '@/utils/crypto.js'
 export default {
   name: 'Variation',
@@ -37,7 +38,19 @@ export default {
       geneDetailData: null,
       variantId: '',
       loading: true,
-      code: '4t5dac4nhxz41e6u'
+      code: '4t5dac4nhxz41e6u',
+      numberMap: {
+        0: '&#59854;',
+        1: '&#58670;',
+        2: '&#59246;',
+        3: '&#59537;',
+        4: '&#57808;',
+        5: '&#60146;',
+        6: '&#60492;',
+        7: '&#58149;',
+        8: '&#58928;',
+        9: '&#58397;'
+      },
     }
   },
   watch: {
@@ -59,11 +72,35 @@ export default {
     })
   },
   methods: {
+    secretNumber(value) {
+      var newval = value
+      if(value){
+        var newvalArr = newval.split('')
+        for (var i = 0; i < newvalArr.length; i++) {
+          if (this.numberMap[newvalArr[i]]) {
+            newvalArr[i] = this.numberMap[newvalArr[i]]
+          }
+        }
+        newval = newvalArr.join('')
+      }else{
+        newval = '.'
+      }
+      return newval
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
+@font-face {
+  font-family: 'stone-secret';
+  src: url('../assets/font/stone.woff2') format('truetype');
+}
+
+.stonebox {
+  font-family: 'stone-secret', 'Hiragino Sans GB', 'Microsoft yahei', Arial,
+    sans-serif, '宋体' !important;
+}
 .main-container {
   width: 80%;
   margin: 0 auto;

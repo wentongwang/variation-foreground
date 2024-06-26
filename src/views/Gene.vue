@@ -2,11 +2,13 @@
   <div>
     <Nav />
     <el-main>
-      <div id="spage-tbshare-container">
-        <div class="tbshare_popup_enter">过滤选项</div>
+      <div id="spage-tbshare-container" v-show="geneData.variation">
+        <div class="tbshare_popup_enter">{{ $t('gene.filter') }}</div>
         <div class="tbshare_popup_main clearfix">
           <el-card class="box-card">
-            <el-divider content-position="left">功能类型</el-divider>
+            <el-divider content-position="left">{{
+              $t('gene.functionType')
+            }}</el-divider>
             <el-row class="checkbox-container" type="flex" justify="start">
               <el-checkbox-group
                 v-model="checkboxGroup1"
@@ -43,7 +45,10 @@
         <el-row type="flex" justify="space-between">
           <el-col :span="6">
             <p class="title">
-              {{ gene.start }}-{{ gene.end }}<span class="sub-title" />
+              Chr{{ gene.chrom === 23 ? 'X' : gene.chrom }}-{{ gene.start }}-{{
+                gene.end
+              }}
+              (GRCh38)<span class="sub-title" />
             </p>
           </el-col>
           <el-col :span="10" class="tools">
@@ -99,19 +104,76 @@
             </el-col>
           </el-col>
         </el-row>
-        <el-divider />
+        <el-divider class="my-divider" />
         <div class="axis-container"><svg></svg></div>
         <div class="annotation-container">
           <svg id="svg-drag" v-drag></svg>
         </div>
-        <div class="variation-container" @click="variationClick($event)"><canvas id="canvas"></canvas></div>
+        <div
+          class="variation-container"
+          v-show="geneData.variation"
+          @click="variationClick($event)"
+        >
+          <canvas id="canvas"></canvas>
+        </div>
         <template>
           <el-row>
             <el-col :span="8">
-              <el-button type="primary" @click="onReset" class="resetBtn"
-                >初始化</el-button
-              >
+              <el-button type="primary" @click="onReset" class="resetBtn">{{
+                $t('gene.init')
+              }}</el-button>
               <div id="mapChart" />
+              <div>
+                <div class="tableSubData-title" style="color: #909399;">
+                  Allele Frequency (AF)
+                </div>
+                <template>
+                  <el-table :data="tableSubData" border style="width: 100%">
+                    <el-table-column
+                      prop="NorthEast"
+                      :show-overflow-tooltip="true"
+                      :label="this.$t('variat.NorthEastAF')"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                      prop="NorthChina"
+                      :show-overflow-tooltip="true"
+                      :label="this.$t('variat.NorthChinaAF')"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                      prop="EastChina"
+                      :show-overflow-tooltip="true"
+                      :label="this.$t('variat.EastChinaAF')"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                      prop="CentralChina"
+                      :show-overflow-tooltip="true"
+                      :label="this.$t('variat.CentralChinaAF')"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                      prop="NorthWest"
+                      :show-overflow-tooltip="true"
+                      :label="this.$t('variat.NorthWestAF')"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                      prop="SouthWest"
+                      :show-overflow-tooltip="true"
+                      :label="this.$t('variat.SouthWestAF')"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                      prop="SouthChina"
+                      :show-overflow-tooltip="true"
+                      :label="this.$t('variat.SouthChinaAF')"
+                    >
+                    </el-table-column>
+                  </el-table>
+                </template>
+              </div>
             </el-col>
             <el-col :span="16">
               <VirtualScroll
@@ -121,7 +183,7 @@
                 :key="virtualListValue"
                 :height="50"
                 key-prop="id"
-                @change="(data) => (virtualList = data)"
+                @change="data => (virtualList = data)"
               >
                 <el-table
                   row-key="id"
@@ -133,6 +195,7 @@
                   style="width: 100%"
                   @cell-click="tableCell"
                   :row-style="TableRowStyle"
+                  :empty-text="$t('gene.table.empty')"
                   highlight-current-row
                 >
                   <el-table-column
@@ -142,47 +205,83 @@
                   >
                     <template slot-scope="scope">
                       <el-link
-                        class="stonefont"
                         style="font-size: 12px"
                         v-if="scope.row.variation_type === 'SV'"
                         :href="
                           '#/svVariant?id=' +
-                          scope.row.variatiId +
-                          '&chrom=' +
-                          scope.row.chrom
+                            scope.row.variatiId +
+                            '&chrom=' +
+                            scope.row.chrom +
+                            '&func=' +
+                            scope.row.exonicFuncValue
                         "
                         type="primary"
                         target="_blank"
-                        >
-                        {{ scope.row.variatiId | filterAmount(27) }}
-                        <!-- &#xF7B3;&#xEDBA;&#xF0F0;&#xE85F;&#xEFE9;&#xED4F;&#xF70E;&#xE916;&#xE83F;&#xED98; -->
-                        </el-link
+                        class="stonebox"
+                        v-html="secretNumber(scope.row.variatiId, 26)"
                       >
+                      </el-link>
                       <el-link
                         v-else
                         style="font-size: 12px"
                         :href="
                           '#/variant?id=' +
-                          scope.row.variatiId +
-                          '&chrom=' +
-                          scope.row.chrom
+                            scope.row.variatiId +
+                            '&chrom=' +
+                            scope.row.chrom +
+                            '&func=' +
+                            scope.row.exonicFuncValue +
+                            '&AC=' +
+                            scope.row.AC
                         "
                         type="primary"
                         target="_blank"
-                        >{{ scope.row.variatiId | filterAmount(27) }}</el-link
+                        class="stonebox"
+                        v-html="secretNumber(scope.row.variatiId, 26)"
                       >
+                      </el-link>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="gene" :label="$t('gene.table.gene')" />
+                  <el-table-column prop="gene" :label="$t('gene.table.gene')">
+                    <template slot-scope="scope">
+                      <span
+                        class="stonebox"
+                        v-html="secretNumber(scope.row.gene)"
+                      ></span>
+                    </template>
+                  </el-table-column>
                   <el-table-column
                     prop="rsid"
                     :label="$t('gene.table.rsid')"
                     width="100"
-                  />
+                  >
+                    <template slot-scope="scope">
+                      <span
+                        class="stonebox"
+                        v-html="secretNumber(scope.row.rsid)"
+                      ></span>
+                    </template>
+                  </el-table-column>
                   <el-table-column
                     prop="chn100k_ALL"
                     :label="$t('gene.table.chn100k_ALL')"
-                  />
+                  >
+                    <template slot-scope="scope">
+                      <span
+                        class="stonebox"
+                        v-html="secretNumber(scope.row.chn100k_ALL)"
+                      ></span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="AC"
+                    :label="$t('gene.table.AC')"
+                    width="100"
+                  >
+                    <template slot-scope="scope">
+                      <span class="stonebox" v-html="scope.row.AC"></span>
+                    </template>
+                  </el-table-column>
                   <el-table-column
                     prop="exonicFunc"
                     :label="$t('gene.table.exonicFunc')"
@@ -210,11 +309,13 @@
                   <el-table-column
                     prop="geneDetail"
                     :label="$t('gene.table.geneDetail')"
-                    show-overflow-tooltip
                   >
-                  <template slot-scope="scope">
-                    {{ scope.row.geneDetail | filterAmount(100) }}
-                  </template>
+                    <template slot-scope="scope">
+                      <span
+                        class="stonebox"
+                        v-html="secretNumber(scope.row.geneDetail, 50)"
+                      ></span>
+                    </template>
                   </el-table-column>
                 </el-table>
               </VirtualScroll>
@@ -234,19 +335,18 @@ import Nav from '@/components/Nav'
 import * as echarts from 'echarts'
 import chinaJson from 'echarts/map/json/china.json'
 import VirtualScroll from 'el-table-virtual-scroll'
-import '@/utils/filters.js'
 import { decrypt } from '@/utils/crypto.js'
 require('echarts/theme/macarons') // echarts theme
 export default {
   name: 'Gene',
   components: {
     Nav,
-    VirtualScroll,
+    VirtualScroll
   },
   directives: {
     drag: {
       // 指令的定义
-      bind: function (el, binding, vnode) {
+      bind: function(el, binding, vnode) {
         // el.drag();
         // 获取元素
         // var dv = document.getElementById("dv");
@@ -254,7 +354,7 @@ export default {
         let nl = 0
         let isDown = false
         // 鼠标按下事件
-        el.onmousedown = function (e) {
+        el.onmousedown = function(e) {
           // 获取x坐标和y坐标
           x = e.clientX
           // 获取左部和顶部的偏移量
@@ -268,7 +368,7 @@ export default {
           el.style.cursor = 'move'
         }
         // 鼠标移动
-        window.onmousemove = function (e) {
+        window.onmousemove = function(e) {
           if (isDown == false) {
             return
           }
@@ -279,7 +379,7 @@ export default {
           el.style.left = nl + 'px'
         }
         // 鼠标抬起事件
-        el.onmouseup = function () {
+        el.onmouseup = function() {
           // 开关关闭
           if (nl < -20 && nl > -300) {
             vnode.context.moveClick('10')
@@ -299,11 +399,23 @@ export default {
           el.style.left = '0px'
           el.style.cursor = 'default'
         }
-      },
-    },
+      }
+    }
   },
   data() {
     return {
+      numberMap: {
+        0: '&#59854;',
+        1: '&#58670;',
+        2: '&#59246;',
+        3: '&#59537;',
+        4: '&#57808;',
+        5: '&#60146;',
+        6: '&#60492;',
+        7: '&#58149;',
+        8: '&#58928;',
+        9: '&#58397;'
+      },
       virtualList: [],
       virtualListValue: undefined,
       geneData: {
@@ -320,10 +432,10 @@ export default {
             gene_id: '',
             parent: '',
             gene: '',
-            id: 1,
-          },
+            id: 1
+          }
         ],
-        variation: [],
+        variation: []
       },
       filterData: '',
       loading: true,
@@ -339,40 +451,58 @@ export default {
         { name: 'pLoF', num: 0 },
         { name: 'Missense', num: 0 },
         { name: 'Synonymous', num: 0 },
-        { name: 'Other', num: 0 },
+        { name: 'Other', num: 0 }
       ],
       options2: [
         { name: 'EXomes', num: 0 },
-        { name: 'Genomes', num: 0 },
+        { name: 'Genomes', num: 0 }
       ],
       options3: [
         { name: 'SNVs', num: 0 },
         { name: 'Indels', num: 0 },
-        { name: 'SVs', num: 0 },
+        { name: 'SVs', num: 0 }
       ],
       tableData: [],
+      tableSubData: [
+        {
+          NorthEast: '0',
+          NorthChina: '0',
+          EastChina: '0',
+          CentralChina: '0',
+          NorthWest: '0',
+          SouthWest: '0',
+          SouthChina: '0'
+        }
+      ],
       colorActive: [
         'rgb(245, 108, 108)',
         'rgb(230, 162, 60)',
         'rgb(103, 194, 58)',
-        'rgb(157, 157, 157)',
+        'rgb(157, 157, 157)'
       ],
       color: [
         'rgb(253, 226, 226)',
         'rgb(250, 236, 216)',
         'rgb(208, 249, 188)',
-        'rgb(233, 233, 235)',
+        'rgb(233, 233, 235)'
       ],
       tableBgPos: '',
       dataList: [],
-      code: '4t5dac4nhxz41e6u'
+      code: '4t5dac4nhxz41e6u',
+      NorthChina: this.$t('variat.NorthChina'),
+      NorthEast: this.$t('variat.NorthEast'),
+      EastChina: this.$t('variat.EastChina'),
+      CentralChina: this.$t('variat.CentralChina'),
+      SouthChina: this.$t('variat.SouthChina'),
+      SouthWest: this.$t('variat.SouthWest'),
+      NorthWest: this.$t('variat.NorthWest')
     }
   },
   computed: {
     ...mapGetters(['gene']),
     variation() {
       return this.filterData.variation
-    },
+    }
   },
   watch: {
     filterData() {
@@ -398,19 +528,23 @@ export default {
             .scaleLinear()
             .domain([positionStart, positionEnd])
             .range([0, axisWidth])
-          const axis = d3.axisBottom().scale(scale).ticks(10).tickPadding(10)
-          svg
-            .append('text')
-            .attr('x', 0)
-            .attr('y', 50)
-            .attr('fill', '#409EFF')
-            .attr('font-size', 20)
-            .text(function () {
-              return 'chr' + (_this.gene.chrom === 23 ? 'X' : _this.gene.chrom)
-            })
+          const axis = d3
+            .axisBottom()
+            .scale(scale)
+            .ticks(10)
+            .tickPadding(10)
+          // svg
+          //   .append('text')
+          //   .attr('x', 0)
+          //   .attr('y', 50)
+          //   .attr('fill', '#409EFF')
+          //   .attr('font-size', 18)
+          //   .text(function() {
+          //     return 'chr' + (_this.gene.chrom === 23 ? 'X' : _this.gene.chrom) + '(GRCh38)'
+          //   })
           svg
             .append('g')
-            .attr('transform', function () {
+            .attr('transform', function() {
               return 'translate(' + margin + ',50)'
             })
             .call(axis)
@@ -430,19 +564,19 @@ export default {
           _this.svg.selectAll('*').remove()
           _this.svg.style('overflow', 'visible')
           _this.annotationColor = '#424242'
-          _this.filterData.genomic.forEach(function (d) {
+          _this.filterData.genomic.forEach(function(d) {
             if (d['type'] === 'pseudogene' || d['type'] === 'gene') {
               newArr.push({
                 start: ((d['start'] - positionStart) / geneLength) * width,
                 end: ((d['end'] - positionStart) / geneLength) * width,
-                gene: d['gene'],
+                gene: d['gene']
               })
             }
           })
-          newArr.sort(function (a, b) {
+          newArr.sort(function(a, b) {
             return a['start'] - b['start']
           })
-          newArr.forEach(function (d, i) {
+          newArr.forEach(function(d, i) {
             start = 0
             end = -Infinity
             for (let j = i; j < newArr.length; j++) {
@@ -456,13 +590,13 @@ export default {
               }
             }
           })
-          numArr.forEach(function (c, i) {
+          numArr.forEach(function(c, i) {
             if (i > 0 && numArr[i]['start'] - 120 < numArr[i - 1]['end']) {
               count = count + 1
             }
             grandParent = null
             parent = null
-            _this.filterData.genomic.forEach(function (d) {
+            _this.filterData.genomic.forEach(function(d) {
               if (d['parent'] === '.' && d['gene'] === c['gene']) {
                 // if (d['parent'] === '.' && d['gene'] === 'STATH') {
                 if (d['type'] === 'pseudogene' || d['type'] === 'gene') {
@@ -493,7 +627,7 @@ export default {
                     .attr('font-size', 14)
                     .attr('cursor', 'pointer')
                     .attr('geneId', d['gene_id'])
-                    .on('click', function () {
+                    .on('click', function() {
                       const thisName = d3.select(this).text()
                       const thisId = d3.select(this).attr('geneId')
                       if (genename === thisName) {
@@ -502,7 +636,7 @@ export default {
                         geneAnnotation(thisName, thisId)
                       }
                     })
-                    .text(function () {
+                    .text(function() {
                       return d['gene']
                     })
                 }
@@ -545,7 +679,7 @@ export default {
               }
             })
             if (c['gene'] === genename) {
-              _this.filterData.genomic.forEach(function (d) {
+              _this.filterData.genomic.forEach(function(d) {
                 if (d['parent'] === geneid) {
                   count = count + 1
                   parent = d['gene_id']
@@ -574,7 +708,7 @@ export default {
                     .attr('fill', '#409EFF')
                     .attr('font-size', 12)
                     .attr('geneId', d['gene_id'])
-                    .text(function () {
+                    .text(function() {
                       return d['gene_id']
                     })
                 }
@@ -636,7 +770,7 @@ export default {
         canvas.height = height
         canvas.width = width
         const ctx = canvas.getContext('2d')
-        _this.filterData.variation.forEach(function (d, i) {
+        _this.filterData.variation.forEach(function(d, i) {
           cx =
             ((d['start'] +
               parseInt(d['end'] - d['start'] + 3) / 2 -
@@ -669,9 +803,25 @@ export default {
           }
           if (d['chn100k_ALL'] !== '.') {
             if (i < 10) {
-              _this.BezierEllipse1(ctx,cx,50,parseInt(d['end'] - d['start'] + 5),parseInt(35 * d['chn100k_ALL']),'#DCDFE6',activeColor)
+              _this.BezierEllipse1(
+                ctx,
+                cx,
+                50,
+                parseInt(d['end'] - d['start'] + 5),
+                parseInt(35 * d['chn100k_ALL']),
+                '#DCDFE6',
+                activeColor
+              )
             } else {
-              _this.BezierEllipse1(ctx,cx,50,parseInt(d['end'] - d['start'] + 5),parseInt(35 * d['chn100k_ALL']),'#C0C4CC',thisColor)
+              _this.BezierEllipse1(
+                ctx,
+                cx,
+                50,
+                parseInt(d['end'] - d['start'] + 5),
+                parseInt(35 * d['chn100k_ALL']),
+                '#C0C4CC',
+                thisColor
+              )
             }
           }
         })
@@ -687,115 +837,120 @@ export default {
         let snvNum = 0
         let indelNum = 0
         let svNum = 0
-        _this.filterData.variation.forEach(function (d) {
-          let exonicFunColor = ''
-          let exonicFuncValue = ''
-          if (
-            d['func'].indexOf('ncRNA_exonic') !== -1 ||
-            d['func'].indexOf('ncRNA_intronic') !== -1 ||
-            d['func'].indexOf('intronic') !== -1 ||
-            d['func'].indexOf('UTR5') !== -1 ||
-            d['func'].indexOf('UTR3') !== -1 ||
-            d['func'].indexOf('ncRNA_splicing') !== -1 ||
-            d['func'].indexOf('UTR5;UTR3') !== -1 ||
-            d['func'].indexOf('ncRNA_exonic;splicing') !== -1 ||
-            d['func'].indexOf('ncRNA_UTR5') !== -1
-          ) {
-            exonicFunColor = 'success'
-          } else if (
-            d['func'].indexOf('exonic') !== -1 ||
-            d['func'].indexOf('splicing') !== -1 ||
-            d['func'].indexOf('exonic;splicing') !== -1
-          ) {
-            exonicFunColor = 'danger'
-          } else {
-            exonicFunColor = 'info'
-          }
+        if (_this.filterData.variation) {
+          _this.filterData.variation.forEach(function(d) {
+            let exonicFunColor = ''
+            let exonicFuncValue = ''
+            if (
+              d['func'].indexOf('ncRNA_exonic') !== -1 ||
+              d['func'].indexOf('ncRNA_intronic') !== -1 ||
+              d['func'].indexOf('intronic') !== -1 ||
+              d['func'].indexOf('UTR5') !== -1 ||
+              d['func'].indexOf('UTR3') !== -1 ||
+              d['func'].indexOf('ncRNA_splicing') !== -1 ||
+              d['func'].indexOf('UTR5;UTR3') !== -1 ||
+              d['func'].indexOf('ncRNA_exonic;splicing') !== -1 ||
+              d['func'].indexOf('ncRNA_UTR5') !== -1
+            ) {
+              exonicFunColor = 'success'
+            } else if (
+              d['func'].indexOf('exonic') !== -1 ||
+              d['func'].indexOf('splicing') !== -1 ||
+              d['func'].indexOf('exonic;splicing') !== -1
+            ) {
+              exonicFunColor = 'danger'
+            } else {
+              exonicFunColor = 'info'
+            }
 
-          if (d['exonicFunc'].indexOf('.') !== -1) {
-            exonicFuncValue = d['func']
-          } else {
-            exonicFuncValue = d['func'] + ':' + d['exonicFunc']
-          }
-          if (
-            d['func'] === 'splicing' ||
-            d['func'] === 'exonic;splicing' ||
-            d['exonicFunc'] === 'stopgain' ||
-            d['exonicFunc'] === 'frameshift insertion' ||
-            d['exonicFunc'] === 'frameshift deletion' ||
-            d['exonicFunc'] === 'startloss' ||
-            d['exonicFunc'] === 'stoploss'
-          ) {
-            pLoFNum = pLoFNum + 1
-          } else if (
-            d['exonicFunc'] === 'nonsynonymous SNV' ||
-            d['exonicFunc'] === 'nonframeshift deletion' ||
-            d['exonicFunc'] === 'nonframeshift insertion'
-          ) {
-            MissenseNum = MissenseNum + 1
-          } else if (
-            d['exonicFunc'] === 'synonymous SNV' ||
-            d['exonicFunc'] === 'unknown'
-          ) {
-            SynonymousNum = SynonymousNum + 1
-          } else if (
-            d['func'] !== 'splicing' &&
-            d['func'] !== 'exonic;splicing' &&
-            d['func'] !== 'exonic'
-          ) {
-            OtherNum = OtherNum + 1
-          }
+            if (d['exonicFunc'].indexOf('.') !== -1) {
+              exonicFuncValue = d['func']
+            } else {
+              exonicFuncValue = d['func'] + ':' + d['exonicFunc']
+            }
+            if (
+              d['func'] === 'splicing' ||
+              d['func'] === 'exonic;splicing' ||
+              d['exonicFunc'] === 'stopgain' ||
+              d['exonicFunc'] === 'frameshift insertion' ||
+              d['exonicFunc'] === 'frameshift deletion' ||
+              d['exonicFunc'] === 'startloss' ||
+              d['exonicFunc'] === 'stoploss'
+            ) {
+              pLoFNum = pLoFNum + 1
+            } else if (
+              d['exonicFunc'] === 'nonsynonymous SNV' ||
+              d['exonicFunc'] === 'nonframeshift deletion' ||
+              d['exonicFunc'] === 'nonframeshift insertion'
+            ) {
+              MissenseNum = MissenseNum + 1
+            } else if (
+              d['exonicFunc'] === 'synonymous SNV' ||
+              d['exonicFunc'] === 'unknown'
+            ) {
+              SynonymousNum = SynonymousNum + 1
+            } else if (
+              d['func'] !== 'splicing' &&
+              d['func'] !== 'exonic;splicing' &&
+              d['func'] !== 'exonic'
+            ) {
+              OtherNum = OtherNum + 1
+            }
 
-          if (d['variation_type'].indexOf('exome') !== -1) {
-            exomeNum = exomeNum + 1
-          }
-          if (d['variation_type'].indexOf('genome') !== -1) {
-            genomeNum = genomeNum + 1
-          }
-          if (d['variation_type'].indexOf('SNV') !== -1) {
-            snvNum = snvNum + 1
-          }
-          if (d['variation_type'].indexOf('INDEL') !== -1) {
-            indelNum = indelNum + 1
-          }
-          if (d['variation_type'].indexOf('SV') !== -1) {
-            svNum = svNum + 1
-          }
-          _this.tableData.push({
-            id:d['id'],
-            variatiId: d['uu_id'],
-            chrom: d['chrom'],
-            rsid: d['rsid'],
-            exonicFunColor: exonicFunColor,
-            exonicFuncValue: exonicFuncValue,
-            variation_type: d['variation_type'],
-            dbsnp: d['af'],
-            chn100k_ALL: parseFloat(d['chn100k_ALL'] * 100).toFixed(4) + '%',
-            gene: d['gene'],
-            geneDetail: d['geneDetail'],
-            chn100k_NE: d['chn100k_NE'],
-            chn100k_N: d['chn100k_N'],
-            chn100k_E: d['chn100k_E'],
-            chn100k_C: d['chn100k_C'],
-            chn100k_NW: d['chn100k_NW'],
-            chn100k_SW: d['chn100k_SW'],
-            chn100k_S: d['chn100k_S'],
+            if (d['variation_type'].indexOf('exome') !== -1) {
+              exomeNum = exomeNum + 1
+            }
+            if (d['variation_type'].indexOf('genome') !== -1) {
+              genomeNum = genomeNum + 1
+            }
+            if (d['variation_type'].indexOf('SNV') !== -1) {
+              snvNum = snvNum + 1
+            }
+            if (d['variation_type'].indexOf('INDEL') !== -1) {
+              indelNum = indelNum + 1
+            }
+            if (d['variation_type'].indexOf('SV') !== -1) {
+              svNum = svNum + 1
+            }
+            _this.tableData.push({
+              id: d['id'],
+              variatiId: d['uu_id'],
+              chrom: d['chrom'],
+              rsid: d['RSID'],
+              exonicFunColor: exonicFunColor,
+              exonicFuncValue: exonicFuncValue,
+              variation_type: d['variation_type'],
+              chn100k_ALL: parseFloat(d['chn100k_ALL'] * 100).toFixed(4) + '%',
+              AC:
+                d['chn100k_ALL'] === '0.0'
+                  ? 1
+                  : Math.ceil(d['chn100k_ALL'] * 25169 * 2),
+              gene: d['gene'],
+              geneDetail: d['geneDetail'],
+              chn100k_NE: d['chn100k_NE'],
+              chn100k_N: d['chn100k_N'],
+              chn100k_E: d['chn100k_E'],
+              chn100k_C: d['chn100k_C'],
+              chn100k_NW: d['chn100k_NW'],
+              chn100k_SW: d['chn100k_SW'],
+              chn100k_S: d['chn100k_S']
+            })
           })
-        })
+        }
         _this.options = [
           { name: 'pLoF', num: pLoFNum },
           { name: 'Missense', num: MissenseNum },
           { name: 'Synonymous', num: SynonymousNum },
-          { name: 'Other', num: OtherNum },
+          { name: 'Other', num: OtherNum }
         ]
         _this.options2 = [
           { name: 'EXomes', num: exomeNum },
-          { name: 'Genomes', num: genomeNum },
+          { name: 'Genomes', num: genomeNum }
         ]
         _this.options3 = [
           { name: 'SNVs', num: snvNum },
           { name: 'Indels', num: indelNum },
-          { name: 'SVs', num: svNum },
+          { name: 'SVs', num: svNum }
         ]
         function parseNum(num) {
           let newNum = '.'
@@ -815,24 +970,30 @@ export default {
           return newNum
         }
       }
-      geneVariation() // 变异功能类型及筛选
+      if (_this.filterData.variation) {
+        geneVariation() // 变异功能类型及筛选
+      }
       creatTable() // 创建表格
     },
     input() {
       this.dataFiter()
-    },
+    }
   },
-  created: function () {
+  created: function() {
     if (this.gene.value) {
       const data = {
         start: this.gene.start,
         end: this.gene.end,
-        chrom: this.gene.chrom === 'x' ? 23 : this.gene.chrom,
+        chrom: this.gene.chrom === 'x' ? 23 : this.gene.chrom
       }
-      genePositionData(data).then((response) => {
-        response.variation = JSON.parse(decrypt(response.variation,decrypt(response.key,this.code)))
+      genePositionData(data).then(response => {
+        if (response.variation) {
+          response.variation = JSON.parse(
+            decrypt(response.variation, decrypt(response.key, this.code))
+          )
+          this.scrollHeight = response.variation.length * 51
+        }
         this.geneData = response
-        this.scrollHeight = this.geneData.variation.length * 51
         this.filterData = Object.assign({}, response)
         this.containerWidth = parseInt(
           d3.select('.axis-container').style('width')
@@ -913,7 +1074,7 @@ export default {
       if (window.addEventListener) {
         svgDrag.addEventListener(
           'DOMMouseScroll',
-          function (evt) {
+          function(evt) {
             const e = evt || window.event
             const detail = -e.detail / 3
             if (detail >= 1) {
@@ -928,7 +1089,7 @@ export default {
         )
       }
       // 非火狐
-      svgDrag.onmousewheel = function (evt) {
+      svgDrag.onmousewheel = function(evt) {
         const e = evt || window.event
         const detail = e.wheelDelta / 120
         if (detail >= 1) {
@@ -945,6 +1106,7 @@ export default {
   },
   methods: {
     zoomClick(value) {
+      this.loading = true
       const center =
         parseInt((this.gene.end - this.gene.start) / 2) + this.gene.start
       const length = parseInt(((this.gene.end - this.gene.start) * value) / 2)
@@ -954,12 +1116,16 @@ export default {
         const data = {
           start: start,
           end: end,
-          chrom: this.gene.chrom === 'x' ? 23 : this.gene.chrom,
+          chrom: this.gene.chrom === 'x' ? 23 : this.gene.chrom
         }
-        genePositionData(data).then((response) => {
-          response.variation = JSON.parse(decrypt(response.variation,decrypt(response.key,this.code)))
+        genePositionData(data).then(response => {
+          if (response.variation) {
+            response.variation = JSON.parse(
+              decrypt(response.variation, decrypt(response.key, this.code))
+            )
+            this.scrollHeight = response.variation.length * 51
+          }
           this.geneData = response
-          this.scrollHeight = this.geneData.variation.length * 51
           this.filterData = Object.assign({}, response)
           this.containerWidth = parseInt(
             d3.select('.axis-container').style('width')
@@ -967,10 +1133,14 @@ export default {
           this.gene.start = data.start
           this.gene.end = data.end
           this.$store.dispatch('variations/geneSearch', this.gene)
+          this.loading = false
         })
+      } else {
+        this.loading = false
       }
     },
     moveClick(value) {
+      this.loading = true
       const length = parseInt((this.gene.end - this.gene.start) / 2)
       const center = parseInt(
         (this.gene.end - this.gene.start) / 2 +
@@ -983,12 +1153,16 @@ export default {
         const data = {
           start: start,
           end: end,
-          chrom: this.gene.chrom,
+          chrom: this.gene.chrom
         }
-        genePositionData(data).then((response) => {
-          response.variation = JSON.parse(decrypt(response.variation,decrypt(response.key,this.code)))
+        genePositionData(data).then(response => {
+          if (response.variation) {
+            response.variation = JSON.parse(
+              decrypt(response.variation, decrypt(response.key, this.code))
+            )
+            this.scrollHeight = response.variation.length * 51
+          }
           this.geneData = response
-          this.scrollHeight = this.geneData.variation.length * 51
           this.filterData = Object.assign({}, response)
           this.containerWidth = parseInt(
             d3.select('.axis-container').style('width')
@@ -996,7 +1170,10 @@ export default {
           this.gene.start = data.start
           this.gene.end = data.end
           this.$store.dispatch('variations/geneSearch', this.gene)
+          this.loading = false
         })
+      } else {
+        this.loading = false
       }
     },
     filterHandler(value, row, column) {
@@ -1044,8 +1221,8 @@ export default {
       const canvas = document.getElementById('canvas')
       let thisColor, activeColor, cx
       const ctx = canvas.getContext('2d')
-      ctx.clearRect(0,0,width,100)
-      this.filterData.variation.forEach(function (d1, i1) {
+      ctx.clearRect(0, 0, width, 100)
+      this.filterData.variation.forEach(function(d1, i1) {
         cx =
           ((d1['start'] +
             parseInt(d1['end'] - d1['start'] + 5) / 2 -
@@ -1066,13 +1243,13 @@ export default {
           }
         }
       })
-      this.filterData.variation.forEach(function (d, i) {
-          cx =
-            ((d['start'] +
-              parseInt(d['end'] - d['start'] + 3) / 2 -
-              positionStart) /
-              geneLength) *
-            width
+      this.filterData.variation.forEach(function(d, i) {
+        cx =
+          ((d['start'] +
+            parseInt(d['end'] - d['start'] + 5) / 2 -
+            positionStart) /
+            geneLength) *
+          width
         if (
           d['func'].indexOf('ncRNA_exonic') !== -1 ||
           d['func'].indexOf('ncRNA_intronic') !== -1 ||
@@ -1097,16 +1274,31 @@ export default {
           thisColor = _this.color[3]
           activeColor = _this.colorActive[3]
         }
-      
+
         if (d['chn100k_ALL'] !== '.') {
           if (_this.minIdxSC - i < 6 && _this.minIdxSC - i > -6) {
-            _this.BezierEllipse1(ctx,cx,50,parseInt(d['end'] - d['start'] + 5),parseInt(35 * d['chn100k_ALL']),'#DCDFE6',activeColor)
+            _this.BezierEllipse1(
+              ctx,
+              cx,
+              50,
+              parseInt(d['end'] - d['start'] + 5),
+              parseInt(35 * d['chn100k_ALL']),
+              '#DCDFE6',
+              activeColor
+            )
           } else {
-            _this.BezierEllipse1(ctx,cx,50,parseInt(d['end'] - d['start'] + 5),parseInt(35 * d['chn100k_ALL']),'#C0C4CC',thisColor)
+            _this.BezierEllipse1(
+              ctx,
+              cx,
+              50,
+              parseInt(d['end'] - d['start'] + 5),
+              parseInt(35 * d['chn100k_ALL']),
+              '#C0C4CC',
+              thisColor
+            )
           }
         }
       })
-      console.log((needScroll * scrollIndex) / (this.filterData.variation.length - 1))
       this.dom.scrollTop =
         (needScroll * scrollIndex) / (this.filterData.variation.length - 1)
     },
@@ -1122,7 +1314,7 @@ export default {
           label: this.geneList[i].gene,
           type: this.geneList[i].type,
           start: parseInt(this.geneList[i].start) - 1,
-          end: parseInt(this.geneList[i].end) + 1,
+          end: parseInt(this.geneList[i].end) + 1
         })
         window.open(routeUrl.href, '_blank')
       }
@@ -1133,7 +1325,7 @@ export default {
       _this.filterData.variation = []
       let i
       if (this.input) {
-        _this.geneData.variation.forEach(function (d) {
+        _this.geneData.variation.forEach(function(d) {
           if (d['uuId'].indexOf(_this.input) !== -1) {
             i = 0
             while (i < _this.checkboxGroup1.length) {
@@ -1178,7 +1370,7 @@ export default {
           }
         })
       } else {
-        _this.geneData.variation.forEach(function (d) {
+        _this.geneData.variation.forEach(function(d) {
           i = 0
           while (i < _this.checkboxGroup1.length) {
             if (
@@ -1221,7 +1413,7 @@ export default {
           }
         })
       }
-      filterArr.forEach(function (d) {
+      filterArr.forEach(function(d) {
         for (let i = 0; i < _this.checkboxGroup3.length; i++) {
           if (
             _this.checkboxGroup3[i] === 'SNVs' &&
@@ -1335,12 +1527,12 @@ export default {
           geometry: {
             type: 'Polygon',
             coordinates: polygons[a],
-            encodeOffsets: polygons2[a],
+            encodeOffsets: polygons2[a]
           },
           properties: {
             name: properties.name[a] || '',
-            childNum: polygons[a].length,
-          },
+            childNum: polygons[a].length
+          }
         }
         if (properties.cp[a]) {
           feature.properties.cp = properties.cp[a]
@@ -1361,11 +1553,19 @@ export default {
           ['河南', '湖北', '湖南'],
           ['广东', '广西', '海南', '香港', '澳门'],
           ['重庆', '四川', '云南', '西藏', '贵州'],
-          ['陕西', '甘肃', '青海', '宁夏', '新疆'],
+          ['陕西', '甘肃', '青海', '宁夏', '新疆']
         ],
         properties: {
           //自定义大区的名字，要和上面的大区省份一一对应
-          name: ['华北', '东北', '华东', '华中', '华南', '西南', '西北'],
+          name: [
+            this.NorthChina,
+            this.NorthEast,
+            this.EastChina,
+            this.CentralChina,
+            this.SouthChina,
+            this.SouthWest,
+            this.NorthWest
+          ],
           cp: [
             //经纬度可以自己随意定义
             [116.24, 39.54],
@@ -1374,9 +1574,9 @@ export default {
             [114.2, 30.32],
             [113.15, 23.08],
             [104.04, 30.39],
-            [103.49, 36.03],
-          ],
-        },
+            [103.49, 36.03]
+          ]
+        }
       }
       if (chinaJson.features && chinaJson.features.length > 8) {
         this.mergeProvinces(chinaJson, params.names, params.properties)
@@ -1387,16 +1587,16 @@ export default {
       var _this = this
       var chartDom = document.getElementById('mapChart')
       var clientWidth = document.body.clientWidth
-      chartDom.style.height = (540 / 1903) * clientWidth + 'px'
+      chartDom.style.height = (460 / 1903) * clientWidth + 'px'
       var myChart = echarts.init(chartDom)
 
       var option = {
         // center: ['80%', '50%'],
         tooltip: {
           trigger: 'item',
-          formatter: function (params) {
+          formatter: function(params) {
             return params.name // 自行定义formatter格式
-          },
+          }
         },
         visualMap: {
           // min: 0,
@@ -1411,7 +1611,7 @@ export default {
             { min: 0.01, max: 0.05, label: '1%-5%', color: '#f5c63a' },
             { min: 0.005, max: 0.01, label: '0.5%-1%', color: '#48bd48' },
             { min: 0, max: 0.005, label: '0%-0.5%', color: '#40a1e5' },
-            { value: 0, label: '0%', color: '#eeeeee' },
+            { value: 0, label: '0%', color: '#eeeeee' }
           ],
           // inRange: {
           // color: ['#e0ffff', '#2196f3'], //取值范围的颜色
@@ -1428,7 +1628,7 @@ export default {
           // color: ['#121122', 'rgba(3,4,5,0.4)', 'red'],
           // symbolSize: [30, 100]
           // },
-          show: true, //图注
+          show: true //图注
         },
         geo: {
           map: 'china',
@@ -1439,13 +1639,13 @@ export default {
             normal: {
               show: true,
               fontSize: '12',
-              color: 'rgba(0,0,0,0.7)',
+              color: 'rgba(0,0,0,0.7)'
             },
             emphasis: {
               textStyle: {
-                color: '#fff',
-              },
-            },
+                color: '#fff'
+              }
+            }
           },
           // regions: [
           //   {
@@ -1463,7 +1663,7 @@ export default {
           // ],
           itemStyle: {
             normal: {
-              borderColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: 'rgba(0, 0, 0, 0.2)'
             },
             emphasis: {
               areaColor: '#F3B329', //鼠标选择区域颜色
@@ -1471,83 +1671,83 @@ export default {
               shadowOffsetY: 0,
               shadowBlur: 20,
               borderWidth: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-            },
-          },
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
         },
         series: [
           {
             name: '变异数量',
             type: 'map',
             geoIndex: 0,
-            data: dataList,
-          },
-        ],
+            data: dataList
+          }
+        ]
       }
       myChart.setOption(option, true)
 
-      myChart.on('click', function (params) {
-        if (params.name === '东北') {
+      myChart.on('click', function(params) {
+        if (params.name === _this.NorthEast) {
           _this.tableBgPos = 'chn100k_NE'
           _this.dataList = [
             {
-              name: '东北',
-              value: 0.004,
-            },
+              name: _this.NorthEast,
+              value: 0.004
+            }
           ]
         }
-        if (params.name === '华北') {
+        if (params.name === _this.NorthChina) {
           _this.tableBgPos = 'chn100k_N'
           _this.dataList = [
             {
-              name: '华北',
-              value: 0.004,
-            },
+              name: _this.NorthChina,
+              value: 0.004
+            }
           ]
         }
-        if (params.name === '华东') {
+        if (params.name === _this.EastChina) {
           _this.tableBgPos = 'chn100k_E'
           _this.dataList = [
             {
-              name: '华东',
-              value: 0.004,
-            },
+              name: _this.EastChina,
+              value: 0.004
+            }
           ]
         }
-        if (params.name === '华中') {
+        if (params.name === _this.CentralChina) {
           _this.tableBgPos = 'chn100k_C'
           _this.dataList = [
             {
-              name: '华中',
-              value: 0.004,
-            },
+              name: _this.CentralChina,
+              value: 0.004
+            }
           ]
         }
-        if (params.name === '华南') {
+        if (params.name === _this.SouthChina) {
           _this.tableBgPos = 'chn100k_S'
           _this.dataList = [
             {
-              name: '华南',
-              value: 0.004,
-            },
+              name: _this.SouthChina,
+              value: 0.004
+            }
           ]
         }
-        if (params.name === '西北') {
+        if (params.name === _this.NorthWest) {
           _this.tableBgPos = 'chn100k_NW'
           _this.dataList = [
             {
-              name: '西北',
-              value: 0.004,
-            },
+              name: _this.NorthWest,
+              value: 0.004
+            }
           ]
         }
-        if (params.name === '西南') {
+        if (params.name === _this.SouthWest) {
           _this.tableBgPos = 'chn100k_SW'
           _this.dataList = [
             {
-              name: '西南',
-              value: 0.004,
-            },
+              name: _this.SouthWest,
+              value: 0.004
+            }
           ]
         }
         myChart.clear()
@@ -1562,33 +1762,44 @@ export default {
     tableCell(row, column, event, cell) {
       this.dataList = [
         {
-          name: '东北',
-          value: row.chn100k_NE,
+          name: this.NorthEast,
+          value: row.chn100k_NE
         },
         {
-          name: '华北',
-          value: row.chn100k_N,
+          name: this.NorthChina,
+          value: row.chn100k_N
         },
         {
-          name: '华南',
-          value: row.chn100k_S,
+          name: this.SouthChina,
+          value: row.chn100k_S
         },
         {
-          name: '华东',
-          value: row.chn100k_E,
+          name: this.EastChina,
+          value: row.chn100k_E
         },
         {
-          name: '华中',
-          value: row.chn100k_C,
+          name: this.CentralChina,
+          value: row.chn100k_C
         },
         {
-          name: '西南',
-          value: row.chn100k_SW,
+          name: this.SouthWest,
+          value: row.chn100k_SW
         },
         {
-          name: '西北',
-          value: row.chn100k_NW,
-        },
+          name: this.NorthWest,
+          value: row.chn100k_NW
+        }
+      ]
+      this.tableSubData = [
+        {
+          NorthEast: row.chn100k_NE,
+          NorthChina: row.chn100k_N,
+          EastChina: row.chn100k_E,
+          CentralChina: row.chn100k_C,
+          NorthWest: row.chn100k_NW,
+          SouthWest: row.chn100k_SW,
+          SouthChina: row.chn100k_S
+        }
       ]
       if (this.tableBgPos !== '') {
         this.tableBgPos = ''
@@ -1634,28 +1845,77 @@ export default {
         this.$refs.filterTable.setCurrentRow()
         this.initChart(this.dataList)
       }
+      this.tableSubData = [
+        {
+          NorthEast: 0,
+          NorthChina: 0,
+          EastChina: 0,
+          CentralChina: 0,
+          NorthWest: 0,
+          SouthWest: 0,
+          SouthChina: 0
+        }
+      ]
     },
-    BezierEllipse1(context, x, y, a, b, strokeColor, fillColor){
-        context.save();
-        var r = (a > b) ? a : b; 
-        var ratioX = a / r;
-        var ratioY = b / r;
-        context.scale(ratioX, ratioY);
-        context.beginPath();
-        context.moveTo((x + a) / ratioX, y / ratioY);
-        context.arc(x / ratioX, y / ratioY, r, 0, 2 * Math.PI);
-        context.closePath();
-        context.strokeStyle = strokeColor
-        context.fillStyle = fillColor
-        context.fill();
-        context.stroke();
-        context.restore();
+    BezierEllipse1(context, x, y, a, b, strokeColor, fillColor) {
+      context.save()
+      var r = a > b ? a : b
+      var ratioX = a / r
+      var ratioY = b / r
+      context.scale(ratioX, ratioY)
+      context.beginPath()
+      context.moveTo((x + a) / ratioX, y / ratioY)
+      context.arc(x / ratioX, y / ratioY, r, 0, 2 * Math.PI)
+      context.closePath()
+      context.strokeStyle = strokeColor
+      context.fillStyle = fillColor
+      context.fill()
+      context.stroke()
+      context.restore()
+    },
+    secretNumber(value, n) {
+      if (!n) n = 20
+      var newval = value
+      var newvalArr = null
+      if (value) {
+        if (newval.length > n) {
+          newval = newval.substring(0, n)
+          newvalArr = newval.split('')
+          for (var i = 0; i < newvalArr.length; i++) {
+            if (this.numberMap[newvalArr[i]]) {
+              newvalArr[i] = this.numberMap[newvalArr[i]]
+            }
+          }
+          newval = newvalArr.join('')
+          newval = newval + '...'
+        } else {
+          newvalArr = newval.split('')
+          for (var i = 0; i < newvalArr.length; i++) {
+            if (this.numberMap[newvalArr[i]]) {
+              newvalArr[i] = this.numberMap[newvalArr[i]]
+            }
+          }
+          newval = newvalArr.join('')
+        }
+      } else {
+        newval = '.'
+      }
+      return newval
     }
-  },
+  }
 }
 </script>
 
 <style scoped lang="scss">
+@font-face {
+  font-family: 'stone-secret';
+  src: url('../assets/font/stone.woff2') format('truetype');
+}
+
+.stonebox {
+  font-family: 'stone-secret', 'Hiragino Sans GB', 'Microsoft yahei', Arial,
+    sans-serif, '宋体' !important;
+}
 #spage-tbshare-container {
   width: 34px;
   height: 122px;
@@ -1671,6 +1931,9 @@ export default {
     padding-top: 24px;
     color: #ffffff;
     font-size: 18px;
+    writing-mode: vertical-rl;
+    text-align: left;
+    line-height: 34px;
   }
   .tbshare_popup_main {
     display: none;
@@ -1801,7 +2064,7 @@ export default {
     }
   }
   .el-table {
-    max-width: 90%;
+    max-width: 96%;
     margin: 0 auto;
   }
   .annotation-container {
@@ -1818,7 +2081,7 @@ export default {
     }
   }
   #mapChart {
-    height: 540px;
+    height: 460px;
   }
   .resetBtn {
     position: absolute;
@@ -1848,5 +2111,11 @@ export default {
 }
 .el-link.el-link--primary {
   color: #0580ff;
+}
+.gene-table .el-tooltip__popper.is-dark {
+  display: none !important;
+}
+.my-divider {
+  margin: 10px 0;
 }
 </style>

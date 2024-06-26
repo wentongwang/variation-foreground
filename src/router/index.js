@@ -27,8 +27,18 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/adminLogin',
+    component: () => import('@/views/AdminLogin.vue'),
+    hidden: true
+  },
+  {
     path: '/register',
     component: () => import('@/views/Register.vue'),
+    hidden: true
+  },
+  {
+    path: '/forgotPassword',
+    component: () => import('@/views/ForgotPassword.vue'),
     hidden: true
   },
   {
@@ -43,6 +53,14 @@ export const constantRoutes = [
     path: '/about',
     name: 'About',
     component: () => import('@/views/About.vue'),
+    meta: {
+      roles: ['admin']
+    }
+  },
+  {
+    path: '/help',
+    name: 'Help',
+    component: () => import('@/views/Help.vue'),
     meta: {
       roles: ['admin']
     }
@@ -78,6 +96,19 @@ export const constantRoutes = [
     meta: {
       roles: ['admin']
     }
+  },
+  {
+    path: '/accountReview',
+    name: 'accountReview',
+    component: () => import('@/views/AccountReview.vue'),
+    meta: {
+      roles: ['admin']
+    }
+  },
+  {
+    path: '/downloadReport',
+    component: () => import('@/views/DownloadReport.vue'),
+    hidden: true
   },
   { path: '*', redirect: '/404', hidden: true }
 ]

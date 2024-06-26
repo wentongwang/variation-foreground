@@ -39,14 +39,18 @@ export default {
           type: 'success'
         })
       }
+      location.reload()
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-  .language{
-    color: #ffffff;
-    cursor: pointer;
+  .international{
+    background-color: #141414;
+    .language{
+      color: #ffffff;
+      cursor: pointer;
+    }
   }
 </style>

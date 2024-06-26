@@ -9,7 +9,7 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">{{ $t('login.title') }}</h3>
+        <h3 class="title">{{ $t('adminlogin.title') }}</h3>
       </div>
 
       <el-form-item prop="username">
@@ -19,7 +19,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          :placeholder="$t('login.name')"
+          :placeholder="$t('adminlogin.name')"
           name="username"
           type="text"
           tabindex="1"
@@ -42,7 +42,7 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            :placeholder="$t('login.pass')"
+            :placeholder="$t('adminlogin.pass')"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -55,27 +55,21 @@
               :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
             />
           </span>
-          <el-link
-            @click.native.prevent="handleForgotPassword"
-            class="forgotPassword"
-            target="_blank"
-            >{{ $t('login.forgotPassword') }}</el-link
-          >
         </el-form-item>
       </el-tooltip>
       <el-button
         :loading="loading"
         type="primary"
-        style="width: 100%; margin: 10px 0"
+        style="width: 100%; margin-bottom: 10px"
         @click.native.prevent="handleLogin"
-        >{{ $t('login.login') }}</el-button
+        >{{ $t('adminlogin.login') }}</el-button
       >
     </el-form>
-    <div class="register-container">
+    <div class="login-container">
       <span class="title"
-        >{{ $t('register.title')
-        }}<el-link type="primary" @click.native.prevent="handleRegister">{{
-          $t('register.toRegister')
+        >{{ $t('adminlogin.loginTitle')
+        }}<el-link type="primary" @click.native.prevent="handleToLogin">{{
+          $t('adminlogin.toLogin')
         }}</el-link></span
       >
     </div>
@@ -96,31 +90,19 @@ export default {
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
       },
       loginRules: {
         password: [
-          { required: true, trigger: 'blur', validator: validatePassword }
-        ]
+          { required: true, trigger: 'blur', validator: validatePassword },
+        ],
       },
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
-    }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        const query = route.query
-        if (query) {
-          this.redirect = query.redirect
-          this.otherQuery = this.getOtherQuery(query)
-        }
-      },
-      immediate: true
+      otherQuery: {},
     }
   },
   created() {
@@ -151,16 +133,18 @@ export default {
         this.$refs.password.focus()
       })
     },
+    handleToLogin() {
+      this.$router.push({ path: '/login' })
+    },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true
           this.$store
-            .dispatch('user/login', this.loginForm)
+            .dispatch('user/adminLogin', this.loginForm)
             .then(() => {
               this.$router.push({
-                path: this.redirect || '/',
-                query: this.otherQuery
+                path: this.redirect || '/accountReview',
               })
               this.loading = false
             })
@@ -173,21 +157,7 @@ export default {
         }
       })
     },
-    handleRegister() {
-      this.$router.push({ path: '/register' })
-    },
-    handleForgotPassword() {
-      this.$router.push({ path: '/forgotPassword' })
-    },
-    getOtherQuery(query) {
-      return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== 'redirect') {
-          acc[cur] = query[cur]
-        }
-        return acc
-      }, {})
-    }
-  }
+  },
 }
 </script>
 
@@ -301,9 +271,9 @@ $light_gray: #eee;
       font-size: 14px;
     }
   }
-  .adminLogin-container {
+
+  .login-container {
     position: relative;
-    margin-top: 5px;
     .title {
       font-size: 14px;
       color: $light_gray;
@@ -329,13 +299,6 @@ $light_gray: #eee;
     position: absolute;
     right: 0;
     bottom: 6px;
-  }
-
-  .forgotPassword {
-    position: absolute;
-    color: #889aa4;
-    bottom: -37px;
-    right: 0;
   }
 
   @media only screen and (max-width: 470px) {

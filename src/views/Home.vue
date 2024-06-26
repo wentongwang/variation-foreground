@@ -35,15 +35,15 @@
           >
             <el-col :span="7"
               ><div id="echart1" class="mychart"></div>
-              <p class="name">各染色体变异数量统计</p></el-col
+              <p class="name">{{ $t('home.chart1') }}</p></el-col
             >
             <el-col :span="7"
               ><div id="echart2" class="mychart"></div>
-              <p class="name">各AF区间变异数量统计</p></el-col
+              <p class="name">{{ $t('home.chart2') }}</p></el-col
             >
             <el-col :span="7">
               <div id="echart3" class="mychart"></div>
-              <p class="name">各地域人群样本数统计</p>
+              <p class="name">{{ $t('home.chart3') }}</p>
             </el-col>
           </el-row>
           <el-row
@@ -54,11 +54,11 @@
           >
             <el-col :span="7">
               <div id="echart4" class="mychart"></div>
-              <p class="name">各功能类型变异数量统计</p>
+              <p class="name">{{ $t('home.chart4') }}</p>
             </el-col>
             <el-col :span="7">
               <div id="echart5" class="mychart"></div>
-              <p class="name">SNV/Indel/SV数量统计</p>
+              <p class="name">{{ $t('home.chart5') }}</p>
             </el-col>
             <el-col :span="7" style="position: relative">
               <div id="line6" class="mychart">
@@ -66,7 +66,7 @@
               </div>
               <div id="echart6" class="mychart"></div>
 
-              <p class="name">临床特征相关变异数量统计</p>
+              <p class="name">{{ $t('home.chart6') }}</p>
             </el-col>
           </el-row>
         </div>
@@ -75,71 +75,98 @@
             {{ $t('home.content.con1') }}
           </div>
           <div class="reference">
-            <el-divider content-position="left">参考文献</el-divider>
-            <p>
-              1.Howe K L, Achuthan P, Allen J, et al. Ensembl 2021[J]. Nucleic
-              acids research, 2021, 49(D1): D884-D891.
-            </p>
-            <p>
-              2.Karolchik D, Baertsch R, Diekhans M, et al. The UCSC genome
-              browser database[J]. Nucleic acids research, 2003, 31(1): 51-54.
-            </p>
-            <p>
-              3.Tate J G, Bamford S, Jubb H C, et al. COSMIC: the catalogue of
-              somatic mutations in cancer[J]. Nucleic acids research, 2019,
-              47(D1): D941-D947.
-            </p>
-            <p>
-              4.Hamosh A, Scott A F, Amberger J S, et al. Online Mendelian
-              Inheritance in Man (OMIM), a knowledgebase of human genes and
-              genetic disorders[J]. Nucleic acids research, 2005, 33(suppl_1):
-              D514-D517.
-            </p>
-            <p>
-              5.Landrum M J, Lee J M, Benson M, et al. ClinVar: public archive
-              of interpretations of clinically relevant variants[J]. Nucleic
-              acids research, 2016, 44(D1): D862-D868.
-            </p>
-            <p>
-              6.Ng P C, Henikoff S. SIFT: Predicting amino acid changes that
-              affect protein function[J]. Nucleic acids research, 2003, 31(13):
-              3812-3814.
-            </p>
-            <p>
-              7.Adzhubei I A, Schmidt S, Peshkin L, et al. A method and server
-              for predicting damaging missense mutations[J]. Nature methods,
-              2010, 7(4): 248-249.
-            </p>
-            <p>
-              8.Fairley S, Lowy-Gallego E, Perry E, et al. The International
-              Genome Sample Resource (IGSR) collection of open human genomic
-              variation resources[J]. Nucleic Acids Research, 2020, 48(D1):
-              D941-D947.
-            </p>
-            <p>
-              9.Rentzsch P, Schubach M, Shendure J, et al. CADD-Splice—improving
-              genome-wide variant effect prediction using deep learning-derived
-              splice scores[J]. Genome medicine, 2021, 13(1): 1-12.
-            </p>
-            <p>
-              10.Wang K, Li M, Hakonarson H. ANNOVAR: functional annotation of
-              genetic variants from high-throughput sequencing data[J]. Nucleic
-              acids research, 2010, 38(16): e164-e164.
-            </p>
+            <el-divider content-position="left">{{
+              $t('home.reference')
+            }}</el-divider>
+            <!-- <el-divider content-position="left">{{
+              $t('home.accessRecords')
+            }}</el-divider> -->
+            <el-row class="reference-container">
+              <el-col :span="12">
+                <p>
+                  1.Howe K L, Achuthan P, Allen J, et al. Ensembl 2021[J].
+                  Nucleic acids research, 2021, 49(D1): D884-D891.
+                </p>
+                <p>
+                  2.Karolchik D, Baertsch R, Diekhans M, et al. The UCSC genome
+                  browser database[J]. Nucleic acids research, 2003, 31(1):
+                  51-54.
+                </p>
+                <p>
+                  3.Tate J G, Bamford S, Jubb H C, et al. COSMIC: the catalogue
+                  of somatic mutations in cancer[J]. Nucleic acids research,
+                  2019, 47(D1): D941-D947.
+                </p>
+                <p>
+                  4.Hamosh A, Scott A F, Amberger J S, et al. Online Mendelian
+                  Inheritance in Man (OMIM), a knowledgebase of human genes and
+                  genetic disorders[J]. Nucleic acids research, 2005,
+                  33(suppl_1): D514-D517.
+                </p>
+                <p>
+                  5.Landrum M J, Lee J M, Benson M, et al. ClinVar: public
+                  archive of interpretations of clinically relevant variants[J].
+                  Nucleic acids research, 2016, 44(D1): D862-D868.
+                </p>
+                <p>
+                  6.Ng P C, Henikoff S. SIFT: Predicting amino acid changes that
+                  affect protein function[J]. Nucleic acids research, 2003,
+                  31(13): 3812-3814.
+                </p>
+                <p>
+                  7.Adzhubei I A, Schmidt S, Peshkin L, et al. A method and
+                  server for predicting damaging missense mutations[J]. Nature
+                  methods, 2010, 7(4): 248-249.
+                </p>
+                <p>
+                  8.Fairley S, Lowy-Gallego E, Perry E, et al. The International
+                  Genome Sample Resource (IGSR) collection of open human genomic
+                  variation resources[J]. Nucleic Acids Research, 2020, 48(D1):
+                  D941-D947.
+                </p>
+                <p>
+                  9.Rentzsch P, Schubach M, Shendure J, et al.
+                  CADD-Splice—improving genome-wide variant effect prediction
+                  using deep learning-derived splice scores[J]. Genome medicine,
+                  2021, 13(1): 1-12.
+                </p>
+                <p>
+                  10.Wang K, Li M, Hakonarson H. ANNOVAR: functional annotation
+                  of genetic variants from high-throughput sequencing data[J].
+                  Nucleic acids research, 2010, 38(16): e164-e164.
+                </p>
 
-            <p>
-              11.Buniello A, MacArthur J A L, Cerezo M, et al. The NHGRI-EBI
-              GWAS Catalog of published genome-wide association studies,
-              targeted arrays and summary statistics 2019[J]. Nucleic acids
-              research, 2019, 47(D1): D1005-D1012.
-            </p>
+                <p>
+                  11.Buniello A, MacArthur J A L, Cerezo M, et al. The NHGRI-EBI
+                  GWAS Catalog of published genome-wide association studies,
+                  targeted arrays and summary statistics 2019[J]. Nucleic acids
+                  research, 2019, 47(D1): D1005-D1012.
+                </p>
+              </el-col>
+
+              <el-col class="textwidget custom-html-widget" :span="12">
+                <a href="javascript:void(0);" style="width: 80%;"
+                  ><img
+                    src="//rf.revolvermaps.com/h/m/a/0/ff0000/256/25/584envh3x52.png"
+                    alt="Map"
+                    style="border:0;width: 100%;"
+                /></a>
+              </el-col>
+            </el-row>
           </div>
         </div>
       </div>
     </el-main>
     <div class="co">
-      Copyright © 2021 哈尔滨工业大学生物信息技术研究院. All right reserved.
+      {{ $t('home.copyright') }}
     </div>
+    <button
+      type="button"
+      class="el-button el-button--primary el-button--medium help"
+      @click="helpClick()"
+    >
+      <i class="el-icon-question"></i><span>{{ $t('home.help') }}</span>
+    </button>
   </div>
 </template>
 
@@ -149,11 +176,13 @@ import * as d3 from 'd3'
 import { search, variant, svVariant } from '@/api/variation'
 import echarts from 'echarts'
 import Nav from '@/components/Nav'
+import Driver from 'driver.js'
+import 'driver.js/dist/driver.min.css'
 
 export default {
   name: 'Home',
   components: {
-    Nav,
+    Nav
   },
   data() {
     return {
@@ -161,6 +190,7 @@ export default {
       value: [],
       loading: false,
       options: [],
+      driver: null
     }
   },
   mounted() {
@@ -170,6 +200,58 @@ export default {
     this.getEchartData4()
     this.getEchartData5()
     this.getEchartData6()
+    this.driver = new Driver({
+      opacity: 0.7,
+      allowClose: false,
+      keyboardControl: false,
+      nextBtnText: this.$t('home.nextBtnText'),
+      prevBtnText: this.$t('home.prevBtnText'),
+      closeBtnText: this.$t('home.closeBtnText'),
+      doneBtnText: this.$t('home.doneBtnText')
+    })
+    this.driver.defineSteps([
+      {
+        element: '.logo>span',
+        popover: {
+          title: this.$t('home.logoTitle'),
+          description: this.$t('home.logoDescription'),
+          position: 'bottom'
+        }
+      },
+      {
+        element: '.imputation-btn',
+        popover: {
+          title: this.$t('home.imputationTitle'),
+          description: this.$t('home.imputationDescription'),
+          position: 'bottom'
+        }
+      },
+      {
+        element: '.international',
+        popover: {
+          title: this.$t('home.internationalTitle'),
+          description: this.$t('home.internationalDescription'),
+          position: 'bottom'
+        }
+      },
+      {
+        element: '.header-search',
+        popover: {
+          title: this.$t('home.headerSearchTitle'),
+          description: this.$t('home.headerSearchDescription'),
+          position: 'bottom'
+        }
+      },
+      {
+        element: '.search',
+        popover: {
+          title: this.$t('home.searchTitle'),
+          description: this.$t('home.searchDescription'),
+          position: 'bottom'
+        }
+      }
+    ])
+    // driver.start()
   },
   methods: {
     getEchartData1() {
@@ -183,7 +265,7 @@ export default {
           Gene2: 'AAMDC',
           FG_Name: 'AAMDC-TP53',
           Samples: 'SRR1164881',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -194,7 +276,7 @@ export default {
           Gene2: 'ANKRD10',
           FG_Name: 'ANKRD10-TP53',
           Samples: 'SRR1164883',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -206,7 +288,7 @@ export default {
           FG_Name: 'ANKRD30BL-TP53',
           Samples:
             'SRR1164787、SRR1164794、SRR1164802、SRR1164805、SRR1164821、SRR1164826、SRR1164834、SRR1164835、SRR1164847、SRR1164848、SRR1164853、SRR1164854、SRR1164871、SRR1164872、SRR1164877、SRR1164880、SRR1164888、SRR1164891、SRR1164892',
-          Num_Samples: '19',
+          Num_Samples: '19'
         },
         {
           Chr1: '17',
@@ -217,7 +299,7 @@ export default {
           Gene2: 'ATP8A2',
           FG_Name: 'ATP8A2-TP53',
           Samples: 'SRR1164831',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -228,7 +310,7 @@ export default {
           Gene2: 'DLG2',
           FG_Name: 'DLG2-TP53',
           Samples: 'SRR1164861',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -239,7 +321,7 @@ export default {
           Gene2: 'EFCAB11',
           FG_Name: 'EFCAB11-TP53',
           Samples: 'SRR1164808',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -250,7 +332,7 @@ export default {
           Gene2: 'EHBP1',
           FG_Name: 'EHBP1-TP53',
           Samples: 'SRR1164809',
-          Num_Samples: '10',
+          Num_Samples: '10'
         },
         {
           Chr1: '17',
@@ -261,7 +343,7 @@ export default {
           Gene2: 'ERCC4',
           FG_Name: 'ERCC4-TP53',
           Samples: 'SRR1164869',
-          Num_Samples: '5',
+          Num_Samples: '5'
         },
         {
           Chr1: '17',
@@ -272,7 +354,7 @@ export default {
           Gene2: 'FILIP1L',
           FG_Name: 'FILIP1L-TP53',
           Samples: 'SRR1164824',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -283,7 +365,7 @@ export default {
           Gene2: 'HFM1',
           FG_Name: 'HFM1-TP53',
           Samples: 'SRR1164829',
-          Num_Samples: '7',
+          Num_Samples: '7'
         },
         {
           Chr1: '17',
@@ -294,7 +376,7 @@ export default {
           Gene2: 'LMF1',
           FG_Name: 'LMF1-TP53',
           Samples: 'SRR1164865',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -305,7 +387,7 @@ export default {
           Gene2: 'MAPK6',
           FG_Name: 'MAPK6-TP53',
           Samples: 'SRR1164886',
-          Num_Samples: '8',
+          Num_Samples: '8'
         },
         {
           Chr1: '17',
@@ -316,7 +398,7 @@ export default {
           Gene2: 'NFIA',
           FG_Name: 'NFIA-TP53',
           Samples: 'SRR1164839',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -327,7 +409,7 @@ export default {
           Gene2: 'NRDE2',
           FG_Name: 'NRDE2-TP53',
           Samples: 'SRR1164884',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -338,7 +420,7 @@ export default {
           Gene2: 'PDS5B',
           FG_Name: 'PDS5B-TP53',
           Samples: 'SRR1164813',
-          Num_Samples: '3',
+          Num_Samples: '3'
         },
         {
           Chr1: '17',
@@ -349,7 +431,7 @@ export default {
           Gene2: 'PFKFB3',
           FG_Name: 'PFKFB3-TP53',
           Samples: 'SRR1164840',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -360,7 +442,7 @@ export default {
           Gene2: 'PPM1B',
           FG_Name: 'PPM1B-TP53',
           Samples: 'SRR1164816',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -371,7 +453,7 @@ export default {
           Gene2: 'PRC1',
           FG_Name: 'PRC1-TP53',
           Samples: 'SRR1164870',
-          Num_Samples: '2',
+          Num_Samples: '2'
         },
         {
           Chr1: '17',
@@ -382,7 +464,7 @@ export default {
           Gene2: 'RP11-444D3.1',
           FG_Name: 'RP11-444D3.1-TP53',
           Samples: 'SRR1164795',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -393,7 +475,7 @@ export default {
           Gene2: 'TBCE',
           FG_Name: 'TBCE-TP53',
           Samples: 'SRR1164820',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -404,7 +486,7 @@ export default {
           Gene2: 'AC004448.5',
           FG_Name: 'TP53-AC004448.5',
           Samples: 'SRR1164800、SRR1164815',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -415,7 +497,7 @@ export default {
           Gene2: 'MT-RNR2',
           FG_Name: 'TP53-MT-RNR2',
           Samples: 'SRR1164832',
-          Num_Samples: '1',
+          Num_Samples: '1'
         },
         {
           Chr1: '17',
@@ -426,7 +508,7 @@ export default {
           Gene2: 'PCIF1',
           FG_Name: 'TP53-PCIF1',
           Samples: 'SRR1164863',
-          Num_Samples: '6',
+          Num_Samples: '6'
         },
         {
           Chr1: '17',
@@ -438,8 +520,8 @@ export default {
           FG_Name: 'TP53-PRKCSH',
           Samples:
             'SRR1164796、SRR1164789、SRR1164798、SRR1164803、SRR1164810、SRR1164817、SRR1164819、SRR1164822、SRR1164825、SRR1164827、SRR1164828、SRR1164836、SRR1164838、SRR1164841、SRR1164844、SRR1164846、SRR1164849、SRR1164855、SRR1164858、SRR1164859、SRR1164866、SRR1164867、SRR1164873、SRR1164874、SRR1164875、SRR1164878、SRR1164882、SRR1164885、SRR1164887、SRR1164889、SRR1164890',
-          Num_Samples: '31',
-        },
+          Num_Samples: '31'
+        }
       ]
       //圆环颜色
       var gieStainColor = {
@@ -454,7 +536,7 @@ export default {
         gneg: 'rgb(255,255,255)',
         acen: 'rgb(217,47,39)',
         stalk: 'rgb(100,127,164)',
-        select: 'rgb(135,177,255)',
+        select: 'rgb(135,177,255)'
       }
       //线条颜色
       var dataColor = {
@@ -481,33 +563,33 @@ export default {
         chr21: '#ceaaf2',
         chr22: '#848484',
         chrX: '#ababab',
-        chrY: '#d1d1d1',
+        chrY: '#d1d1d1'
       }
-      var buildData = function (rawData1, rawData2, karyotype) {
+      var buildData = function(rawData1, rawData2, karyotype) {
         var binLength = 10000000
         var data = []
         var rawDataByChr1 = d3
           .nest()
-          .key(function (d) {
+          .key(function(d) {
             return d.chr
           })
           .entries(rawData1)
         var rawDataByChr2 = d3
           .nest()
-          .key(function (d) {
+          .key(function(d) {
             return d.chr
           })
           .entries(rawData2)
-        karyotype.forEach(function (chr) {
-          var raw1 = rawDataByChr1.filter(function (d) {
+        karyotype.forEach(function(chr) {
+          var raw1 = rawDataByChr1.filter(function(d) {
             return d.key === chr.id
           })[0].values
-          var raw2 = rawDataByChr2.filter(function (d) {
+          var raw2 = rawDataByChr2.filter(function(d) {
             return d.key === chr.id
           })[0].values
-          d3.range(0, chr.len, binLength).forEach(function (position) {
+          d3.range(0, chr.len, binLength).forEach(function(position) {
             var counter = 0
-            raw1.forEach(function (datum) {
+            raw1.forEach(function(datum) {
               var start = parseInt(datum.start)
               var end = parseInt(datum.end)
               if (
@@ -517,7 +599,7 @@ export default {
                 counter++
               }
             })
-            raw2.forEach(function (datum) {
+            raw2.forEach(function(datum) {
               var start = parseInt(datum.start)
               var end = parseInt(datum.end)
               if (
@@ -531,7 +613,7 @@ export default {
               block_id: chr.id,
               start: position,
               end: Math.min(position + binLength - 1, chr.len),
-              value: counter,
+              value: counter
             })
           })
         })
@@ -543,32 +625,32 @@ export default {
         var circos = new Circos({
           container: '#echart1',
           width: width,
-          height: width,
+          height: width
         })
-        cytobands = cytobands.map(function (d) {
+        cytobands = cytobands.map(function(d) {
           return {
             block_id: d.chrom,
             start: parseInt(d.chromStart),
             end: parseInt(d.chromEnd),
             gieStain: d.gieStain,
-            name: d.name,
+            name: d.name
           }
         })
-        var data = this.dataListAll.map((d) => {
+        var data = this.dataListAll.map(d => {
           return {
             source: {
               id: 'chr' + d.Chr1,
               start: parseInt(d.Pos1) - 2000000,
-              end: parseInt(d.Pos1) + 2000000,
+              end: parseInt(d.Pos1) + 2000000
             },
             target: {
               id: 'chr' + d.Chr2,
               start: parseInt(d.Pos2) - 2000000,
-              end: parseInt(d.Pos2) + 2000000,
+              end: parseInt(d.Pos2) + 2000000
             },
             name: d.FG_Name,
             number: d.Num_Samples,
-            sample: d.Samples,
+            sample: d.Samples
           }
         })
 
@@ -581,33 +663,33 @@ export default {
               display: true,
               size: 12,
               color: '#000',
-              radialOffset: 70,
+              radialOffset: 70
             },
             ticks: {
               display: true,
-              labelDenominator: 1000000,
+              labelDenominator: 1000000
             },
             events: {
-              'click.demo': function (d, i, nodes, event) {
+              'click.demo': function(d, i, nodes, event) {
                 // console.log('clicked on layout block', d, event)
-              },
-            },
+              }
+            }
           })
           .highlight('cytobands', cytobands, {
             innerRadius: width / 2 - 108,
             outerRadius: width / 2 - 75,
             opacity: 0.3,
-            color: function (d) {
+            color: function(d) {
               return gieStainColor[d.gieStain]
             },
-            tooltipContent: function (d) {
+            tooltipContent: function(d) {
               return d.name
-            },
+            }
           })
           .histogram('es', buildData(es, ips, GRCh38), {
             innerRadius: width / 2 - 140,
             outerRadius: width / 2 - 110,
-            color: 'OrRd',
+            color: 'OrRd'
           })
           // .chords('l1', data, {
           //   radius: function (d) {
@@ -658,7 +740,7 @@ export default {
       var option = {
         tooltip: {
           trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         series: [
           {
@@ -667,7 +749,7 @@ export default {
             radius: '60%',
             center: ['50%', '50%'],
             label: {
-              fontSize: 14,
+              fontSize: 14
             },
             color: [
               '#eb2f96',
@@ -678,7 +760,7 @@ export default {
               '#faad14',
               '#1890ff',
               '#fa8c16',
-              '#13c2c2',
+              '#13c2c2'
             ],
             data: [
               { value: 132783003, name: 'AC=1' },
@@ -686,22 +768,23 @@ export default {
               { value: 33441788, name: 'AF<0.1%' },
               { value: 7069182, name: 'AF<1' },
               { value: 2686164, name: 'AF<5%' },
-              { value: 6814282, name: 'AF>5%' },
+              { value: 6814282, name: 'AF>5%' }
             ],
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)',
-              },
-            },
-          },
-        ],
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
       }
       option && myChart.setOption(option)
       myChart.resize({ width: width, height: width })
     },
     getEchartData3() {
+      var _this = this
       var width = document.getElementById('echart3').offsetWidth
       var chartDom = document.getElementById('echart3')
       var myChart = echarts.init(chartDom)
@@ -711,10 +794,10 @@ export default {
             name: '面积模式',
             type: 'pie',
             radius: '60%',
-            radius: [20, 160],
+            radius: [20, 125],
             center: ['50%', '50%'],
             label: {
-              fontSize: 14,
+              fontSize: 14
             },
             // color: [
             //   '#b7944c',
@@ -739,20 +822,20 @@ export default {
               '#faad14',
               '#1890ff',
               '#fa8c16',
-              '#13c2c2',
+              '#13c2c2'
             ],
             roseType: 'area',
             data: [
-              { value: 2000, name: '华北' },
-              { value: 16000, name: '华东' },
-              { value: 500, name: '西北' },
-              { value: 1000, name: '华南' },
-              { value: 5500, name: '东北' },
-              { value: 3000, name: '西南' },
-              { value: 5400, name: '华中' },
-            ],
-          },
-        ],
+              { value: 4041, name: _this.$t('home.North') },
+              { value: 10261, name: _this.$t('home.East') },
+              { value: 876, name: _this.$t('home.NorthWest') },
+              { value: 5311, name: _this.$t('home.NorthEast') },
+              { value: 1309, name: _this.$t('home.SouthWest') },
+              { value: 379, name: _this.$t('home.South') },
+              { value: 3551, name: _this.$t('home.Central') }
+            ]
+          }
+        ]
       }
       option && myChart.setOption(option)
       myChart.resize({ width: width, height: width })
@@ -767,14 +850,14 @@ export default {
           trigger: 'axis',
           axisPointer: {
             // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
-          },
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          }
         },
         grid: {
           left: '3%',
           right: '4%',
           bottom: '3%',
-          containLabel: true,
+          containLabel: true
         },
         xAxis: [
           {
@@ -782,31 +865,31 @@ export default {
             axisLabel: {
               interval: 0,
               textStyle: {
-                fontSize: 14,
-              },
+                fontSize: 14
+              }
             },
             data: ['Synonymous', 'PloF', 'Missense'],
             axisTick: {
-              alignWithLabel: true,
-            },
-          },
+              alignWithLabel: true
+            }
+          }
         ],
         yAxis: [
           {
             type: 'value',
             textStyle: {
-              fontSize: 14,
-            },
-          },
+              fontSize: 14
+            }
+          }
         ],
         series: [
           {
             name: '变异数量',
             type: 'bar',
             barWidth: '60%',
-            data: [1110270, 179317, 2183046],
-          },
-        ],
+            data: [1110270, 179317, 2183046]
+          }
+        ]
       }
       option && myChart.setOption(option)
       myChart.resize({ width: width, height: width })
@@ -821,17 +904,17 @@ export default {
           trigger: 'axis',
           axisPointer: {
             // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
-          },
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          }
         },
         legend: {
-          data: ['SNP', 'Indel', 'SV'],
+          data: ['SNP', 'Indel', 'SV']
         },
         grid: {
           left: '3%',
           right: '4%',
           bottom: '3%',
-          containLabel: true,
+          containLabel: true
         },
         xAxis: [
           {
@@ -840,41 +923,39 @@ export default {
             axisLabel: {
               interval: 0,
               textStyle: {
-                fontSize: 14,
-              },
-            },
-          },
+                fontSize: 14
+              }
+            }
+          }
         ],
         yAxis: [
           {
             type: 'value',
             textStyle: {
-              fontSize: 14,
-            },
-          },
+              fontSize: 14
+            }
+          }
         ],
         series: [
           {
             name: 'SNP x1M',
             type: 'bar',
             stack: 'SNP',
-            data: [
-              121.31254, 68.965787, 29.880671, 5.744029, 2.00137, 5.545652,
-            ],
+            data: [121.31254, 68.965787, 29.880671, 5.744029, 2.00137, 5.545652]
           },
           {
             name: 'Indel x100K',
             type: 'bar',
             stack: 'Indel',
-            data: [111.43149, 63.62683, 34.70793, 12.96697, 6.72408, 12.50544],
+            data: [111.43149, 63.62683, 34.70793, 12.96697, 6.72408, 12.50544]
           },
           {
             name: 'SV x10K',
             type: 'bar',
             stack: 'SV',
-            data: [32.7314, 14.1549, 9.0324, 2.8456, 1.2386, 1.8086],
-          },
-        ],
+            data: [32.7314, 14.1549, 9.0324, 2.8456, 1.2386, 1.8086]
+          }
+        ]
       }
       option && myChart.setOption(option)
       myChart.resize({ width: width, height: width })
@@ -888,7 +969,7 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)',
-          confine: true,
+          confine: true
         },
         series: [
           {
@@ -897,7 +978,7 @@ export default {
             radius: '40%',
             center: ['60%', '40%'],
             label: {
-              fontSize: 16,
+              fontSize: 16
             },
             color: [
               '#eb2f96',
@@ -908,31 +989,31 @@ export default {
               '#faad14',
               '#1890ff',
               '#fa8c16',
-              '#13c2c2',
+              '#13c2c2'
             ],
             label: {
               formatter: '{b}：{c}',
               fontSize: 14,
-              lineHeight: 20,
+              lineHeight: 20
             },
             data: [
               { value: 1207, name: 'Benign' },
               { value: 1206, name: 'Likely_benign' },
               {
                 value: 192,
-                name: 'Conflicting_interpretations_of\n_pathogenicity',
+                name: 'Conflicting_interpretations_of\n_pathogenicity'
               },
               { value: 62, name: 'Likely_pathogenic' },
               { value: 100, name: 'Pathogenic' },
-              { value: 921, name: 'Uncertain_significance' },
+              { value: 921, name: 'Uncertain_significance' }
             ],
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)',
-              },
-            },
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
           },
           {
             name: '临床特征相关变异数量总图',
@@ -949,14 +1030,14 @@ export default {
               '#faad14',
               '#1890ff',
               '#fa8c16',
-              '#13c2c2',
+              '#13c2c2'
             ],
             label: {
               formatter: '{b}：{c}',
               position: 'outer',
               fontSize: 14,
               // alignTo: 'edge',
-              margin: 20,
+              margin: 20
             },
             data: [
               {
@@ -965,21 +1046,21 @@ export default {
                 label: { show: false },
                 labelLine: {
                   normal: {
-                    show: false,
-                  },
-                },
+                    show: false
+                  }
+                }
               },
-              { value: 4746545, name: 'ALL' },
+              { value: 4746545, name: 'ALL' }
             ],
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)',
-              },
-            },
-          },
-        ],
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
       }
 
       option && myChart.setOption(option)
@@ -987,9 +1068,49 @@ export default {
     },
     remoteMethod(query) {
       if (query !== '') {
-        const queryArr = query.split('-')
+        let newQuery = query.replace(/:|：/g, '-')
+        const queryArr = newQuery.split('-')
         this.options = []
         const _this = this
+        if (
+          queryArr.length >= 4 &&
+          (queryArr[3] === 'DEL' ||
+            queryArr[3] === 'INS' ||
+            queryArr[3] === 'BND' ||
+            queryArr[3] === 'INV' ||
+            queryArr[3] === 'DUP')
+        ) {
+          this.loading = true
+          const data = {
+            variantId: query.toUpperCase(),
+            chrom: null
+          }
+          if (
+            (queryArr[0].slice(0, 3) === 'chr' && queryArr[0].slice(3) < 23) ||
+            (queryArr[0].slice(0, 3) === 'chr' &&
+              queryArr[0].slice(3) === 'x') ||
+            (queryArr[0].slice(0, 3) === 'chr' && queryArr[0].slice(3) === 'X')
+          ) {
+            queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
+              ? (data.chrom = 23)
+              : (data.chrom = queryArr[0].slice(3)),
+              svVariant(data).then(response => {
+                const data = response.listData
+                data.forEach(function(val, index, arr) {
+                  _this.options.push({
+                    chrom: val.chrom,
+                    value: val.uu_id,
+                    label: val.uu_id,
+                    type: response['type'],
+                    start: parseInt(val.start) - 1,
+                    end: parseInt(val.end) + 1
+                  })
+                })
+                this.loading = false
+              })
+          }
+          return null
+        }
         if (
           (queryArr.length < 5 && queryArr.length > 0 && queryArr[0] < 23) ||
           (queryArr.length < 5 && queryArr.length > 0 && queryArr[0] === 'x') ||
@@ -1012,7 +1133,7 @@ export default {
                     : parseInt(queryArr[0].replace(/[^\d]/g, ' ')),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[1]) + 1,
-                type: 'position',
+                type: 'position'
               })
             }
           }
@@ -1033,23 +1154,11 @@ export default {
                     : parseInt(queryArr[0].replace(/[^\d]/g, ' ')),
                 start: parseInt(queryArr[1]) - 1,
                 end: parseInt(queryArr[2]) + 1,
-                type: 'position',
+                type: 'position'
               })
             }
           }
-          if (
-            queryArr.length >= 4 &&
-            (queryArr[3] === 'DEL' ||
-              queryArr[3] === 'INS' ||
-              queryArr[3] === 'BND' ||
-              queryArr[3] === 'INV' ||
-              queryArr[3] === 'DUP')
-          ) {
-            this.loading = true
-            const data = {
-              variantId: query.toUpperCase(),
-              chrom: null,
-            }
+          if (queryArr.length === 4) {
             if (
               (queryArr[0].slice(0, 3) === 'chr' &&
                 queryArr[0].slice(3) < 23) ||
@@ -1058,68 +1167,44 @@ export default {
               (queryArr[0].slice(0, 3) === 'chr' &&
                 queryArr[0].slice(3) === 'X')
             ) {
+              this.loading = true
+              const data = {
+                variantId: query.toUpperCase(),
+                chrom: null
+              }
               queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
                 ? (data.chrom = 23)
                 : (data.chrom = queryArr[0].slice(3)),
-                svVariant(data).then((response) => {
+                variant(data).then(response => {
                   const data = response.listData
-                  data.forEach(function (val, index, arr) {
+                  data.forEach(function(val, index, arr) {
                     _this.options.push({
                       chrom: val.chrom,
                       value: val.uu_id,
                       label: val.uu_id,
+                      func: val.exonicFunc,
+                      AC: val.chn100k_ALL === '0.0' ? 1 : Math.ceil(val.chn100k_ALL * 25169 * 2),
                       type: response['type'],
                       start: parseInt(val.start) - 1,
-                      end: parseInt(val.end) + 1,
+                      end: parseInt(val.end) + 1
                     })
                   })
                   this.loading = false
                 })
             }
           }
-          if (
-            (queryArr[0].slice(0, 3) === 'chr' &&
-              queryArr[0].slice(3) < 23) ||
-            (queryArr[0].slice(0, 3) === 'chr' &&
-              queryArr[0].slice(3) === 'x') ||
-            (queryArr[0].slice(0, 3) === 'chr' &&
-              queryArr[0].slice(3) === 'X')
-          ) {
-            this.loading = true
-            const data = {
-              variantId: query.toUpperCase(),
-              chrom: null,
-            }
-            queryArr[0].slice(3) === 'x' || queryArr[0].slice(3) === 'X'
-              ? (data.chrom = 23)
-              : (data.chrom = queryArr[0].slice(3)),
-              variant(data).then((response) => {
-                const data = response.listData
-                data.forEach(function (val, index, arr) {
-                  _this.options.push({
-                    chrom: val.chrom,
-                    value: val.uu_id,
-                    label: val.uu_id,
-                    type: response['type'],
-                    start: parseInt(val.start) - 1,
-                    end: parseInt(val.end) + 1,
-                  })
-                })
-                this.loading = false
-              })
-          }
         } else {
           this.loading = true
-          search(query.toUpperCase()).then((response) => {
+          search(query.toUpperCase()).then(response => {
             const data = response.listData
-            data.forEach(function (val, index, arr) {
+            data.forEach(function(val, index, arr) {
               _this.options.push({
                 chrom: parseInt(val.chrom.split('.')[0].split('_')[1]),
                 value: val.gene,
                 label: val.gene,
                 type: data[0]['type'],
                 start: parseInt(val.start) - 1,
-                end: parseInt(val.end) + 1,
+                end: parseInt(val.end) + 1
               })
             })
             this.loading = false
@@ -1140,7 +1225,11 @@ export default {
       }
       if (e.type === 'variant') {
         this.$router.push(
-          '/variant?id=' + e.value + '&chrom=' + this.options[0].chrom
+          '/variant?id=' + e.value + '&chrom=' + this.options[0].chrom +
+              '&func=' +
+              this.options[0].func +
+              '&AC=' +
+              this.options[0].AC
         )
         this.$store.dispatch('variations/variationSearch', e)
       }
@@ -1169,7 +1258,11 @@ export default {
             '/variant?id=' +
               this.options[0].value +
               '&chrom=' +
-              this.options[0].chrom
+              this.options[0].chrom +
+              '&func=' +
+              this.options[0].func +
+              '&AC=' +
+              this.options[0].AC
           )
           this.$store.dispatch('variations/variationSearch', this.options[0])
         }
@@ -1181,7 +1274,10 @@ export default {
         }
       }
     },
-  },
+    helpClick() {
+      this.driver.start()
+    }
+  }
 }
 </script>
 
@@ -1217,12 +1313,23 @@ export default {
       border-radius: 4px;
       border-left: 4px solid #50bfff;
       margin: 20px 0;
+      .reference-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     }
   }
   .chart-container {
     width: 95%;
     margin: 20px 2.5% 0 2.5%;
   }
+}
+
+.help {
+  position: fixed;
+  right: 30px;
+  bottom: 50px;
 }
 .co {
   padding: 16px 50px;
@@ -1254,5 +1361,21 @@ export default {
   -moz-transform: rotate(225deg); /* Firefox */
   -webkit-transform: rotate(225deg); /* Safari 和 Chrome */
   -o-transform: rotate(225deg); /* Opera */
+}
+.textwidget {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  a {
+    img {
+      width: 100%;
+    }
+  }
+}
+</style>
+
+<style>
+div#driver-popover-item {
+  max-width: 500px !important;
 }
 </style>
